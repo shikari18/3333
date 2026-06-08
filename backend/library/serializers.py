@@ -1,0 +1,102 @@
+from rest_framework import serializers
+from django.conf import settings
+from .models import Resource, Deck, Flashcard, Quiz, ResourceImage
+
+
+class ResourceImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ResourceImage
+        fields = ('id', 'image', 'page_number', 'description', 'created_at')
+
+    def get_image(self, obj):
+        # If description contains a base64 data URI, use that (survives redeploys)
+        if obj.description and obj.description.startswith('data:'):
+            return obj.description
+        if not obj.image:
+            return None
+        try:
+            # Check if file actually exists on disk (ephemeral filesystem check)
+            if not obj.image.storage.exists(obj.image.name):
+                return None
+        except Exception:
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.image.url)
+        return f"{settings.API_URL}{obj.image.url}" if hasattr(settings, 'API_URL') else obj.image.url
+
+
+class ResourceSerializer(serializers.ModelSerializer):
+    file_url = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
+    owner_name = serializers.SerializerMethodField()
+    extracted_images = ResourceImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Resource
+        fields = (
+            'id', 'title', 'resource_type', 'file_url', 'url', 'subject',
+            'cover_image_url', 'thumbnail_url',
+            'status', 'processing_progress', 'status_text', 'file_size', 
+            'ai_summary', 'ai_concepts', 'ai_notes_json',
+            'has_study_kit', 'extracted_images', 'owner_name', 'author_name', 
+            'is_public', 'created_at', 'updated_at'
+        )
+        read_only_fields = ('id', 'status', 'ai_summary', 'ai_concepts', 'has_study_kit', 'is_public', 'created_at', 'updated_at')
+
+    def get_file_url(self, obj):
+        request = self.context.get('request')
+        if obj.file and request:
+            # Return our cloaked API endpoint instead of direct media URL
+            from django.urls import reverse
+            return request.build_absolute_uri(reverse('resource-file', kwargs={'resource_id': obj.id}))
+        return None
+
+    def get_owner_name(self, obj):
+        return obj.owner.get_full_name() or obj.owner.username
+
+    def get_cover_image_url(self, obj):
+        if not obj.cover_image: return None
+        try:
+            # Check if the file actually exists on disk before returning URL
+            # (Render's ephemeral filesystem wipes files on redeploy)
+            if not obj.cover_image.storage.exists(obj.cover_image.name):
+                return None
+        except Exception:
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(obj.cover_image.url)
+        return obj.cover_image.url
+
+
+class ResourceUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Resource
+        fields = ('title', 'resource_type', 'file', 'url', 'subject')
+
+
+class DeckSerializer(serializers.ModelSerializer):
+    total_cards = serializers.IntegerField(read_only=True)
+    due_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Deck
+        fields = ('id', 'title', 'subject', 'description', 'total_cards', 'due_count', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'created_at', 'updated_at')
+
+
+class FlashcardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Flashcard
+        fields = ('id', 'deck', 'resource', 'question', 'answer', 'subject', 'difficulty', 'created_at')
+        read_only_fields = ('id', 'created_at')
+
+
+class QuizSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Quiz
+        fields = ('id', 'resource', 'title', 'format', 'questions', 'academic_level', 'created_at')
+        read_only_fields = ('id', 'created_at')

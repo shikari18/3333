@@ -1,0 +1,38 @@
+from django.urls import path
+from .views import (
+    ResourceListCreateView, ResourceDetailView,
+    GenerateFlashcardsView, GenerateQuizView,
+    GenerateMindMapView, GeneratePracticeQuestionsView,
+    FlashcardListView, QuizListView, AnkiExportView,
+    RefetchTranscriptView, MathSolverView,
+    DeckListCreateView, DeckDetailView, SaveFlashcardsView,
+    CloneResourceView, ResourceFileView, CuratedLibraryView,
+    ReprocessResourceView
+)
+from .spaced_repetition import DueFlashcardsView, ReviewFlashcardView
+from .sse import ResourceStatusSSEView
+
+urlpatterns = [
+    path('decks/', DeckListCreateView.as_view(), name='deck-list-create'),
+    path('decks/<int:pk>/', DeckDetailView.as_view(), name='deck-detail'),
+    path('decks/<int:deck_id>/save-flashcards/', SaveFlashcardsView.as_view(), name='save-flashcards'),
+    path('resources/status-stream/', ResourceStatusSSEView.as_view(), name='resource-status-stream'),
+    path('resources/curated/', CuratedLibraryView.as_view(), name='resource-curated'),
+    path('resources/', ResourceListCreateView.as_view(), name='resource-list'),
+    path('resources/<int:pk>/', ResourceDetailView.as_view(), name='resource-detail'),
+    path('resources/<int:resource_id>/reprocess/', ReprocessResourceView.as_view(), name='resource-reprocess'),
+    path('resources/<int:resource_id>/flashcards/generate/', GenerateFlashcardsView.as_view()),
+    path('resources/<int:resource_id>/quiz/generate/', GenerateQuizView.as_view()),
+    path('resources/<int:resource_id>/mindmap/generate/', GenerateMindMapView.as_view()),
+    path('resources/<int:resource_id>/practice/generate/', GeneratePracticeQuestionsView.as_view()),
+    path('resources/<int:resource_id>/export/anki/', AnkiExportView.as_view()),
+    path('resources/<int:resource_id>/math/solve/', MathSolverView.as_view()),
+    path('resources/<int:resource_id>/refetch-transcript/', RefetchTranscriptView.as_view()),
+    path('resources/<int:resource_id>/clone/', CloneResourceView.as_view()),
+    path('resources/<int:resource_id>/file/', ResourceFileView.as_view(), name='resource-file'),
+    path('flashcards/', FlashcardListView.as_view(), name='flashcard-list'),
+    path('flashcards/due/', DueFlashcardsView.as_view()),
+    path('flashcards/<int:flashcard_id>/review/', ReviewFlashcardView.as_view()),
+    path('flashcards/export/anki/', AnkiExportView.as_view()),
+    path('quizzes/', QuizListView.as_view(), name='quiz-list'),
+]

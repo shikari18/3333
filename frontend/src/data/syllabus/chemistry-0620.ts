@@ -1,0 +1,172 @@
+import { SyllabusData, Subject, SyllabusObjective } from "@/types/syllabus";
+
+const chemistrySubject: Subject = {
+  id: "chemistry-0620",
+  name: "Chemistry",
+  code: "0620",
+  examBoard: {
+    id: "cambridge",
+    name: "Cambridge",
+    code: "Cambridge",
+  },
+  displayName: "Chemistry – Cambridge IGCSE (0620)",
+};
+
+const chemistryObjectives: SyllabusObjective[] = [
+  {
+    id: "obj-1",
+    subjectId: "chemistry-0620",
+    code: "1",
+    title: "The Particulate Nature of Matter",
+    description: "States of matter and kinetic theory",
+    order: 1,
+    subObjectives: [
+      {
+        id: "obj-1-1",
+        subjectId: "chemistry-0620",
+        code: "1.1",
+        title: "States of Matter",
+        description: "Describe the states of matter",
+        order: 1,
+        parentId: "obj-1",
+      },
+      {
+        id: "obj-1-2",
+        subjectId: "chemistry-0620",
+        code: "1.2",
+        title: "Kinetic Theory",
+        description: "Understand the kinetic theory of matter",
+        order: 2,
+        parentId: "obj-1",
+      },
+    ],
+  },
+  {
+    id: "obj-2",
+    subjectId: "chemistry-0620",
+    code: "2",
+    title: "Experimental Techniques",
+    description: "Experimental methods and apparatus",
+    order: 2,
+    subObjectives: [
+      {
+        id: "obj-2-1",
+        subjectId: "chemistry-0620",
+        code: "2.1",
+        title: "Measurement",
+        description: "Appropriate apparatus and measurements",
+        order: 1,
+        parentId: "obj-2",
+      },
+      {
+        id: "obj-2-2",
+        subjectId: "chemistry-0620",
+        code: "2.2",
+        title: "Purification Methods",
+        description: "Methods of purification",
+        order: 2,
+        parentId: "obj-2",
+      },
+    ],
+  },
+  {
+    id: "obj-3",
+    subjectId: "chemistry-0620",
+    code: "3",
+    title: "Atoms, Elements and Compounds",
+    description: "Atomic structure and bonding",
+    order: 3,
+    subObjectives: [
+      {
+        id: "obj-3-1",
+        subjectId: "chemistry-0620",
+        code: "3.1",
+        title: "Atomic Structure",
+        description: "Describe the structure of atoms",
+        order: 1,
+        parentId: "obj-3",
+      },
+      {
+        id: "obj-3-2",
+        subjectId: "chemistry-0620",
+        code: "3.2",
+        title: "Bonding",
+        description: "Understand ionic and covalent bonding",
+        order: 2,
+        parentId: "obj-3",
+      },
+    ],
+  },
+  {
+    id: "obj-4",
+    subjectId: "chemistry-0620",
+    code: "4",
+    title: "Stoichiometry",
+    description: "Chemical calculations",
+    order: 4,
+    subObjectives: [
+      {
+        id: "obj-4-1",
+        subjectId: "chemistry-0620",
+        code: "4.1",
+        title: "Formulae and Equations",
+        description: "Write chemical formulae and equations",
+        order: 1,
+        parentId: "obj-4",
+      },
+      {
+        id: "obj-4-2",
+        subjectId: "chemistry-0620",
+        code: "4.2",
+        title: "Mole Concept",
+        description: "Use the mole concept in calculations",
+        order: 2,
+        parentId: "obj-4",
+      },
+    ],
+  },
+  {
+    id: "obj-5",
+    subjectId: "chemistry-0620",
+    code: "5",
+    title: "Electricity and Chemistry",
+    description: "Electrolysis and electrochemical cells",
+    order: 5,
+    subObjectives: [
+      {
+        id: "obj-5-1",
+        subjectId: "chemistry-0620",
+        code: "5.1",
+        title: "Electrolysis",
+        description: "Understand electrolysis",
+        order: 1,
+        parentId: "obj-5",
+      },
+    ],
+  },
+  {
+    id: "obj-6",
+    subjectId: "chemistry-0620",
+    code: "6",
+    title: "Chemical Energetics",
+    description: "Energy changes in chemical reactions",
+    order: 6,
+    subObjectives: [
+      {
+        id: "obj-6-1",
+        subjectId: "chemistry-0620",
+        code: "6.1",
+        title: "Energy Changes",
+        description: "Exothermic and endothermic reactions",
+        order: 1,
+        parentId: "obj-6",
+      },
+    ],
+  },
+];
+
+export const chemistry0620Data: SyllabusData = {
+  subject: chemistrySubject,
+  objectives: chemistryObjectives,
+  notes: [],
+};
