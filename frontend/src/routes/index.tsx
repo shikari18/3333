@@ -70,7 +70,7 @@ function Home() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const q = searchRef.current?.value?.trim();
-    if (q) navigate({ to: "/search" as any, search: { q } });
+    if (q) navigate({ to: "/search" as any, search: { q } as any });
   };
 
   return (

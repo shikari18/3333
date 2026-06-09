@@ -79,7 +79,7 @@ function NotesIndex() {
 
   // If a subject is pre-selected via ?subject=, redirect to the new route
   if (preselected) {
-    navigate({ to: "/subject-notes/$subject" as any, params: { subject: preselected }, replace: true });
+    navigate({ to: "/subject-notes/$subject" as any, params: { subject: preselected } as any, replace: true });
     return null;
   }
 

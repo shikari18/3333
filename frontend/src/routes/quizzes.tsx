@@ -2,21 +2,14 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import {
-  Clock,
-  BookOpen,
-  Flag,
-  ChevronLeft,
-  ChevronRight,
-  CheckCircle2,
-  XCircle,
-  Trophy,
-  Loader2,
+  Clock, BookOpen, Flag, ChevronLeft, ChevronRight,
+  CheckCircle2, XCircle, Trophy, Loader2,
 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { getQuizSets, getQuiz, submitQuiz } from "@/api/quizzes";
+import type { QuizSet, QuizQuestion, QuizResult } from "@/api/quizzes";
 import { useAuth } from "@/lib/auth-context";
 import { useProfile } from "@/lib/profile-context";
-import type { QuizSet, QuizQuestion } from "@/api/quizzes";
 
 export const Route = createFileRoute("/quizzes")({
   head: () => ({ meta: [{ title: "Quiz — ExamGlow" }] }),
@@ -27,31 +20,17 @@ function Quizzes() {
   const { user, loading: authLoading } = useAuth();
   const { enrolledSubjects } = useProfile();
   const navigate = useNavigate();
-  interface QuizSet {
-    id: string;
-    title: string;
-    subject: string;
-    question_count: number;
-    attempts?: number;
-    best_score?: number;
-  }
 
   const [quizSets, setQuizSets] = useState<QuizSet[]>([]);
   const [activeSubject, setActiveSubject] = useState<string>("All");
   const [selectedQuiz, setSelectedQuiz] = useState<{ quiz: QuizSet; questions: QuizQuestion[] } | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [flagged, setFlagged] = useState<Set<string>>(new Set());
+  // answers keyed by question id (number → string key)
+  const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [flagged, setFlagged] = useState<Set<number>>(new Set());
   const [timeLeft, setTimeLeft] = useState(600);
   const [submitted, setSubmitted] = useState(false);
-  interface QuizResults {
-    score: number;
-    total: number;
-    percentage: number;
-    answers: Array<{ questionId: string; correct: boolean; userAnswer: string; correctAnswer: string }>;
-  }
-
-  const [results, setResults] = useState<QuizResults | null>(null);
+  const [results, setResults] = useState<QuizResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [quizLoading, setQuizLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -67,7 +46,7 @@ function Quizzes() {
   useEffect(() => {
     if (!selectedQuiz || submitted) return;
     if (timeLeft <= 0) { handleSubmit(); return; }
-    const t = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
+    const t = setTimeout(() => setTimeLeft((s) => s - 1), 1000);
     return () => clearTimeout(t);
   }, [selectedQuiz, timeLeft, submitted]);
 
@@ -91,11 +70,11 @@ function Quizzes() {
     setQuizLoading(false);
   };
 
-  const handleAnswer = (questionId: string, option: string) => {
+  const handleAnswer = (questionId: number, option: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: option }));
   };
 
-  const handleFlag = (questionId: string) => {
+  const handleFlag = (questionId: number) => {
     setFlagged((prev) => {
       const next = new Set(prev);
       next.has(questionId) ? next.delete(questionId) : next.add(questionId);
@@ -107,13 +86,26 @@ function Quizzes() {
     if (!selectedQuiz) return;
     setSubmitting(true);
     const timeTaken = Math.round((Date.now() - startTime.current) / 1000);
-    const res = await submitQuiz(selectedQuiz.quiz.id, answers, timeTaken);
+    // Convert number-keyed answers to string-keyed for the API
+    const stringAnswers: Record<string, string> = {};
+    for (const [k, v] of Object.entries(answers)) stringAnswers[k] = v;
+    const res = await submitQuiz(selectedQuiz.quiz.id, stringAnswers, timeTaken);
     setResults(res);
     setSubmitted(true);
     setSubmitting(false);
   };
 
-  if (authLoading) return null;
+  if (authLoading || quizLoading) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header authed />
+        <main className="flex-1 flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   const subjectColors: Record<string, string> = {
     Biology: "bg-green-50 text-green-700",
@@ -122,14 +114,14 @@ function Quizzes() {
     Mathematics: "bg-orange-50 text-orange-700",
   };
 
-  // Quiz selection
+  // ── Quiz selection ────────────────────────────────────────────────────────
   if (!selectedQuiz) {
     const filteredSets = activeSubject === "All"
       ? quizSets
-      : quizSets.filter((qs: any) => qs.subject === activeSubject);
+      : quizSets.filter((qs) => qs.subject === activeSubject);
 
     const subjectTabs = ["All", ...enrolledSubjects.filter((s) =>
-      quizSets.some((qs: any) => qs.subject === s)
+      quizSets.some((qs) => qs.subject === s)
     )];
 
     return (
@@ -142,7 +134,6 @@ function Quizzes() {
           </p>
         </section>
         <main className="max-w-4xl mx-auto w-full px-6 py-10">
-          {/* Subject filter tabs */}
           <div className="flex gap-2 flex-wrap mb-6">
             {subjectTabs.map((s) => (
               <button
@@ -161,9 +152,14 @@ function Quizzes() {
 
           {loading ? (
             <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
+          ) : filteredSets.length === 0 ? (
+            <div className="text-center py-20 text-foreground/40">
+              <p className="font-semibold">No quizzes available yet for this subject.</p>
+              <p className="text-sm mt-1">Quizzes are added by admins — check back soon.</p>
+            </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-5">
-              {filteredSets.map((qs: any) => (
+              {filteredSets.map((qs) => (
                 <button
                   key={qs.id}
                   onClick={() => loadQuiz(qs)}
@@ -180,14 +176,14 @@ function Quizzes() {
                         {qs.subject}
                       </span>
                       {qs.best_score != null && (
-                        <span className="text-xs text-green-600 font-semibold">Best: {qs.best_score}%</span>
+                        <span className="text-xs text-green-600 font-semibold">Best: {Math.round(qs.best_score)}%</span>
                       )}
                     </div>
                     <h3 className="font-bold mt-3 text-lg group-hover:text-primary transition-colors">{qs.title}</h3>
                     <p className="text-sm text-foreground/60 mt-1">{qs.description}</p>
                     <div className="flex items-center gap-4 mt-4 text-xs text-foreground/50">
                       <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {Math.round(qs.time_limit_seconds / 60)} min</span>
-                      <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> 8 questions</span>
+                      <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> MCQ</span>
                       {qs.attempt_count > 0 && <span>{qs.attempt_count} attempt{qs.attempt_count !== 1 ? "s" : ""}</span>}
                     </div>
                   </div>
@@ -205,7 +201,7 @@ function Quizzes() {
   const currentQuestion = questions[currentIndex];
   const answeredCount = Object.keys(answers).length;
 
-  // Results view
+  // ── Results view ──────────────────────────────────────────────────────────
   if (submitted && results) {
     return (
       <div className="min-h-screen flex flex-col">
@@ -224,7 +220,7 @@ function Quizzes() {
           <div className="space-y-4">
             {questions.map((q, i) => {
               const userAns = answers[q.id];
-              const graded = results.graded[q.id];
+              const graded = results.graded[String(q.id)];
               const correct = graded?.correct;
               return (
                 <div key={q.id} className={`rounded-2xl border p-5 ${correct ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}>
@@ -235,13 +231,19 @@ function Quizzes() {
                     <div className="flex-1">
                       <p className="font-semibold text-sm">Q{i + 1}. {q.question}</p>
                       <p className="text-sm mt-2">
-                        Your answer: <span className={correct ? "text-green-700 font-semibold" : "text-red-600 font-semibold"}>
-                          {userAns ? `(${userAns}) ${(q as any)[`option_${userAns.toLowerCase()}`] ?? userAns}` : "Not answered"}
+                        Your answer:{" "}
+                        <span className={correct ? "text-green-700 font-semibold" : "text-red-600 font-semibold"}>
+                          {userAns
+                            ? `(${userAns}) ${(q as any)[`option_${userAns.toLowerCase()}`] ?? userAns}`
+                            : "Not answered"}
                         </span>
                       </p>
-                      {!correct && (
+                      {!correct && graded && (
                         <p className="text-sm text-green-700 mt-1">
-                          Correct: <span className="font-semibold">({graded.correctAnswer}) {(q as any)[`option_${graded.correctAnswer.toLowerCase()}`]}</span>
+                          Correct:{" "}
+                          <span className="font-semibold">
+                            ({graded.correctAnswer}) {(q as any)[`option_${graded.correctAnswer.toLowerCase()}`]}
+                          </span>
                         </p>
                       )}
                       {q.explanation && (
@@ -262,7 +264,7 @@ function Quizzes() {
               Retry Quiz
             </button>
             <button
-              onClick={() => { setSelectedQuiz(null); }}
+              onClick={() => { setSelectedQuiz(null); setResults(null); setSubmitted(false); }}
               className="px-6 py-3 rounded-full border border-border font-semibold"
             >
               All Quizzes
@@ -274,6 +276,7 @@ function Quizzes() {
     );
   }
 
+  // ── Active quiz ───────────────────────────────────────────────────────────
   const options = [
     { key: "A", text: currentQuestion.option_a },
     { key: "B", text: currentQuestion.option_b },
@@ -308,12 +311,12 @@ function Quizzes() {
         <section>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-xs px-2 py-0.5 rounded-full bg-pink-soft text-primary">
-                {quiz.subject}
-              </span>
-              <span className="text-xs text-foreground/60 flex items-center gap-1">
-                <BookOpen className="w-3 h-3" /> {currentQuestion.topic}
-              </span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-pink-soft text-primary">{quiz.subject}</span>
+              {currentQuestion.topic && (
+                <span className="text-xs text-foreground/60 flex items-center gap-1">
+                  <BookOpen className="w-3 h-3" /> {currentQuestion.topic}
+                </span>
+              )}
             </div>
             <button
               onClick={() => handleFlag(currentQuestion.id)}
@@ -322,15 +325,12 @@ function Quizzes() {
               <Flag className="w-3 h-3" /> {isFlagged ? "Flagged" : "Flag for review"}
             </button>
           </div>
+
           <h1 className="font-display text-2xl md:text-3xl mt-4">{currentQuestion.question}</h1>
 
           {currentQuestion.image_url && (
             <div className="mt-5 rounded-2xl overflow-hidden border border-border bg-muted/30">
-              <img
-                src={currentQuestion.image_url}
-                alt="Question diagram"
-                className="w-full max-h-64 object-cover"
-              />
+              <img src={currentQuestion.image_url} alt="Question diagram" className="w-full max-h-64 object-cover" />
             </div>
           )}
 
@@ -345,11 +345,7 @@ function Quizzes() {
                     : "border-border hover:bg-pink-softer/40"
                 }`}
               >
-                <span
-                  className={`w-7 h-7 rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0 ${
-                    selectedAnswer === key ? "bg-primary text-white" : "bg-muted"
-                  }`}
-                >
+                <span className={`w-7 h-7 rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0 ${selectedAnswer === key ? "bg-primary text-white" : "bg-muted"}`}>
                   {key}
                 </span>
                 <span className="text-sm">{text}</span>
@@ -360,17 +356,13 @@ function Quizzes() {
           <hr className="my-7" />
           <div className="flex items-center justify-between">
             <button
-              onClick={() => { setCurrentIndex(Math.max(0, currentIndex - 1)); }}
+              onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
               disabled={currentIndex === 0}
               className="px-4 py-2 rounded-full border border-border text-sm flex items-center gap-1 disabled:opacity-40"
             >
               <ChevronLeft className="w-3 h-3" /> Previous
             </button>
-            <button
-              onClick={handleSubmit}
-              disabled={submitting}
-              className="text-sm text-foreground/60 hover:text-primary"
-            >
+            <button onClick={handleSubmit} disabled={submitting} className="text-sm text-foreground/60 hover:text-primary">
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Finish Quiz"}
             </button>
             {currentIndex < questions.length - 1 ? (
@@ -378,13 +370,13 @@ function Quizzes() {
                 onClick={() => setCurrentIndex(currentIndex + 1)}
                 className="px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-semibold flex items-center gap-1"
               >
-                Next Question <ChevronRight className="w-3 h-3" />
+                Next <ChevronRight className="w-3 h-3" />
               </button>
             ) : (
               <button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-semibold flex items-center gap-1 disabled:opacity-50"
+                className="px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-semibold disabled:opacity-50"
               >
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Submit Quiz"}
               </button>
@@ -394,7 +386,7 @@ function Quizzes() {
 
         <aside className="space-y-4">
           <div className="border border-border rounded-2xl p-5">
-            <p className="font-bold">Navigator</p>
+            <p className="font-bold mb-1">Navigator</p>
             <p className="text-xs text-foreground/60 mb-3">Jump to any question</p>
             <div className="grid grid-cols-5 gap-2">
               {questions.map((q, n) => (
@@ -402,13 +394,10 @@ function Quizzes() {
                   key={q.id}
                   onClick={() => setCurrentIndex(n)}
                   className={`aspect-square rounded-lg text-sm font-semibold transition-all ${
-                    n === currentIndex
-                      ? "bg-primary text-white"
-                      : answers[q.id]
-                      ? "bg-primary/20 text-primary border border-primary/30"
-                      : flagged.has(q.id)
-                      ? "border-2 border-orange-400 text-orange-500"
-                      : "border border-border text-foreground/60"
+                    n === currentIndex ? "bg-primary text-white" :
+                    answers[q.id] ? "bg-primary/20 text-primary border border-primary/30" :
+                    flagged.has(q.id) ? "border-2 border-orange-400 text-orange-500" :
+                    "border border-border text-foreground/60"
                   }`}
                 >
                   {n + 1}
@@ -426,9 +415,7 @@ function Quizzes() {
             <p className="font-bold flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-primary" /> Progress
             </p>
-            <p className="text-sm text-foreground/70 mt-1">
-              {answeredCount} of {questions.length} questions answered.
-            </p>
+            <p className="text-sm text-foreground/70 mt-1">{answeredCount} of {questions.length} answered.</p>
             {answeredCount === questions.length && (
               <button
                 onClick={handleSubmit}

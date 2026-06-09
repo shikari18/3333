@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getDashboardData, addGoal, toggleGoal, deleteGoal } from "@/api/user";
+import type { DashboardData, StudyGoal, UserBookmark } from "@/api/user";
 import { useAuth } from "@/lib/auth-context";
 import { useProfile } from "@/lib/profile-context";
 
@@ -47,21 +48,9 @@ function Dashboard() {
   const { enrolledSubjects, course, yearGroup, profile } = useProfile();
   const navigate = useNavigate();
 
-  type ActivityItem = { id?: string; activity_type: string; title: string; score_text?: string; created_at: string };
-  type GoalItem = { id: string; title: string; completed: boolean | number };
-  type BookmarkItem = { id: string; resource_type: string; title: string; subject?: string; created_at: string };
-  type DashboardData = {
-    user: { id: string; name: string; email: string };
-    streak: number;
-    avgScore: number | null;
-    activity: ActivityItem[];
-    goals: GoalItem[];
-    bookmarks: BookmarkItem[];
-  };
-
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [goals, setGoals] = useState<GoalItem[]>([]);
+  const [goals, setGoals] = useState<StudyGoal[]>([]);
   const [newGoal, setNewGoal] = useState("");
   const [addingGoal, setAddingGoal] = useState(false);
   const [showGoalInput, setShowGoalInput] = useState(false);
@@ -94,25 +83,25 @@ function Dashboard() {
     }
   };
 
-  const handleToggleGoal = async (id: string, completed: boolean | number) => {
+  const handleToggleGoal = async (id: number, completed: boolean) => {
     const newCompleted = !completed;
     setGoals((prev) =>
       prev.map((g) => (g.id === id ? { ...g, completed: newCompleted } : g))
     );
-    await toggleGoal(Number(id), newCompleted);
+    await toggleGoal(id, newCompleted);
   };
 
-  const handleDeleteGoal = async (id: string) => {
+  const handleDeleteGoal = async (id: number) => {
     setGoals((prev) => prev.filter((g) => g.id !== id));
-    await deleteGoal(Number(id));
+    await deleteGoal(id);
   };
 
   const streak = data?.streak ?? 0;
   const avgScore = data?.avgScore;
-  const activity = data?.activity ?? [];
+  const activity = (data as any)?.activity ?? [];
   const bookmarks = data?.bookmarks ?? [];
   const quizCount = activity.filter((a: any) => a.activity_type === "Quiz").length;
-  const completedGoals = goals.filter((g) => g.completed && g.completed !== 0).length;
+  const completedGoals = goals.filter((g) => g.completed).length;
 
   if (authLoading) return null;
 
@@ -124,13 +113,13 @@ function Dashboard() {
           <p className="text-[11px] tracking-widest text-foreground/60">MAIN MENU</p>
           {[
             { Icon: LayoutDashboard, label: "Overview", active: true, to: "/dashboard" },
-            { Icon: BookOpen, label: "Library", to: "/library" },
+            { Icon: Library, label: "Library", to: "/library" },
             { Icon: BookOpen, label: "Notes", to: "/notes" },
             { Icon: Zap, label: "Flashcards", to: "/flashcards" },
             { Icon: Trophy, label: "Quizzes", to: "/quizzes" },
             { Icon: FileText, label: "Past Papers", to: "/past-papers" },
             { Icon: GraduationCap, label: "Exam Prep", to: "/exam-prep" },
-            { Icon: GraduationCap, label: "Syllabus", to: "/subjects" },
+            { Icon: Target, label: "Syllabus", to: "/subjects" },
           ].map((i) => (
             <Link
               key={i.label}
