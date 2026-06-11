@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getDashboardData, addGoal, toggleGoal, deleteGoal } from "@/api/user";
-import type { DashboardData, StudyGoal, UserBookmark } from "@/api/user";
+import type { DashboardData, StudyGoal, UserBookmark, ActivityItem } from "@/api/user";
 import { useAuth } from "@/lib/auth-context";
 import { useProfile } from "@/lib/profile-context";
 
@@ -58,7 +58,7 @@ function Dashboard() {
   const fetchData = async () => {
     const d = await getDashboardData();
     setData(d);
-    setGoals(d?.goals ?? []);
+    setGoals(Array.isArray(d?.goals) ? d.goals : []);
     setLoading(false);
   };
 
@@ -98,9 +98,9 @@ function Dashboard() {
 
   const streak = data?.streak ?? 0;
   const avgScore = data?.avgScore;
-  const activity = (data as any)?.activity ?? [];
-  const bookmarks = data?.bookmarks ?? [];
-  const quizCount = activity.filter((a: any) => a.activity_type === "Quiz").length;
+  const activity: ActivityItem[] = Array.isArray(data?.activity) ? data.activity : [];
+  const bookmarks = Array.isArray(data?.bookmarks) ? data.bookmarks : [];
+  const quizCount = activity.filter((a) => a.activity_type === "Quiz").length;
   const completedGoals = goals.filter((g) => g.completed).length;
 
   if (authLoading) return null;

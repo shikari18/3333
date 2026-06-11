@@ -125,3 +125,15 @@ export const api = {
     apiFetch<T>(path, { method: 'PATCH', body: body !== undefined ? JSON.stringify(body) : undefined }),
   delete: <T>(path: string) => apiFetch<T>(path, { method: 'DELETE' }),
 };
+
+/**
+ * Like api.get but automatically unwraps DRF PageNumberPagination responses.
+ * Returns the `results` array when the response has {count, results, next, previous},
+ * otherwise returns the response as-is.
+ */
+export async function apiList<T>(path: string): Promise<T[]> {
+  const res = await apiFetch<{ results: T[] } | T[]>(path, { method: 'GET' });
+  if (Array.isArray(res)) return res;
+  if (res && typeof res === 'object' && 'results' in res) return (res as { results: T[] }).results;
+  return res as unknown as T[];
+}

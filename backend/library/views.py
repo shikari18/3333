@@ -67,6 +67,7 @@ MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
 class ResourceListCreateView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
+    pagination_class = None  # Return plain array for simplicity
 
     def get_throttles(self):
         # Only apply upload throttle to POST requests
@@ -159,6 +160,7 @@ class CuratedLibraryView(generics.ListAPIView):
     """View to fetch public/curated resources available to everyone."""
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ResourceSerializer
+    pagination_class = None
 
     def get_queryset(self):
         qs = Resource.objects.filter(is_public=True).select_related('owner').prefetch_related('extracted_images')

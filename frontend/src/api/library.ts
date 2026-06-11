@@ -4,7 +4,7 @@
  * Handles uploading materials, fetching AI-generated study kits,
  * and curated content.
  */
-import { api, apiFetch, API_BASE, getAccessToken } from '@/lib/api-client';
+import { api, apiFetch, apiList, API_BASE, getAccessToken } from '@/lib/api-client';
 
 export type ResourceStatus = 'processing' | 'ready' | 'error';
 export type ResourceType = 'pdf' | 'video' | 'code' | 'slides' | 'other';
@@ -94,7 +94,7 @@ export async function uploadResource(data: {
 /** Get all resources owned by the current user */
 export async function getMyResources(type?: ResourceType): Promise<Resource[]> {
   const qs = type ? `?type=${type}` : '';
-  return api.get<Resource[]>(`/api/library/resources/${qs}`);
+  return apiList<Resource>(`/api/library/resources/${qs}`);
 }
 
 /** Get a single resource */
@@ -110,7 +110,7 @@ export async function deleteResource(id: number): Promise<void> {
 /** Get curated/public resources */
 export async function getCuratedResources(type?: ResourceType): Promise<Resource[]> {
   const qs = type ? `?type=${type}` : '';
-  return api.get<Resource[]>(`/api/library/resources/curated/${qs}`);
+  return apiList<Resource>(`/api/library/resources/curated/${qs}`);
 }
 
 /** Generate flashcards from a resource */

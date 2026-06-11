@@ -39,7 +39,7 @@ function Quizzes() {
   useEffect(() => {
     if (!authLoading && !user) { navigate({ to: "/login" as any }); return; }
     if (!authLoading) {
-      getQuizSets().then((sets) => { setQuizSets(sets); setLoading(false); });
+      getQuizSets().then((sets) => { setQuizSets(Array.isArray(sets) ? sets : []); setLoading(false); });
     }
   }, [user, authLoading]);
 

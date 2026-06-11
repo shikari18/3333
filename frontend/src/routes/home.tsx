@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getDashboardData } from "@/api/user";
+import type { ActivityItem } from "@/api/user";
 import { useAuth } from "@/lib/auth-context";
 import { useProfile } from "@/lib/profile-context";
 
@@ -84,7 +85,7 @@ function Home() {
 
   const streak = data?.streak ?? 0;
   const avgScore = data?.avgScore;
-  const activity = data?.activity ?? [];
+  const activity: ActivityItem[] = Array.isArray(data?.activity) ? data.activity : [];
 
   const stats = [
     { label: "Study Streak", value: `${streak} day${streak !== 1 ? "s" : ""}`, icon: Flame, color: "text-orange-500" },

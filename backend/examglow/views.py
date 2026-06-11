@@ -85,6 +85,7 @@ class QuizSetListView(generics.ListAPIView):
     """
     serializer_class = QuizSetSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None  # Return plain array — these lists are always small
 
     def get_queryset(self):
         user = self.request.user
@@ -182,6 +183,7 @@ class FlashcardDeckListView(generics.ListAPIView):
     """GET /api/examglow/flashcards/decks/"""
     serializer_class = FlashcardDeckSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None  # Return plain array
 
     def get_queryset(self):
         user = self.request.user
@@ -450,6 +452,17 @@ class DashboardView(APIView):
         from users.serializers import UserSerializer
         avg_score = round(quiz_stats['avg_score']) if quiz_stats['avg_score'] is not None else None
 
+        # Build recent activity from quiz attempts and bookmarks
+        recent_quizzes = QuizAttempt.objects.filter(user=user).select_related('quiz_set').order_by('-created_at')[:5]
+        activity = []
+        for attempt in recent_quizzes:
+            activity.append({
+                'activity_type': 'Quiz',
+                'title': f"{attempt.quiz_set.subject}: {attempt.quiz_set.title}",
+                'score_text': f"{attempt.percentage}%",
+                'created_at': attempt.created_at.isoformat(),
+            })
+
         return Response({
             'user': UserSerializer(user, context={'request': request}).data,
             'streak': user.study_streak,
@@ -458,4 +471,5 @@ class DashboardView(APIView):
             'bookmarks': UserBookmarkSerializer(bookmarks, many=True).data,
             'avgScore': avg_score,
             'totalAttempts': quiz_stats['total_attempts'] or 0,
+            'activity': activity,
         })

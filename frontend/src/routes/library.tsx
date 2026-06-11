@@ -583,8 +583,8 @@ function LibraryPage() {
 
   const fetchResources = useCallback(async () => {
     const [mine, pub] = await Promise.all([getMyResources(), getCuratedResources()]);
-    setMyResources(mine);
-    setCurated(pub);
+    setMyResources(Array.isArray(mine) ? mine : []);
+    setCurated(Array.isArray(pub) ? pub : []);
   }, []);
 
   useEffect(() => {

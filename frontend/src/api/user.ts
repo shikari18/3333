@@ -22,6 +22,13 @@ export type UserBookmark = {
   created_at: string;
 };
 
+export type ActivityItem = {
+  activity_type: string;
+  title: string;
+  score_text?: string | null;
+  created_at: string;
+};
+
 export type DashboardData = {
   user: User;
   streak: number;
@@ -30,6 +37,7 @@ export type DashboardData = {
   bookmarks: UserBookmark[];
   avgScore: number | null;
   totalAttempts: number;
+  activity: ActivityItem[];
 };
 
 /** Get all dashboard data in one request. */

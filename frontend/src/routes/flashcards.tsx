@@ -18,8 +18,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState, useCallback } from "react";
 import { getDecks, getDeckWithCards, getDueCards, updateCardProgress } from "@/api/flashcards";
-import { api } from "@/lib/api-client";
-import { useAuth } from "@/lib/auth-context";
+import { api } from "@/lib/api-client";import { useAuth } from "@/lib/auth-context";
 import { useProfile } from "@/lib/profile-context";
 import type { FlashcardDeck, Flashcard } from "@/api/flashcards";
 
@@ -50,7 +49,7 @@ function Flashcards() {
   useEffect(() => {
     if (!authLoading && !user) { navigate({ to: "/login" as any }); return; }
     if (!authLoading) {
-      getDecks().then((d) => { setDecks(d); setLoading(false); });
+      getDecks().then((d) => { setDecks(Array.isArray(d) ? d : []); setLoading(false); });
     }
   }, [user, authLoading]);
 
