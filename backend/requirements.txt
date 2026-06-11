@@ -1,35 +1,54 @@
+# Core — pinned for Django 5.2 LTS stability on Render (Python 3.12)
 django>=5.1,<6.0
-djangorestframework>=3.17
-django-cors-headers>=4.9
-djangorestframework-simplejwt>=5.5
-pillow>=12.0
-python-dotenv>=1.2
-requests>=2.32
-youtube-transcript-api>=0.6.2
-PyPDF2>=3.0.0
-whitenoise>=6.7.0
+djangorestframework>=3.15,<4.0
+django-cors-headers>=4.3
+djangorestframework-simplejwt>=5.3
+pillow>=10.0
+python-dotenv>=1.0
+requests>=2.31
+whitenoise>=6.6
+gunicorn>=21.0
+
+# Auth & admin
 django-unfold>=0.40.0
-edge-tts>=6.1.13
-PyMuPDF>=1.24.0
-yt-dlp>=2024.1.1
-groq>=0.9.0
-psycopg2-binary>=2.9.0
-dj-database-url>=2.0.0
+
+# Database
+psycopg2-binary>=2.9
+dj-database-url>=2.0
+pgvector>=0.2.4
+
+# Storage (S3 / Cloudflare R2)
+django-storages>=1.14
+boto3>=1.34
+
+# Channels / WebSockets (optional — needed for real-time notifications)
+daphne>=4.0
+channels>=4.0
+channels-redis>=4.1
+
+# Background tasks
+django-q2>=1.6
+redis>=5.0
+
+# AI / LLM
 google-genai
 langchain>=0.3.0
 langchain-core>=0.3.0
 langchain-text-splitters>=0.3.0
-daphne>=4.1.2
-channels>=4.0.0
-channels-redis>=4.1.0
-httpx>=0.27.0
-gunicorn>=23.0.0
-django-storages>=1.14.0
-boto3>=1.34.0
-django-q2>=1.7.0
-pgvector>=0.3.0
-redis>=5.0.0
-python-pptx>=0.6.23
-pywebpush>=1.14.0
-reportlab>=4.2.2
-python-docx>=1.1.2
+httpx>=0.27
+groq>=0.9
+
+# Content extraction
+youtube-transcript-api>=0.6
+PyPDF2>=3.0
+PyMuPDF>=1.24
+yt-dlp>=2024.1
+python-pptx>=0.6
+python-docx>=1.1
+
+# Payments & notifications
+pywebpush>=1.14
+reportlab>=4.2
+
+# TTS
+edge-tts>=6.1

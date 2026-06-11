@@ -6,9 +6,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-nitemind-dev-key-change-in-production')
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-examglow-dev-key-change-in-production')
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
+
+# On Render, auto-add the service's public URL to ALLOWED_HOSTS
+_render_external_url = os.getenv('RENDER_EXTERNAL_URL', '')
+if _render_external_url:
+    from urllib.parse import urlparse as _urlparse
+    _parsed = _urlparse(_render_external_url)
+    if _parsed.hostname and _parsed.hostname not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(_parsed.hostname)
 
 INSTALLED_APPS = [
     # Unfold must come before django.contrib.admin
@@ -246,13 +254,14 @@ else:
     CORS_ALLOW_ALL_ORIGINS = DEBUG
     CORS_URLS_REGEX = r'^/api/.*$|/media/.*$'
 
-# Allow all *.replit.dev, *.repl.co, and flowstate.college origins
+# Allow all *.replit.dev, *.repl.co, *.onrender.com, and examglow domains
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r'^https://.*\.replit\.dev$',
     r'^https://.*\.repl\.co$',
     r'^https://.*\.worf\.replit\.dev$',
     r'^https://(www\.)?flowstate\.college$',
     r'^https://.*\.onrender\.com$',
+    r'^https://(www\.)?examglow\.com$',
 ]
 CORS_ALLOW_CREDENTIALS = True
 
