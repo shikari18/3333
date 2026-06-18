@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { playSpeechConversation, stopAllSpeech, speakSingleTurn, type SpeechTurn } from "@/lib/speech-utils";
-import { apiFetch } from "@/lib/api-client";
+import { groqAsk } from "@/lib/groq-client";
 
 export const Route = createFileRoute("/syllabus/$subjectId")({
   component: SyllabusPage,
@@ -661,18 +661,17 @@ function SyllabusPDFReader({ subjectName, subjectCode, subjectId, yearRange, fil
     setIsTyping(true);
 
     try {
-      const prompt = `You are a warm, expert IGCSE tutor teaching a student the syllabus details. Please generate a highly comprehensive, detailed, and thorough explanation covering everything on Page ${currentPage} ("${activePageTitle}") of the IGCSE ${clean} (${subjectCode}) syllabus.
-Here is the context of this page:
+      const systemPrompt = `You are a warm, expert IGCSE tutor. Your job is to teach students the syllabus content in a thorough, engaging, and easy-to-understand way. Speak directly to the student. Do not use headers or bullet points — write in flowing, natural paragraphs as if you are speaking. Be extremely detailed and comprehensive.`;
+
+      const userPrompt = `Teach me everything on Page ${currentPage} ("${activePageTitle}") of the IGCSE ${clean} (${subjectCode}) syllabus.
+
+Page content:
 ${contentSummary}
 
-Write a detailed, thorough explanation teaching every single term, concept, exam structure, aim, or sub-objective on this page. Cover all details and provide examples where relevant. Make the explanation long, comprehensive, and complete (not a brief summary). Avoid headers or bullet points. Start speaking immediately without intro filler.`;
+Give a complete, long, detailed lesson covering every single concept, term, aim, sub-topic, and exam detail on this page. Include real-world examples to help understanding. Do not skip anything. Do not give a brief summary — teach every part fully.`;
 
-      const data = await apiFetch<{ answer: string }>("/api/ai/ask/", {
-        method: "POST",
-        body: JSON.stringify({ question: prompt })
-      });
+      const explanationText = await groqAsk(systemPrompt, userPrompt, { max_tokens: 4096, temperature: 0.65 });
 
-      const explanationText = data.answer.trim();
       setIsTyping(false);
       
       setMessages(prev => [
@@ -694,7 +693,7 @@ Write a detailed, thorough explanation teaching every single term, concept, exam
       setIsTyping(false);
       setMessages(prev => [
         ...prev,
-        { role: "assistant", text: "Sorry, I had trouble reaching the AI tutor to generate a custom lesson. Please check your connection." }
+        { role: "assistant", text: `❌ AI Tutor error: ${err instanceof Error ? err.message : "Unknown error"}. Make sure your VITE_GROQ_API_KEY is set correctly in frontend/.env` }
       ]);
     }
   };
@@ -741,30 +740,37 @@ Write a detailed, thorough explanation teaching every single term, concept, exam
     setIsTyping(true);
 
     try {
-      const prompt = `You are a script writer. Write a turn-by-turn academic debate script between Dr. AI Smith (academic, theoretical, male) and Prof. AI Jones (practical, application-focused, female) discussing the concepts on Page ${currentPage} ("${activePageTitle}") of the IGCSE ${clean} (${subjectCode}) syllabus.
-Here is the context of this page:
+      const systemPrompt = `You are a debate script writer for an academic AI show. You write lively, educational debates between two AI professors. Output ONLY valid JSON — no markdown, no code fences, no extra text. Respond with a raw JSON array only.`;
+
+      const userPrompt = `Write a 4-turn academic debate between Dr. AI Smith (theoretical, rigorous, enthusiastic) and Prof. AI Jones (practical, application-focused, relatable) about the concepts on Page ${currentPage} ("${activePageTitle}") of the IGCSE ${clean} (${subjectCode}) syllabus.
+
+Page content:
 ${contentSummary}
 
-Write exactly 4 turns, alternating between Dr. AI Smith (male) and Prof. AI Jones (female), starting with Dr. AI Smith. Make their arguments professional, educational, and engaging.
-Return ONLY a valid JSON array matching this exact schema, without any backticks, markdown, or text outside the JSON block:
-[
-  { "speaker": "Dr. AI Smith", "gender": "male", "text": "turn text" },
-  { "speaker": "Prof. AI Jones", "gender": "female", "text": "turn text" },
-  { "speaker": "Dr. AI Smith", "gender": "male", "text": "turn text" },
-  { "speaker": "Prof. AI Jones", "gender": "female", "text": "turn text" }
-]`;
+Rules:
+- Exactly 4 turns, alternating Smith then Jones
+- Each turn is 3-5 sentences, substantive and educational
+- They build on each other's points, agree sometimes, disagree other times
+- Output ONLY this JSON array, nothing else:
+[{"speaker":"Dr. AI Smith","gender":"male","text":"..."},
+{"speaker":"Prof. AI Jones","gender":"female","text":"..."},
+{"speaker":"Dr. AI Smith","gender":"male","text":"..."},
+{"speaker":"Prof. AI Jones","gender":"female","text":"..."}]`;
 
-      const data = await apiFetch<{ answer: string }>("/api/ai/ask/", {
-        method: "POST",
-        body: JSON.stringify({ question: prompt })
-      });
+      const rawAnswer = await groqAsk(systemPrompt, userPrompt, { max_tokens: 2048, temperature: 0.8 });
 
       setIsTyping(false);
 
       // Clean up markdown code block fences if any
-      let rawJson = data.answer.trim();
+      let rawJson = rawAnswer.trim();
       if (rawJson.startsWith("```")) {
         rawJson = rawJson.replace(/^```(json)?/, "").replace(/```$/, "").trim();
+      }
+      // Extract JSON array if model added extra text before/after
+      const jsonStart = rawJson.indexOf("[");
+      const jsonEnd = rawJson.lastIndexOf("]");
+      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+        rawJson = rawJson.slice(jsonStart, jsonEnd + 1);
       }
 
       let turns: SpeechTurn[];
@@ -825,36 +831,21 @@ Return ONLY a valid JSON array matching this exact schema, without any backticks
     setInputText("");
     setIsTyping(true);
 
-    // Query AI assistant QuickAskView backend, fallback to mock response if error
+    // Query Groq directly — no backend needed
     try {
-      const data = await apiFetch<{ answer: string }>("/api/ai/ask/", {
-        method: "POST",
-        body: JSON.stringify({
-          question: `For IGCSE ${cleanName} (${subjectCode}) syllabus, Page ${currentPage} (${getPageTitle(currentPage)}): ${userMsg}`
-        })
-      });
-      setMessages(prev => [...prev, { role: "assistant", text: data.answer }]);
-      setIsTyping(false);
-      return;
-    } catch (err) {
-      console.error("AI chat failed, falling back to offline tutor", err);
-    }
+      const systemPrompt = `You are an expert IGCSE tutor specialising in ${cleanName} (syllabus code ${subjectCode}). The student is currently reading Page ${currentPage} (${getPageTitle(currentPage)}) of the syllabus. Answer their questions clearly, in depth, and with helpful examples. Be encouraging and educational.`;
 
-    setTimeout(() => {
-      let reply = "";
-      const q = userMsg.toLowerCase();
-      if (q.includes("exam") || q.includes("paper") || q.includes("weight") || q.includes("mark")) {
-        reply = `For IGCSE ${cleanName} (${subjectCode}), the assessment details on Page 6 outline the paper weightings. Standard candidates take Paper 1/2 and Paper 3/4. Core papers contribute 50% and Extended papers contribute 50% or 65% depending on the tier. Make sure to check the marks and timing details listed on Page 6 for maximum preparation!`;
-      } else if (q.includes("calculator")) {
-        reply = `According to the syllabus conventions, calculators are permitted in specific calculator papers (e.g. Paper 3 and Paper 4 for Mathematics, or general science papers). However, they are strictly prohibited in non-calculator components (like Paper 1 and Paper 2). Always check the cover guidelines of your practice papers!`;
-      } else if (q.includes("aim") || q.includes("objective") || q.includes("ao1") || q.includes("ao2")) {
-        reply = `The Assessment Objectives (AOs) detailed on Page 7 specify candidate expectations. AO1: Knowledge and understanding typically accounts for 40-60% of the marks, while AO2: Analysis and Application accounts for the rest. Check Page 7's tables for details!`;
-      } else {
-        reply = `That is an excellent question regarding the IGCSE ${cleanName} syllabus. Page ${currentPage} details the key outcomes and sub-topics for this section. I recommend focusing on the specific vocabulary, standard practical procedures, and using active retrieval to memorize these definitions for your exams!`;
-      }
-      setMessages(prev => [...prev, { role: "assistant", text: reply }]);
+      const answer = await groqAsk(systemPrompt, userMsg, { max_tokens: 1024, temperature: 0.7 });
+      setMessages(prev => [...prev, { role: "assistant", text: answer }]);
       setIsTyping(false);
-    }, 1000);
+    } catch (err) {
+      console.error("AI chat failed", err);
+      setMessages(prev => [
+        ...prev,
+        { role: "assistant", text: `❌ Could not reach AI: ${err instanceof Error ? err.message : "Unknown error"}. Check your VITE_GROQ_API_KEY in frontend/.env` }
+      ]);
+      setIsTyping(false);
+    }
   };
 
   const handleStopAudio = () => {
