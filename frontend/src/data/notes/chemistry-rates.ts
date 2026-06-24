@@ -24,10 +24,10 @@ export const chemistryRatesNotes: NoteChapter = {
           color: "blue",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Activation_energy.svg/800px-Activation_energy.svg.png",
-          caption: "Energy profile diagram — activation energy (Ea) is the minimum energy needed. A catalyst lowers Ea without changing ΔH.",
-          side: "right",
+          kind: "highlight",
+          text: "**Energy profile diagram:**\n• **Reactants** energy level on the left, **Products** on the right\n• **Activation energy (Ea)** = energy hill from reactants to peak (minimum energy for reaction)\n• **Exothermic** → products LOWER than reactants (energy released, ΔH is negative)\n• **Catalyst** lowers the activation energy peak WITHOUT changing reactant/product energy levels or ΔH",
+          color: "blue",
+        },
         },
         {
           kind: "table",

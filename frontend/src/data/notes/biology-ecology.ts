@@ -39,10 +39,9 @@ export const biologyEcologyNotes: NoteChapter = {
           ],
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Ecological_Pyramid.svg/800px-Ecological_Pyramid.svg.png",
-          caption: "Pyramid of biomass — each level has less biomass than the one below due to energy losses at each trophic level",
-          side: "full",
+          kind: "highlight",
+          text: "**Pyramid of biomass:**\n• Each level (trophic level) has LESS biomass than the one below\n• Energy is lost at each level as heat (respiration), waste, and uneaten material\n• Only ~10% of energy passes from one trophic level to the next\n• This is why food chains rarely have more than 4–5 levels — too little energy remains",
+          color: "green",
         },
       ],
     },

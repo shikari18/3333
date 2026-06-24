@@ -40,10 +40,9 @@ export const biologyNutritionNotes: NoteChapter = {
           definition: "the breakdown of large, insoluble food molecules into small, soluble molecules that can be absorbed into the blood. Physical digestion increases surface area; chemical digestion uses enzymes.",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Digestive_system_diagram_en.svg/800px-Digestive_system_diagram_en.svg.png",
-          caption: "The human digestive system — food travels from mouth → oesophagus → stomach → small intestine → large intestine → rectum → anus",
-          side: "right",
+          kind: "highlight",
+          text: "**Digestive system pathway:**\nMouth → Oesophagus → Stomach → Small intestine (duodenum → ileum) → Large intestine → Rectum → Anus\n\n• **Absorption** occurs mainly in the small intestine (villi increase surface area)\n• **Water reabsorption** occurs in the large intestine\n• Liver produces **bile** (emulsifies fats); pancreas produces amylase, trypsin, lipase",
+          color: "blue",
         },
         {
           kind: "table",
@@ -98,10 +97,9 @@ export const biologyNutritionNotes: NoteChapter = {
           definition: "finger-like projections lining the small intestine that massively increase the surface area for absorption. Each villus is covered in microvilli (brush border) for even greater surface area.",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Intestinal_villus.svg/800px-Intestinal_villus.svg.png",
-          caption: "Structure of a villus — note the single epithelial cell layer, blood capillaries for glucose/amino acids, and lacteal for fatty acids/glycerol",
-          side: "right",
+          kind: "highlight",
+          text: "**Villus adaptations for absorption:**\n• **Single epithelial cell layer** → very short diffusion distance\n• **Microvilli** on epithelial cells → massively increase surface area\n• **Blood capillaries** inside → absorb glucose and amino acids; maintain steep concentration gradient\n• **Lacteal** (lymph vessel) inside → absorbs fatty acids and glycerol\n• **Rich blood supply** → constantly removes absorbed products to maintain gradient",
+          color: "green",
         },
         {
           kind: "bullets",

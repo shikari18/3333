@@ -13,10 +13,9 @@ export const biologyGeneticsNotes: NoteChapter = {
           definition: "a double helix polymer made of nucleotide monomers. Each nucleotide contains a phosphate group, deoxyribose sugar, and one of four bases.",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/DNA_Structure%2BKey%2BLabelled.pn_NoBB.png/640px-DNA_Structure%2BKey%2BLabelled.pn_NoBB.png",
-          caption: "DNA double helix — complementary base pairing: A-T and C-G. The two strands are antiparallel.",
-          side: "right",
+          kind: "highlight",
+          text: "**DNA double helix structure:**\n• Two strands wound around each other in a double helix\n• Each strand made of nucleotides linked by covalent bonds (sugar-phosphate backbone)\n• Strands held together by **complementary base pairs**: A pairs with T (2 hydrogen bonds), C pairs with G (3 hydrogen bonds)\n• Strands are **antiparallel** (run in opposite directions 3'→5' and 5'→3')",
+          color: "blue",
         },
         {
           kind: "keyterms",
@@ -104,10 +103,9 @@ export const biologyGeneticsNotes: NoteChapter = {
           color: "green",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Punnett_square_mendel_flowers.svg/800px-Punnett_square_mendel_flowers.svg.png",
-          caption: "Punnett square for a monohybrid cross — 3:1 phenotype ratio for dominant:recessive",
-          side: "full",
+          kind: "highlight",
+          text: "**Punnett square — monohybrid cross example (Tt × Tt):**\n\n|   | T | t |\n|---|---|---|\n| **T** | TT | Tt |\n| **t** | Tt | tt |\n\n• Genotype ratio: 1 TT : 2 Tt : 1 tt\n• Phenotype ratio: **3 tall : 1 short** (3 dominant : 1 recessive)\n• Always use a Punnett square in exam answers — show the cross clearly",
+          color: "green",
         },
       ],
     },

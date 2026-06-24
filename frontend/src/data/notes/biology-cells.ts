@@ -18,10 +18,9 @@ export const biologyCellsNotes: NoteChapter = {
           caption: "Animal vs plant cells, organelle functions and exam tips",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Animal_cell_structure_en.svg/800px-Animal_cell_structure_en.svg.png",
-          caption: "Labeled animal cell — note the absence of cell wall, chloroplasts, and large central vacuole",
-          side: "full",
+          kind: "highlight",
+          text: "**Animal cell** — has nucleus, cytoplasm, cell membrane, mitochondria, ribosomes\n**Plant cell** — has all of the above PLUS: cell wall (cellulose), chloroplasts, large permanent vacuole\n**Key rule:** If an organelle is in the animal cell column only, it has no cell wall or chloroplasts.",
+          color: "blue",
         },
         {
           kind: "table",
@@ -151,10 +150,9 @@ export const biologyCellsNotes: NoteChapter = {
           text: "Common mistake: Never say 'particles move' in osmosis — only **WATER MOLECULES** move. Always include 'partially permeable membrane' and 'water potential' in your definition to score full marks.",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Osmotic_pressure_on_blood_cells_diagram.svg/800px-Osmotic_pressure_on_blood_cells_diagram.svg.png",
-          caption: "Effect of osmosis on animal cells: hypotonic → cell swells/bursts; hypertonic → cell shrinks (crenation)",
-          side: "full",
+          kind: "highlight",
+          text: "**Osmosis effects on cells:**\n• **Hypotonic solution** (dilute) → water enters → animal cell bursts (lysis) / plant cell becomes turgid\n• **Isotonic solution** → no net movement → cell stays the same\n• **Hypertonic solution** (concentrated) → water leaves → animal cell shrinks (crenation) / plant cell undergoes plasmolysis",
+          color: "blue",
         },
         {
           kind: "comparison",

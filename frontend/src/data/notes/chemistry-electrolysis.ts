@@ -13,10 +13,9 @@ export const chemistryElectrolysisNotes: NoteChapter = {
           definition: "the decomposition of an ionic compound (electrolyte) using electricity. Requires a molten or dissolved ionic compound and two electrodes connected to a DC power supply.",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Sodium-chloride-3D-ionic.png/640px-Sodium-chloride-3D-ionic.png",
-          caption: "Electrolysis setup — cathode (negative) attracts cations; anode (positive) attracts anions",
-          side: "right",
+          kind: "highlight",
+          text: "**Electrolysis setup:**\n• **Cathode** (negative electrode) — attracts positive ions (cations) → REDUCTION (gain electrons)\n• **Anode** (positive electrode) — attracts negative ions (anions) → OXIDATION (lose electrons)\n• Electrolyte must be **molten** or **dissolved** so ions can move freely\n• Memory aid: **OILRIG** — Oxidation Is Loss, Reduction Is Gain (of electrons)",
+          color: "blue",
         },
         {
           kind: "comparison",
@@ -156,10 +155,9 @@ export const chemistryElectrolysisNotes: NoteChapter = {
           },
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Activation_energy.svg/800px-Activation_energy.svg.png",
-          caption: "Energy profile diagrams — exothermic (products lower than reactants) vs endothermic (products higher than reactants). Activation energy (Ea) is the energy needed to start the reaction.",
-          side: "full",
+          kind: "highlight",
+          text: "**Energy profile diagrams:**\n• **Exothermic** — products are LOWER in energy than reactants. ΔH is negative. Energy is released to surroundings.\n• **Endothermic** — products are HIGHER in energy than reactants. ΔH is positive. Energy is absorbed from surroundings.\n• **Activation energy (Ea)** = the energy barrier that must be overcome for the reaction to start (the peak above the reactants line)",
+          color: "blue",
         },
         {
           kind: "tip",

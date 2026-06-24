@@ -12,10 +12,9 @@ export const mathematicsGeometryNotes: NoteChapter = {
           text: "Circle theorems describe angle relationships in circles. You must state the theorem used in every proof.",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Circle-withsegments.svg/800px-Circle-withsegments.svg.png",
-          caption: "Circle components: radius, diameter, chord, arc, sector, segment, tangent",
-          side: "right",
+          kind: "highlight",
+          text: "**Circle parts to know:**\n• **Radius** — from centre to circumference\n• **Diameter** — chord through the centre (= 2 × radius)\n• **Chord** — a line joining two points on the circumference\n• **Arc** — part of the circumference between two points\n• **Sector** — region between two radii and an arc (like a pizza slice)\n• **Segment** — region between a chord and an arc\n• **Tangent** — a line that touches the circle at exactly one point",
+          color: "blue",
         },
         {
           kind: "table",

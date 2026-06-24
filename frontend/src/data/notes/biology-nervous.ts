@@ -27,10 +27,9 @@ export const biologyNervousNotes: NoteChapter = {
           },
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Neuron_Hand-tuned.svg/800px-Neuron_Hand-tuned.svg.png",
-          caption: "Structure of a motor neurone — cell body, dendrites (receive signals), axon (transmits signal), myelin sheath (speeds up transmission), axon terminals",
-          side: "right",
+          kind: "highlight",
+          text: "**Neurone structure:**\n• **Cell body** — contains nucleus and cytoplasm\n• **Dendrites** — short extensions that RECEIVE nerve impulses from other neurones\n• **Axon** — long fibre that TRANSMITS impulses away from cell body\n• **Myelin sheath** — fatty insulation around axon; speeds up transmission and prevents signal loss\n• **Axon terminals** — release neurotransmitters across the synapse to the next neurone",
+          color: "blue",
         },
         {
           kind: "keyterms",
@@ -95,10 +94,9 @@ export const biologyNervousNotes: NoteChapter = {
       section: "6.3 The Eye",
       blocks: [
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Schematic_diagram_of_the_human_eye_en.svg/800px-Schematic_diagram_of_the_human_eye_en.svg.png",
-          caption: "Cross-section of the human eye — cornea, iris, lens, retina, optic nerve, blind spot, fovea",
-          side: "right",
+          kind: "highlight",
+          text: "**Eye structure — key parts:**\n• **Cornea** — transparent outer layer; does MOST of the light refraction\n• **Iris** — coloured ring; controls pupil size (circular muscles = constrict; radial muscles = dilate)\n• **Lens** — fine-tunes focus by changing shape (accommodation)\n• **Retina** — contains rod cells (dim light, black/white) and cone cells (bright light, colour)\n• **Fovea** — highest concentration of cone cells; point of sharpest vision\n• **Blind spot** — where optic nerve exits; no photoreceptors here",
+          color: "blue",
         },
         {
           kind: "table",

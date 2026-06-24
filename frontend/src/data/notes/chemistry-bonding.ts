@@ -18,10 +18,9 @@ export const chemistryBondingNotes: NoteChapter = {
           text: "An atom consists of a central nucleus containing protons and neutrons, surrounded by electrons in shells (energy levels).",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Bohr_atom_model.svg/800px-Bohr_atom_model.svg.png",
-          caption: "Bohr model: electrons occupy quantised energy levels (shells) around the nucleus",
-          side: "right",
+          kind: "highlight",
+          text: "**Bohr model — electron shell filling rules:**\n• Shell 1 (closest to nucleus): max **2** electrons\n• Shell 2: max **8** electrons\n• Shell 3: max **8** electrons (for IGCSE)\n\nExamples: Na (2,8,1) | Cl (2,8,7) | Ca (2,8,8,2) | O (2,6)",
+          color: "blue",
         },
         {
           kind: "table",
@@ -72,10 +71,9 @@ export const chemistryBondingNotes: NoteChapter = {
           definition: "the electrostatic attraction between oppositely charged ions. A metal loses electrons to form a positive ion (cation); a non-metal gains electrons to form a negative ion (anion).",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Sodium-chloride-3D-ionic.png/640px-Sodium-chloride-3D-ionic.png",
-          caption: "NaCl giant ionic lattice — millions of Na⁺ and Cl⁻ ions held by strong electrostatic forces in all directions",
-          side: "right",
+          kind: "highlight",
+          text: "**NaCl giant ionic lattice:**\n• Na⁺ ions and Cl⁻ ions arranged alternately in a 3D lattice\n• Each Na⁺ surrounded by 6 Cl⁻ ions, and each Cl⁻ surrounded by 6 Na⁺ ions\n• Strong electrostatic forces act in ALL directions\n• This is why ionic compounds have high melting points and are brittle",
+          color: "blue",
         },
         {
           kind: "bullets",
@@ -106,10 +104,9 @@ export const chemistryBondingNotes: NoteChapter = {
           definition: "the sharing of pairs of electrons between non-metal atoms. Each shared pair counts as one covalent bond. Atoms share electrons to achieve a full outer shell.",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/H2O_2D_labelled.svg/800px-H2O_2D_labelled.svg.png",
-          caption: "Water (H₂O): two O-H single covalent bonds. Oxygen has 2 bonding pairs and 2 lone pairs — bent shape.",
-          side: "right",
+          kind: "highlight",
+          text: "**Dot-and-cross diagrams — common molecules:**\n• H₂O — oxygen shares 1 pair with each hydrogen (2 single bonds, 2 lone pairs on O)\n• CO₂ — carbon shares 2 pairs with each oxygen (2 double bonds, linear shape)\n• NH₃ — nitrogen shares 1 pair with each hydrogen (3 single bonds, 1 lone pair on N)\n• CH₄ — carbon shares 1 pair with each hydrogen (4 single bonds, tetrahedral)",
+          color: "blue",
         },
         {
           kind: "comparison",

@@ -24,10 +24,10 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
           color: "green",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Chloroplast_II.svg/800px-Chloroplast_II.svg.png",
-          caption: "Chloroplast structure — contains chlorophyll in thylakoid membranes; stroma is the site of the Calvin cycle",
-          side: "right",
+          kind: "highlight",
+          text: "**Chloroplast structure:**\n• **Thylakoid membranes** — contain chlorophyll; site of the light-dependent reactions (light energy absorbed here)\n• **Granum** — stack of thylakoids (increases surface area for light absorption)\n• **Stroma** — fluid-filled space; site of the Calvin cycle (light-independent reactions)\n• **Double membrane** — outer and inner membranes surrounding the chloroplast",
+          color: "green",
+        },
         },
         {
           kind: "keyterms",
@@ -72,10 +72,9 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
           ],
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Photosynthesis_yield_graph.svg/800px-Photosynthesis_yield_graph.svg.png",
-          caption: "Rate of photosynthesis vs light intensity — plateau shows another factor (CO₂ or temperature) is now limiting",
-          side: "full",
+          kind: "highlight",
+          text: "**Limiting factor graphs — key shapes:**\n• **Light intensity** → rate rises linearly then plateaus (CO₂ or temperature now limiting)\n• **CO₂ concentration** → rate rises then plateaus (light or temperature now limiting)\n• **Temperature** → rate rises to peak (~40°C) then falls sharply (enzymes denature above 40°C)\n\nAt the plateau, increasing that factor has NO further effect until the limiting factor changes.",
+          color: "green",
         },
         {
           kind: "tip",
@@ -108,10 +107,9 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
           color: "blue",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Mitochondria%2C_mammalian_lung_-_TEM_%282%29.jpg/640px-Mitochondria%2C_mammalian_lung_-_TEM_%282%29.jpg",
-          caption: "Mitochondria — site of aerobic respiration. Folded inner membrane (cristae) maximises surface area for ATP production.",
-          side: "right",
+          kind: "highlight",
+          text: "**Mitochondria structure:**\n• **Outer membrane** — smooth, surrounds the organelle\n• **Inner membrane** — highly folded into **cristae** → greatly increased surface area for ATP synthesis enzymes\n• **Matrix** — fluid interior; contains enzymes for the Krebs cycle and circular DNA\n• More cristae = more mitochondria activity = more ATP produced (e.g. muscle cells have many mitochondria)",
+          color: "blue",
         },
         {
           kind: "bullets",

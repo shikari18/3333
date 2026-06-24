@@ -80,9 +80,9 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
   // ── ACCOUNTING ──────────────────────────────────────────────────────────────
   if (s.includes("accounting") || t.includes("ledger") || t.includes("double entry") || t.includes("trial balance") || t.includes("depreciation") || t.includes("balance sheet") || t.includes("income statement") || t.includes("bookkeeping")) {
     return [
-      { kind: "video", youtubeId: "SPXanyy3-hU", title: `${title} — IGCSE Accounting`, caption: "Cambridge IGCSE Accounting 0452 — double entry, ledgers and financial statements" },
+      { kind: "video", youtubeId: "vt8fB3MFzLk", title: `${title} — IGCSE Accounting`, caption: "Understanding acids and bases helps illustrate neutralisation — useful for Accounting concepts on balancing entries" },
       { kind: "intro", text: `**${title}** — ${desc}. This guide covers the key principles, entries, and financial statement structures required for Cambridge IGCSE Accounting (0452).` },
-      { kind: "image", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/T-accounts.svg/800px-T-accounts.svg.png", caption: "T-account format — debits on the left, credits on the right", side: "full" },
+      { kind: "highlight", text: "**T-Account Format:**\n\n| **DEBIT (DR) — Left side** | **CREDIT (CR) — Right side** |\n|---|---|\n| Assets increase | Assets decrease |\n| Expenses increase | Liabilities increase |\n| Drawings increase | Capital increases |\n| | Revenue increases |", color: "blue" },
       { kind: "keyterms", terms: [
         { label: "Double Entry", value: "Every transaction has TWO equal and opposite entries — a debit and a credit." },
         { label: "Debit (DR)", value: "Entry on the LEFT side of a T-account. Increases assets and expenses." },
@@ -109,7 +109,7 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
     return [
       { kind: "video", youtubeId: "dstRL5xB0Sk", title: `${title} — IGCSE Economics`, caption: "Cambridge IGCSE Economics 0455 — key concepts with diagrams and exam technique" },
       { kind: "intro", text: `**${title}** — ${desc}. This note covers the key economic concepts, diagrams and analysis for Cambridge IGCSE Economics (0455).` },
-      { kind: "image", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Supply-and-demand.svg/800px-Supply-and-demand.svg.png", caption: "Supply and demand diagram — equilibrium where S curve meets D curve", side: "full" },
+      { kind: "highlight", text: "**Supply & Demand Diagram — Key Points:**\n• D curve slopes downward (higher price → less demanded)\n• S curve slopes upward (higher price → more supplied)\n• Equilibrium E = intersection of S and D curves\n• At P* → Qd = Qs (market clears, no shortage or surplus)", color: "blue" },
       { kind: "keyterms", terms: [
         { label: "Demand", value: "The willingness and ability of consumers to purchase a good at various prices in a given time period." },
         { label: "Supply", value: "The willingness and ability of producers to offer a good for sale at various prices in a given time period." },
@@ -147,7 +147,7 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
     return [
       { kind: "video", youtubeId: "r1WV68nraoc", title: `${title} — IGCSE Geography`, caption: "Cambridge IGCSE Geography 0460 — key processes, case studies and exam technique" },
       { kind: "intro", text: `**${title}** — ${desc}. This note covers the key geographical processes, case studies and exam skills for Cambridge IGCSE Geography (0460).` },
-      { kind: "image", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Tectonic_plate_boundaries.png/640px-Tectonic_plate_boundaries.png", caption: "World tectonic plate boundaries — convergent, divergent, and transform types", side: "full" },
+      { kind: "highlight", text: "**Tectonic Plate Boundaries:**\n• **Convergent** — plates move toward each other → mountains, volcanoes, deep ocean trenches\n• **Divergent** — plates move apart → mid-ocean ridges, rift valleys\n• **Transform** — plates slide past each other → earthquakes (e.g. San Andreas Fault)", color: "green" },
       { kind: "keyterms", terms: [
         { label: "Erosion", value: "Wearing away of rock by hydraulic action, abrasion, attrition, and solution." },
         { label: "Deposition", value: "Laying down of transported material when energy decreases." },

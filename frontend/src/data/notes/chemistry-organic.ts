@@ -73,10 +73,9 @@ export const chemistryOrganicNotes: NoteChapter = {
           definition: "shake with bromine water — decolourises from orange/brown to colourless. The C=C double bond undergoes addition with Br₂. Alkanes do NOT decolourise bromine water.",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Ethylene-CRC-MW-3D-balls.png/640px-Ethylene-CRC-MW-3D-balls.png",
-          caption: "Ethene (C₂H₄) — the simplest alkene. The C=C double bond makes it reactive towards addition reactions.",
-          side: "right",
+          kind: "highlight",
+          text: "**Ethene (C₂H₄) — the simplest alkene:**\n• Contains a **C=C double bond** (one sigma + one pi bond)\n• Double bond makes it **unsaturated** and highly reactive\n• General formula for alkenes: **CₙH₂ₙ**\n• Ethene: H₂C=CH₂ — all 6 atoms in a flat (planar) arrangement around the double bond",
+          color: "blue",
         },
         {
           kind: "table",

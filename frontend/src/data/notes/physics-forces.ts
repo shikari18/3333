@@ -39,10 +39,9 @@ export const physicsForcesNotes: NoteChapter = {
           color: "blue",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Velocity_vs_time_graph.svg/800px-Velocity_vs_time_graph.svg.png",
-          caption: "Velocity-time graph: gradient = acceleration (a = Δv/Δt); area under curve = displacement",
-          side: "full",
+          kind: "highlight",
+          text: "**Velocity-time graph shapes:**\n• Horizontal line → constant velocity (zero acceleration)\n• Straight line with positive gradient → uniform acceleration\n• Curved line with decreasing gradient → decreasing acceleration\n• Area under the graph = displacement (count squares or use ½ base × height for triangles)",
+          color: "pink",
         },
       ],
     },
@@ -106,10 +105,9 @@ export const physicsForcesNotes: NoteChapter = {
           ],
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/NewtonsLawOfUniversalGravitation.svg/800px-NewtonsLawOfUniversalGravitation.svg.png",
-          caption: "Free body diagram — always draw all forces acting on an object with arrows showing direction and magnitude",
-          side: "right",
+          kind: "highlight",
+          text: "**Free body diagram rules:**\n• Draw the object as a box or dot\n• Draw ALL forces as arrows FROM the object\n• Arrow length represents magnitude\n• Label each force (Weight W↓, Normal reaction N↑, Friction f←, Applied force F→)\n• Resultant force = vector sum of all forces",
+          color: "blue",
         },
         {
           kind: "highlight",
@@ -146,10 +144,9 @@ export const physicsForcesNotes: NoteChapter = {
           ],
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Velocity_vs_time_graph.svg/800px-Velocity_vs_time_graph.svg.png",
-          caption: "Velocity-time graph for a skydiver — curve shows decreasing acceleration as drag increases, then horizontal line at terminal velocity",
-          side: "right",
+          kind: "highlight",
+          text: "**Skydiver velocity-time graph:**\n1. Steep curve upward → high acceleration (weight >> drag)\n2. Curve flattens → decreasing acceleration (drag increasing)\n3. Horizontal line → terminal velocity (weight = drag)\n4. Sharp drop → parachute opens (drag >> weight, decelerates)\n5. Lower horizontal line → new lower terminal velocity",
+          color: "green",
         },
         {
           kind: "highlight",

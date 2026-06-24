@@ -27,10 +27,9 @@ export const physicsElectricityNotes: NoteChapter = {
           color: "blue",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ohm%27s_Law_Graph.svg/800px-Ohm%27s_Law_Graph.svg.png",
-          caption: "I-V graph for an ohmic resistor — straight line through origin. Gradient = 1/R (constant resistance).",
-          side: "right",
+          kind: "highlight",
+          text: "**Ohm's Law I-V graph shapes:**\n• **Ohmic resistor** — straight line through origin (constant resistance)\n• **Filament bulb** — S-shaped curve (resistance increases as temperature increases)\n• **Diode** — no current in reverse; current flows only above ~0.6V forward\n• Gradient of I-V graph = 1/R (steeper = lower resistance)",
+          color: "blue",
         },
         {
           kind: "table",
@@ -149,10 +148,9 @@ export const physicsElectricityNotes: NoteChapter = {
           ],
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Magnetic_field_of_a_bar_magnet.png/640px-Magnetic_field_of_a_bar_magnet.png",
-          caption: "Magnetic field lines around a bar magnet — from North to South outside, denser near poles indicating stronger field",
-          side: "right",
+          kind: "highlight",
+          text: "**Magnetic field lines around a bar magnet:**\n• Lines go from **North pole** to **South pole** outside the magnet\n• Closer lines = stronger field (denser near the poles)\n• Lines never cross each other\n• Inside the magnet, lines go from South to North\n• A compass needle aligns with field lines — North end points in the field direction",
+          color: "blue",
         },
         {
           kind: "comparison",
