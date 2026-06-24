@@ -159,6 +159,7 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
               "Yeast dies when ethanol concentration gets too high",
             ],
           },
+        },
         {
           kind: "highlight",
           text: "Oxygen debt: after anaerobic exercise, extra oxygen is needed to oxidise lactic acid back to CO₂ and water. This is why you keep breathing heavily after exercise stops.",
