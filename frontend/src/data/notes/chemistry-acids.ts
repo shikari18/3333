@@ -8,6 +8,12 @@ export const chemistryAcidsNotes: NoteChapter = {
       section: "4.1 Acids & Bases",
       blocks: [
         {
+          kind: "video",
+          youtubeId: "zNBhHJHPe_U",
+          title: "Acids, Bases & Salts — IGCSE Chemistry",
+          caption: "pH scale, neutralisation reactions, making salts and titration",
+        },
+        {
           kind: "keyterms",
           terms: [
             { label: "Acid", value: "a substance that produces H⁺ ions in aqueous solution. pH < 7." },

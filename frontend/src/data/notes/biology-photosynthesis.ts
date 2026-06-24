@@ -10,11 +10,17 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
         {
           kind: "definition",
           term: "Photosynthesis",
-          definition: "the process by which green plants use light energy to convert carbon dioxide and water into glucose and oxygen. It occurs in the chloroplasts.",
+          definition: "the process by which green plants use light energy to convert carbon dioxide and water into glucose and oxygen. It occurs in the **chloroplasts**.",
+        },
+        {
+          kind: "video",
+          youtubeId: "sQK3Yr4Sc_k",
+          title: "Photosynthesis — IGCSE Biology Revision",
+          caption: "Covers the equation, limiting factors, leaf structure and exam tips",
         },
         {
           kind: "highlight",
-          text: "Word equation: Carbon dioxide + Water → Glucose + Oxygen\nSymbol equation: 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂",
+          text: "Word equation: **Carbon dioxide + Water → Glucose + Oxygen**\nSymbol equation: **6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂**\n\nLight energy is absorbed by chlorophyll. The reaction occurs inside chloroplasts.",
           color: "green",
         },
         {
@@ -88,7 +94,13 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
         {
           kind: "definition",
           term: "Aerobic respiration",
-          definition: "the release of energy from glucose using oxygen. It occurs in the mitochondria and releases a large amount of ATP.",
+          definition: "the release of energy from glucose using oxygen. It occurs in the **mitochondria** and releases a large amount of ATP.",
+        },
+        {
+          kind: "video",
+          youtubeId: "2BwKE-aCJo4",
+          title: "Aerobic & Anaerobic Respiration — IGCSE Biology",
+          caption: "Explains both types of respiration, oxygen debt and fermentation with clear diagrams",
         },
         {
           kind: "highlight",

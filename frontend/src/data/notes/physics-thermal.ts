@@ -8,6 +8,12 @@ export const physicsThermalNotes: NoteChapter = {
       section: "5.1 Specific Heat Capacity",
       blocks: [
         {
+          kind: "video",
+          youtubeId: "vqDbMEdLiCs",
+          title: "Thermal Physics & Radioactivity — IGCSE Physics",
+          caption: "Specific heat capacity, latent heat, gas laws, nuclear decay and half-life",
+        },
+        {
           kind: "definition",
           term: "Specific heat capacity (c)",
           definition: "the energy required to raise the temperature of 1 kg of a substance by 1°C (or 1 K). Units: J/(kg·°C).",

@@ -8,6 +8,12 @@ export const physicsElectricityNotes: NoteChapter = {
       section: "4.1 Current, Voltage & Resistance",
       blocks: [
         {
+          kind: "video",
+          youtubeId: "F_vLWkkNkhQ",
+          title: "Electricity & Circuits — IGCSE Physics",
+          caption: "Ohm's law, series vs parallel circuits, resistance and power calculations",
+        },
+        {
           kind: "keyterms",
           terms: [
             { label: "Current (I)", value: "rate of flow of electric charge. I = Q/t. Measured in amperes (A). Conventional current flows from + to −." },

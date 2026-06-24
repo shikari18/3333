@@ -8,6 +8,12 @@ export const physicsForcesNotes: NoteChapter = {
       section: "1.1 Scalars & Vectors",
       blocks: [
         {
+          kind: "video",
+          youtubeId: "oRKezs9e73Y",
+          title: "Forces & Motion — IGCSE Physics Full Revision",
+          caption: "Covers scalars, vectors, motion graphs, Newton's laws and momentum",
+        },
+        {
           kind: "comparison",
           left: {
             label: "Scalar quantities (magnitude only)",

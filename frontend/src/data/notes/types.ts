@@ -12,6 +12,7 @@ export type NoteBlock =
   | { kind: "equation"; label: string; formula: string; note?: string }
   | { kind: "table"; headers: string[]; rows: string[][] }
   | { kind: "image"; src: string; caption: string; side?: "right" | "left" | "full" }
+  | { kind: "video"; youtubeId: string; title: string; caption?: string }
   | { kind: "tip"; text: string }
   | { kind: "warning"; text: string }
   | { kind: "comparison"; left: { label: string; items: string[] }; right: { label: string; items: string[] } }

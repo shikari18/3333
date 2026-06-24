@@ -8,6 +8,12 @@ export const mathematicsAlgebraNotes: NoteChapter = {
       section: "5.1 Expanding & Factorising",
       blocks: [
         {
+          kind: "video",
+          youtubeId: "NybKl3SJhTE",
+          title: "Algebra & Graphs — IGCSE Mathematics 0580",
+          caption: "Expanding brackets, factorising, quadratics, simultaneous equations and graph sketching",
+        },
+        {
           kind: "intro",
           text: "Algebra is the language of mathematics — it allows us to express general rules and solve problems with unknown values.",
         },

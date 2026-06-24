@@ -8,6 +8,12 @@ export const chemistryRatesNotes: NoteChapter = {
       section: "5.1 Collision Theory",
       blocks: [
         {
+          kind: "video",
+          youtubeId: "VLudIBQMWXo",
+          title: "Rates of Reaction — IGCSE Chemistry",
+          caption: "Collision theory, factors affecting rate, and equilibrium explained with diagrams",
+        },
+        {
           kind: "definition",
           term: "Rate of reaction",
           definition: "the change in amount of reactants or products per unit time. Can be measured by change in mass, volume of gas produced, or change in colour/turbidity.",

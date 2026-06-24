@@ -8,6 +8,12 @@ export const chemistryBondingNotes: NoteChapter = {
       section: "2.1 Atomic Structure",
       blocks: [
         {
+          kind: "video",
+          youtubeId: "W_bFGMazWlQ",
+          title: "Atomic Structure & Bonding — IGCSE Chemistry",
+          caption: "Covers atomic structure, ionic bonding, covalent bonding and metallic bonding",
+        },
+        {
           kind: "intro",
           text: "An atom consists of a central nucleus containing protons and neutrons, surrounded by electrons in shells (energy levels).",
         },

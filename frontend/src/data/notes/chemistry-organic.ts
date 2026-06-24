@@ -8,6 +8,12 @@ export const chemistryOrganicNotes: NoteChapter = {
       section: "6.1 Alkanes",
       blocks: [
         {
+          kind: "video",
+          youtubeId: "HLW2QByWk8I",
+          title: "Organic Chemistry — IGCSE Chemistry",
+          caption: "Alkanes, alkenes, alcohols, addition reactions and polymerisation",
+        },
+        {
           kind: "intro",
           text: "Organic chemistry is the chemistry of carbon compounds. Crude oil is a mixture of hydrocarbons separated by fractional distillation.",
         },

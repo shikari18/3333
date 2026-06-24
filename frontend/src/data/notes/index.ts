@@ -75,151 +75,213 @@ const subjectMap: Record<string, string> = {
 
 function getDynamicBlocks(title: string, desc: string, code: string, subject: string): NoteBlock[] {
   const t = title.toLowerCase();
-  
-  let keyTerms: { label: string; value: string }[] = [];
-  let examTip = "";
-  let highlightText = "";
-  
-  if (t.includes("binary") || t.includes("hexadecimal") || t.includes("number system") || t.includes("data representation")) {
-    keyTerms = [
-      { label: "Denary (Base-10)", value: "Standard decimal number system using digits 0-9." },
-      { label: "Binary (Base-2)", value: "Base system representing numbers using only two digits: 0 and 1." },
-      { label: "Hexadecimal (Base-16)", value: "Number system using 16 symbols (0-9 and A-F), offering a human-friendly representation of binary values." }
+  const s = subject.toLowerCase();
+
+  // ── ACCOUNTING ──────────────────────────────────────────────────────────────
+  if (s.includes("accounting") || t.includes("ledger") || t.includes("double entry") || t.includes("trial balance") || t.includes("depreciation") || t.includes("balance sheet") || t.includes("income statement") || t.includes("bookkeeping")) {
+    return [
+      { kind: "video", youtubeId: "aBqFbJKSNoo", title: `${title} — IGCSE Accounting`, caption: "Cambridge IGCSE Accounting 0452 — double entry, ledgers and financial statements" },
+      { kind: "intro", text: `**${title}** — ${desc}. This guide covers the key principles, entries, and financial statement structures required for Cambridge IGCSE Accounting (0452).` },
+      { kind: "image", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/T-accounts.svg/640px-T-accounts.svg.png", caption: "T-account format — debits on the left, credits on the right", side: "full" },
+      { kind: "keyterms", terms: [
+        { label: "Double Entry", value: "Every transaction has TWO equal and opposite entries — a debit and a credit." },
+        { label: "Debit (DR)", value: "Entry on the LEFT side of a T-account. Increases assets and expenses." },
+        { label: "Credit (CR)", value: "Entry on the RIGHT side of a T-account. Increases liabilities, equity and income." },
+        { label: "Trial Balance", value: "A list of all ledger account balances — total debits must equal total credits." },
+        { label: "Depreciation", value: "The systematic reduction in value of a non-current asset over its useful life." },
+      ]},
+      { kind: "highlight", text: "**The Accounting Equation:** Assets = Liabilities + Owner's Equity\n\nThis must balance after EVERY transaction. It is the foundation of double entry bookkeeping.", color: "blue" },
+      { kind: "table", headers: ["Account type", "Debit increases", "Credit increases"], rows: [
+        ["Asset (cash, machinery, receivables)", "✓ Yes", "✗ No"],
+        ["Liability (loan, payables)", "✗ No", "✓ Yes"],
+        ["Capital / Equity", "✗ No", "✓ Yes"],
+        ["Revenue / Income", "✗ No", "✓ Yes"],
+        ["Expense (wages, rent)", "✓ Yes", "✗ No"],
+        ["Drawings", "✓ Yes", "✗ No"],
+      ]},
+      { kind: "tip", text: `For **${title}**, always show: date, account debited, account credited, and amounts. Use DEAD CLIC: **D**rawings, **E**xpenses, **A**ssets, **D**ebit = increases these. **C**apital, **L**iabilities, **I**ncome, **C**redit = increases these.` },
+      { kind: "warning", text: "Common mistake: Confusing capital expenditure (buys an asset — goes on balance sheet) with revenue expenditure (day-to-day expense — goes on income statement). E.g. buying a machine = capital; repairing a machine = revenue." },
     ];
-    examTip = "Show all steps in base conversions. Method marks are frequently awarded for correct intermediate divisions or place-value columns.";
-    highlightText = "1 Hexadecimal digit represents exactly 4 binary bits (a nibble). This makes conversion between binary and hex straightforward by grouping bits in fours.";
-  } else if (t.includes("transmission") || t.includes("packet") || t.includes("network")) {
-    keyTerms = [
-      { label: "Packet", value: "A unit of data routed between an origin and a destination on the Internet." },
-      { label: "Simplex", value: "Data transmission in one direction only (e.g., radio broadcast)." },
-      { label: "Duplex", value: "Data transmission in both directions simultaneously (e.g., telephone call)." }
-    ];
-    examTip = "Be clear on the distinction between half-duplex and full-duplex. Half-duplex is bidirectional but only one direction at a time.";
-    highlightText = "Packet switching breaks data into packets that travel independently across the network and are reassembled at the destination.";
-  } else if (t.includes("cpu") || t.includes("architecture") || t.includes("hardware") || t.includes("memory")) {
-    keyTerms = [
-      { label: "ALU", value: "Arithmetic Logic Unit, processes mathematical and logical operations." },
-      { label: "Control Unit", value: "Directs the operations of the processor and manages instruction flows." },
-      { label: "RAM", value: "Random Access Memory, volatile memory used for active programs and data." }
-    ];
-    examTip = "Describe the Fetch-Decode-Execute cycle step-by-step. Remember that PC holds the address of the next instruction, MAR holds current memory address, and MDR holds data.";
-    highlightText = "RAM is volatile (loses data when powered off), whereas ROM is non-volatile and holds boot-up instructions (BIOS).";
-  } else if (t.includes("operating system") || t.includes("software") || t.includes("translator")) {
-    keyTerms = [
-      { label: "Operating System (OS)", value: "Core software managing files, memory, processes, and peripheral devices." },
-      { label: "Compiler", value: "Translates high-level source code into machine code all at once before execution." },
-      { label: "Interpreter", value: "Translates and executes code line-by-line, useful for debugging." }
-    ];
-    examTip = "Understand the tradeoffs of compilers vs interpreters. Compilers produce faster executable files, but interpreters are easier for finding bugs during development.";
-    highlightText = "Compilers compile the entire code into a standalone executable, whereas interpreters translate line-by-line during runtime.";
-  } else if (t.includes("internet") || t.includes("security") || t.includes("encryption") || t.includes("cybersecurity")) {
-    keyTerms = [
-      { label: "Symmetric Encryption", value: "Uses the same key to encrypt and decrypt data." },
-      { label: "Asymmetric Encryption", value: "Uses a public key to encrypt and a private key to decrypt data." },
-      { label: "Firewall", value: "Monitors incoming and outgoing network traffic based on security rules." }
-    ];
-    examTip = "Don't confuse encryption with security against viruses. Encryption prevents data from being understood if intercepted, but it does not block malware.";
-    highlightText = "HTTPS uses SSL/TLS encryption to establish a secure channel over an insecure network.";
-  } else if (t.includes("algorithm") || t.includes("pseudocode") || t.includes("flowchart") || t.includes("problem-solving")) {
-    keyTerms = [
-      { label: "Decomposition", value: "Breaking down a complex problem into smaller, manageable sub-problems." },
-      { label: "Abstraction", value: "Filtering out unnecessary details to focus on core logic." },
-      { label: "Trace Table", value: "A technique used to test algorithms and track variable values step-by-step." }
-    ];
-    examTip = "In pseudocode, pay close attention to loop boundaries and assignment operators. Use standard CAIE keywords like DECLARE, INPUT, OUTPUT, IF, THEN, ELSE.";
-    highlightText = "Dry running using a trace table is the most reliable way to identify logic errors in your algorithm.";
-  } else if (t.includes("database") || t.includes("sql") || t.includes("query")) {
-    keyTerms = [
-      { label: "Primary Key", value: "A field that uniquely identifies each record in a database table." },
-      { label: "Foreign Key", value: "A link between two tables, referencing the primary key of another table." },
-      { label: "SQL Query", value: "A command sent to a database to retrieve specific records." }
-    ];
-    examTip = "Remember the order of SQL commands: SELECT, FROM, WHERE, ORDER BY. Ensure string literals in WHERE clauses are in single quotes.";
-    highlightText = "Validation checks if data is sensible and realistic, whereas verification checks if it matches the original source exactly.";
-  } else if (t.includes("logic") || t.includes("gate") || t.includes("boolean")) {
-    keyTerms = [
-      { label: "AND Gate", value: "Outputs true only if all inputs are true." },
-      { label: "OR Gate", value: "Outputs true if at least one input is true." },
-      { label: "NOT Gate", value: "Inverts the input signal (true becomes false, and vice versa)." }
-    ];
-    examTip = "Construct truth tables systematically. With two inputs A and B, order rows as 00, 01, 10, 11 to avoid missing combinations.";
-    highlightText = "A NAND gate is a universal gate; any boolean expression can be constructed using only NAND gates.";
-  } else if (t.includes("demand") || t.includes("supply") || t.includes("market") || t.includes("price")) {
-    keyTerms = [
-      { label: "Demand", value: "The willingness and ability of consumers to purchase a good at a given price." },
-      { label: "Supply", value: "The willingness and ability of producers to sell a good at a given price." },
-      { label: "Equilibrium Price", value: "The price at which quantity demanded equals quantity supplied." }
-    ];
-    examTip = "Clearly distinguish between a change in demand (shift of the curve) and a change in quantity demanded (movement along the curve).";
-    highlightText = "Price elasticity of demand (PED) measures the responsiveness of quantity demanded to a change in price.";
-  } else if (t.includes("policy") || t.includes("government") || t.includes("fiscal") || t.includes("monetary") || t.includes("inflation")) {
-    keyTerms = [
-      { label: "Fiscal Policy", value: "The use of government spending and taxation to influence economic activity." },
-      { label: "Monetary Policy", value: "The use of interest rates and money supply to manage the economy." },
-      { label: "GDP", value: "Gross Domestic Product, the total value of goods and services produced in a country in a year." }
-    ];
-    examTip = "When discussing expansionary policies, remember that lowering interest rates increases disposable income and investment, shifting aggregate demand right.";
-    highlightText = "Inflation is a sustained increase in the general price level, reducing the purchasing power of money.";
-  } else if (t.includes("versailles") || t.includes("league") || t.includes("treaty") || t.includes("peace")) {
-    keyTerms = [
-      { label: "Appeasement", value: "The policy of making concessions to dictatorial powers to avoid conflict." },
-      { label: "Treaty of Versailles", value: "The peace treaty signed in 1919 that imposed heavy reparations and military limits on Germany." },
-      { label: "League of Nations", value: "An international organization created after WWI to resolve disputes peacefully." }
-    ];
-    examTip = "When writing essay answers, always provide a balanced argument with points supporting both sides before making a reasoned conclusion.";
-    highlightText = "The failure of the League of Nations in the Manchurian and Abyssinian crises exposed its lack of enforcement power.";
-  } else if (t.includes("cold war") || t.includes("soviet") || t.includes("communist")) {
-    keyTerms = [
-      { label: "Containment", value: "The US foreign policy designed to prevent the spread of communism." },
-      { label: "Marshall Plan", value: "A US program providing economic aid to rebuild Western European economies after WWII." },
-      { label: "Détente", value: "A period of easing tensions between the US and USSR in the 1970s." }
-    ];
-    examTip = "Make sure you can explain why both superpowers shared blame for the origins of the Cold War, balancing actions in Eastern Europe with Western containment policies.";
-    highlightText = "The Cuban Missile Crisis of 1962 brought the world to the brink of nuclear war, leading to a hot line and arms treaties.";
-  } else if (t.includes("river") || t.includes("coast") || t.includes("earthquake") || t.includes("plate") || t.includes("population")) {
-    keyTerms = [
-      { label: "Drainage Basin", value: "The area of land drained by a river and its tributaries." },
-      { label: "Longshore Drift", value: "The movement of sand and pebbles along the coast by wave action." },
-      { label: "Ecosystem", value: "A community of living organisms interacting with their physical environment." }
-    ];
-    examTip = "Always state constructive/destructive processes clearly. For example, explain how abrasion, hydraulic action, attrition, and solution erode river beds.";
-    highlightText = "Constructive waves deposit sediment, building up beaches, while destructive waves erode the coast.";
-  } else if (t.includes("double entry") || t.includes("ledger") || t.includes("balance") || t.includes("depreciation")) {
-    keyTerms = [
-      { label: "Double Entry", value: "The bookkeeping system where every transaction has a corresponding debit and credit entry." },
-      { label: "Trial Balance", value: "A list of ledger balances extracted to check the mathematical accuracy of bookkeeping." },
-      { label: "Depreciation", value: "The systematic allocation of the cost of a non-current asset over its useful life." }
-    ];
-    examTip = "Remember: Debit what comes in or increases assets/expenses; Credit what goes out or increases liabilities/equity/revenue (DEAD CLIC).";
-    highlightText = "The accounting equation (Assets = Liabilities + Owner's Equity) must balance after every transaction.";
-  } else {
-    const words = title.split(" ").slice(0, 3);
-    keyTerms = [
-      { label: words[0] || "Concept", value: `Core definition relating to ${title} under the IGCSE curriculum.` },
-      { label: words[1] || "Process", value: `Key process involved in the study and application of ${title}.` }
-    ];
-    examTip = `For questions on ${title}, focus on definitions, key diagrams, and step-by-step explanations. Refer to official syllabus guidelines.`;
-    highlightText = `${title} is a key topic in IGCSE ${subject}. Mastering its core aspects is essential for the exam.`;
   }
-  
-  return [
-    {
-      kind: "intro",
-      text: `Welcome to your revision on **${title}**. ${desc}. This structured guide details the essential concepts, equations, and structures required for the Cambridge IGCSE syllabus.`
-    },
-    {
-      kind: "keyterms",
-      terms: keyTerms
-    },
-    {
-      kind: "tip",
-      text: examTip
-    },
-    {
-      kind: "highlight",
-      text: highlightText,
-      color: "blue"
+
+  // ── ECONOMICS ───────────────────────────────────────────────────────────────
+  if (s.includes("economics") || t.includes("demand") || t.includes("supply") || t.includes("market") || t.includes("elasticity") || t.includes("gdp") || t.includes("inflation") || t.includes("fiscal") || t.includes("monetary") || t.includes("trade")) {
+    return [
+      { kind: "video", youtubeId: "mUoNDev8oS8", title: `${title} — IGCSE Economics`, caption: "Cambridge IGCSE Economics 0455 — key concepts with diagrams and exam technique" },
+      { kind: "intro", text: `**${title}** — ${desc}. This note covers the key economic concepts, diagrams and analysis for Cambridge IGCSE Economics (0455).` },
+      { kind: "image", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Supply-and-demand.svg/640px-Supply-and-demand.svg.png", caption: "Supply and demand diagram — equilibrium where S curve meets D curve", side: "full" },
+      { kind: "keyterms", terms: [
+        { label: "Demand", value: "The willingness and ability of consumers to purchase a good at various prices in a given time period." },
+        { label: "Supply", value: "The willingness and ability of producers to offer a good for sale at various prices in a given time period." },
+        { label: "Equilibrium", value: "The price at which quantity demanded equals quantity supplied — the market clears with no shortage or surplus." },
+        { label: "PED", value: "Price Elasticity of Demand = % change in Qd ÷ % change in P. Measures responsiveness of demand to price changes." },
+        { label: "Inflation", value: "A sustained rise in the general price level, reducing the purchasing power of money." },
+        { label: "GDP", value: "Gross Domestic Product — total monetary value of all goods and services produced in a country in a year." },
+      ]},
+      { kind: "comparison", left: { label: "Shift of demand curve (demand changes)", items: ["Change in consumer income", "Change in price of substitutes or complements", "Change in consumer tastes or fashion", "Change in population size or demographics", "Change in advertising spending"] }, right: { label: "Movement along demand curve", items: ["ONLY caused by a change in the PRICE of the good itself", "Price rises → quantity demanded contracts", "Price falls → quantity demanded extends", "Curve itself does NOT move"] } },
+      { kind: "highlight", text: "**PED:** If |PED| > 1 → price elastic (luxury goods, many substitutes)\nIf |PED| < 1 → price inelastic (necessities, few substitutes, habit-forming)\n\n**Tip:** Inelastic demand → raising price increases total revenue.", color: "blue" },
+      { kind: "tip", text: `For **${title}** diagrams, always: label axes (Price on Y, Quantity on X), label curves (D, S), show equilibrium point E with price P* and quantity Q*. When a curve shifts, label the new curve (D₂/S₂) and new equilibrium E₂.` },
+    ];
+  }
+
+  // ── BUSINESS STUDIES ────────────────────────────────────────────────────────
+  if (s.includes("business") || t.includes("marketing") || t.includes("stakeholder") || t.includes("cash flow") || t.includes("entrepreneur") || t.includes("human resource") || t.includes("production") || t.includes("profit")) {
+    return [
+      { kind: "video", youtubeId: "A6G0mvSgYyE", title: `${title} — IGCSE Business Studies`, caption: "Cambridge IGCSE Business Studies 0450 — key concepts and exam technique" },
+      { kind: "intro", text: `**${title}** — ${desc}. This note covers the essential business concepts and frameworks for Cambridge IGCSE Business Studies (0450).` },
+      { kind: "keyterms", terms: [
+        { label: "Stakeholder", value: "Any person or group with an interest in a business (shareholders, employees, customers, government, community)." },
+        { label: "Cash flow", value: "The movement of money into and out of a business. Net cash flow = cash inflows − cash outflows." },
+        { label: "Break-even", value: "The output level where total revenue = total costs. Neither profit nor loss is made." },
+        { label: "SWOT Analysis", value: "Strengths, Weaknesses, Opportunities, Threats — a strategic planning framework." },
+        { label: "Marketing Mix (4Ps)", value: "Product, Price, Place, Promotion — the tools used to market goods/services." },
+      ]},
+      { kind: "highlight", text: "**Break-even formula:**\n\nBreak-even output = Fixed Costs ÷ (Selling Price − Variable Cost per unit)\n\nThe denominator (Selling Price − Variable Cost per unit) is called **Contribution per unit**.", color: "green" },
+      { kind: "comparison", left: { label: "Internal stakeholders", items: ["Shareholders/owners — want profit and dividends", "Managers — want job security, authority, bonuses", "Employees — want fair pay, good conditions, job security"] }, right: { label: "External stakeholders", items: ["Customers — want quality at fair prices", "Suppliers — want regular orders and prompt payment", "Government — wants tax revenue and low unemployment", "Community — wants minimal negative externalities"] } },
+      { kind: "tip", text: `For **${title}** questions, always apply your answer to the business context. Generic answers score 1–2 marks; applied answers with specific details from the case study score full marks. Use business terminology throughout.` },
+    ];
+  }
+
+  // ── GEOGRAPHY ───────────────────────────────────────────────────────────────
+  if (s.includes("geography") || t.includes("river") || t.includes("coast") || t.includes("plate") || t.includes("population") || t.includes("urbanisation") || t.includes("climate") || t.includes("ecosystem") || t.includes("tectonic") || t.includes("development")) {
+    return [
+      { kind: "video", youtubeId: "1-PJb7SP8_Y", title: `${title} — IGCSE Geography`, caption: "Cambridge IGCSE Geography 0460 — key processes, case studies and exam technique" },
+      { kind: "intro", text: `**${title}** — ${desc}. This note covers the key geographical processes, case studies and exam skills for Cambridge IGCSE Geography (0460).` },
+      { kind: "image", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Tectonic_plate_boundaries.png/640px-Tectonic_plate_boundaries.png", caption: "World tectonic plate boundaries — convergent, divergent, and transform types", side: "full" },
+      { kind: "keyterms", terms: [
+        { label: "Erosion", value: "Wearing away of rock by hydraulic action, abrasion, attrition, and solution." },
+        { label: "Deposition", value: "Laying down of transported material when energy decreases." },
+        { label: "Tectonic plates", value: "Large sections of Earth's crust and upper mantle moving on convection currents." },
+        { label: "Urbanisation", value: "Increase in the proportion of people living in urban areas." },
+        { label: "Sustainable development", value: "Development meeting present needs without compromising future generations." },
+      ]},
+      { kind: "bullets", items: [
+        { text: "**River erosion processes (HAAS):**", sub: ["**H**ydraulic action — force of water breaks rock apart", "**A**brasion — rocks carried scrape the bed and banks", "**A**ttrition — rocks carried collide and break into smaller pieces", "**S**olution — soluble minerals dissolve in the water"] },
+        { text: "**Coastal processes:**", sub: ["Constructive waves — low energy, strong swash → deposition, builds beaches", "Destructive waves — high energy, strong backwash → erosion of cliffs", "Longshore drift — sediment moves along coast in zigzag due to wave angle"] },
+      ]},
+      { kind: "tip", text: `For **${title}** questions: always name a specific case study with data (figures, dates, locations). Structure answers as: describe → explain → impact → management. Draw and annotate diagrams where relevant.` },
+    ];
+  }
+
+  // ── HISTORY ──────────────────────────────────────────────────────────────────
+  if (s.includes("history") || t.includes("war") || t.includes("versailles") || t.includes("cold war") || t.includes("nazi") || t.includes("revolution") || t.includes("appeasement") || t.includes("league") || t.includes("imperialism")) {
+    return [
+      { kind: "video", youtubeId: "Zq8OoCXh9lQ", title: `${title} — IGCSE History`, caption: "Cambridge IGCSE History 0470 — key events, causes, consequences and essay technique" },
+      { kind: "intro", text: `**${title}** — ${desc}. This note covers the key historical events, causes, consequences and significance for Cambridge IGCSE History (0470/0977).` },
+      { kind: "keyterms", terms: [
+        { label: "Appeasement", value: "Policy of making concessions to an aggressor to avoid war. E.g. Munich Agreement 1938." },
+        { label: "Treaty of Versailles (1919)", value: "Peace treaty after WWI. Germany lost 13% territory, paid £6.6bn reparations, army limited to 100,000." },
+        { label: "League of Nations", value: "International organisation created 1920 to maintain peace. Weakened by USA not joining, no armed forces." },
+        { label: "Cold War", value: "Ideological tension between the USA (capitalism) and USSR (communism) 1947–1991." },
+        { label: "Containment", value: "US policy to prevent spread of communism — basis of the Truman Doctrine (1947) and Marshall Plan (1948)." },
+      ]},
+      { kind: "comparison", left: { label: "Arguments FOR appeasement", items: ["Britain was not militarily ready in 1938", "WWI memories made war very unpopular", "Hitler's demands seemed to be based on self-determination", "Buying time allowed British rearmament"] }, right: { label: "Arguments AGAINST appeasement", items: ["Encouraged Hitler to make further demands", "Failed to stop aggression at an early stage", "Abandoned Czechoslovakia without consultation", "Churchill argued it made war more, not less likely"] } },
+      { kind: "tip", text: "For essay questions, use **POINT → EVIDENCE → EXPLANATION → LINK** structure. Always balance both sides before giving a supported conclusion. Examiners reward well-reasoned judgements backed by specific evidence." },
+      { kind: "warning", text: "Don't just describe events — EXPLAIN causation and consequence. Phrases like 'This led to...' and 'As a result...' demonstrate analytical thinking and are needed for Level 3 (highest) mark bands." },
+    ];
+  }
+
+  // ── ENGLISH LANGUAGE / LITERATURE ───────────────────────────────────────────
+  if (s.includes("english") || t.includes("narrative") || t.includes("descriptive") || t.includes("reading") || t.includes("writing") || t.includes("poetry") || t.includes("prose")) {
+    return [
+      { kind: "video", youtubeId: "NybKl3SJhTE", title: `${title} — IGCSE English`, caption: "Cambridge IGCSE English Language 0500 — reading, writing and exam techniques" },
+      { kind: "intro", text: `**${title}** — ${desc}. This guide covers the key skills, language techniques and exam strategies for Cambridge IGCSE English (0500/0475).` },
+      { kind: "keyterms", terms: [
+        { label: "Simile", value: "A comparison using 'like' or 'as' — e.g. 'as cold as ice'" },
+        { label: "Metaphor", value: "A direct comparison stating one thing IS another — e.g. 'The world is a stage'" },
+        { label: "Personification", value: "Giving human qualities to non-human things — e.g. 'The wind howled angrily'" },
+        { label: "Alliteration", value: "Repetition of consonant sounds at the start of words — creates rhythm and emphasis" },
+        { label: "Tone", value: "The attitude/mood conveyed by the writer through word choice and sentence structure" },
+      ]},
+      { kind: "highlight", text: "**PEEL paragraph structure:**\n**P**oint — Make a clear point about the text\n**E**vidence — Quote directly from the text\n**E**xplain — Analyse the effect of the language/technique\n**L**ink — Connect back to the question/theme", color: "pink" },
+      { kind: "comparison", left: { label: "Narrative writing", items: ["Use first or third person consistently", "Create vivid characters and settings", "Build tension through conflict and pace", "Vary sentence length for dramatic effect", "Strong opening hook and satisfying resolution"] }, right: { label: "Descriptive writing", items: ["Focus on all five senses", "Use figurative language throughout", "Create atmosphere through word choice", "Zoom in on specific vivid details", "Present moment — no need for plot or events"] } },
+      { kind: "tip", text: "For reading questions: always quote directly from the text and explain the EFFECT on the reader. Don't just identify the technique — say what it makes the reader think or feel and WHY the writer chose it." },
+    ];
+  }
+
+  // ── COMPUTER SCIENCE / ICT ───────────────────────────────────────────────────
+  if (s.includes("computer") || s.includes("ict") || t.includes("binary") || t.includes("algorithm") || t.includes("cpu") || t.includes("database") || t.includes("network") || t.includes("programming") || t.includes("security") || t.includes("logic")) {
+    if (t.includes("binary") || t.includes("hexadecimal") || t.includes("number system") || t.includes("data representation")) {
+      return [
+        { kind: "video", youtubeId: "wgRBpZdoMEI", title: "Number Systems (Binary & Hex) — IGCSE Computer Science", caption: "Conversion between denary, binary and hexadecimal with worked examples" },
+        { kind: "intro", text: `**${title}** — ${desc}. Covers binary, hexadecimal and denary conversions for Cambridge IGCSE Computer Science (0478).` },
+        { kind: "keyterms", terms: [
+          { label: "Denary (Base-10)", value: "Standard decimal system using digits 0–9." },
+          { label: "Binary (Base-2)", value: "Uses only 0 and 1. Each digit is a bit. 8 bits = 1 byte." },
+          { label: "Hexadecimal (Base-16)", value: "Uses digits 0–9 and A–F. 1 hex digit = 4 binary bits (a nibble)." },
+        ]},
+        { kind: "highlight", text: "**1 Hex digit = 4 binary bits (nibble)**\nBinary → Hex: group bits in fours from the right, convert each group.\nHex → Binary: replace each hex digit with its 4-bit binary equivalent.", color: "blue" },
+        { kind: "tip", text: "Show ALL steps in base conversions — method marks are awarded. For binary → denary: write out place values (128, 64, 32, 16, 8, 4, 2, 1) above each bit, then add where there is a 1." },
+        { kind: "warning", text: "Hexadecimal A=10, B=11, C=12, D=13, E=14, F=15. Don't forget these when converting — forgetting them is the most common error." },
+      ];
     }
+    if (t.includes("cpu") || t.includes("architecture") || t.includes("hardware") || t.includes("memory")) {
+      return [
+        { kind: "video", youtubeId: "Z5JC9Ve1sfI", title: "CPU Architecture & Fetch-Decode-Execute — IGCSE CS", caption: "Covers CPU components, registers and the FDE cycle with diagrams" },
+        { kind: "intro", text: `**${title}** — ${desc}. This note covers CPU architecture and memory for Cambridge IGCSE Computer Science (0478).` },
+        { kind: "keyterms", terms: [
+          { label: "ALU", value: "Arithmetic Logic Unit — performs calculations and logical comparisons." },
+          { label: "Control Unit", value: "Directs the operation of the processor; manages the FDE cycle." },
+          { label: "RAM", value: "Random Access Memory — volatile; loses data when powered off." },
+          { label: "ROM", value: "Read-Only Memory — non-volatile; stores boot instructions permanently." },
+          { label: "Cache", value: "Very fast memory between CPU and RAM; stores frequently accessed data." },
+        ]},
+        { kind: "highlight", text: "**Fetch-Decode-Execute Cycle:**\n1. PC holds address of next instruction\n2. Address copied to MAR → instruction fetched to MDR → stored in CIR\n3. Control Unit decodes the instruction\n4. ALU/other components execute it\n5. PC incremented to point to next instruction", color: "blue" },
+        { kind: "tip", text: "Name the registers correctly: PC (Program Counter), MAR (Memory Address Register), MDR (Memory Data Register), CIR (Current Instruction Register), ACC (Accumulator). Wrong register names lose marks." },
+      ];
+    }
+    if (t.includes("algorithm") || t.includes("pseudocode") || t.includes("flowchart") || t.includes("problem-solving")) {
+      return [
+        { kind: "video", youtubeId: "e_WfC8HwVB8", title: "Algorithms & Pseudocode — IGCSE Computer Science", caption: "Covers decomposition, abstraction, trace tables, searching and sorting" },
+        { kind: "intro", text: `**${title}** — ${desc}. Covers algorithmic thinking for Cambridge IGCSE Computer Science (0478).` },
+        { kind: "keyterms", terms: [
+          { label: "Algorithm", value: "A step-by-step set of instructions to solve a problem." },
+          { label: "Decomposition", value: "Breaking a complex problem into smaller, manageable sub-problems." },
+          { label: "Abstraction", value: "Removing unnecessary detail to focus on the core logic of a problem." },
+          { label: "Trace table", value: "A technique to test an algorithm by tracking variable values step by step." },
+        ]},
+        { kind: "highlight", text: "**Standard CAIE pseudocode keywords:** DECLARE, INPUT, OUTPUT, IF...THEN...ELSE...ENDIF, FOR...TO...NEXT, WHILE...DO...ENDWHILE, REPEAT...UNTIL\n\nAssignment: variable ← value (use ← not =)", color: "blue" },
+        { kind: "tip", text: "In trace tables, create one column per variable plus one for output. Work through each line of the algorithm carefully — don't skip steps. Marks are awarded for correct intermediate values." },
+      ];
+    }
+    if (t.includes("database") || t.includes("sql") || t.includes("query")) {
+      return [
+        { kind: "video", youtubeId: "FR4QIeZaPeM", title: "Databases & SQL — IGCSE Computer Science", caption: "Covers database concepts, primary/foreign keys, and SQL SELECT queries" },
+        { kind: "intro", text: `**${title}** — ${desc}. This note covers database design and SQL for Cambridge IGCSE Computer Science (0478).` },
+        { kind: "keyterms", terms: [
+          { label: "Primary Key", value: "A field that uniquely identifies each record in a table. Cannot be NULL or duplicate." },
+          { label: "Foreign Key", value: "A field in one table that references the primary key of another table — creates a relationship." },
+          { label: "Query", value: "A request to retrieve specific data from a database using criteria." },
+        ]},
+        { kind: "highlight", text: "**SQL SELECT structure:**\nSELECT [fields] FROM [table] WHERE [condition] ORDER BY [field] ASC/DESC\n\nExample: SELECT Name, Age FROM Students WHERE Age > 16 ORDER BY Name ASC", color: "blue" },
+        { kind: "tip", text: "Put string values in single quotes in WHERE clauses: WHERE Name = 'Smith'\nUse wildcards with LIKE: WHERE Name LIKE 'S%' matches all names starting with S." },
+      ];
+    }
+    // CS fallback
+    return [
+      { kind: "video", youtubeId: "AQDCe585Lnc", title: `${title} — IGCSE Computer Science`, caption: "Cambridge IGCSE Computer Science 0478 revision" },
+      { kind: "intro", text: `**${title}** — ${desc}.` },
+      { kind: "keyterms", terms: [
+        { label: "Data", value: "Raw facts and figures without context." },
+        { label: "Information", value: "Data that has been processed to give it meaning." },
+        { label: "System", value: "A set of connected components working together to achieve a goal." },
+      ]},
+      { kind: "tip", text: `For **${title}**: focus on precise definitions, worked examples and applying knowledge to the context given.` },
+    ];
+  }
+
+  // ── DEFAULT FALLBACK ─────────────────────────────────────────────────────────
+  const words = title.split(" ").slice(0, 3);
+  return [
+    { kind: "intro", text: `**${title}** — ${desc}. This structured guide covers the essential concepts, definitions and exam techniques for Cambridge IGCSE ${subject}.` },
+    { kind: "keyterms", terms: [
+      { label: words[0] || "Concept", value: `Core definition relating to ${title} under the IGCSE ${subject} curriculum.` },
+      { label: words[1] || "Process", value: `Key process involved in the study and application of ${title}.` },
+      { label: "Key principle", value: desc || `Fundamental principle of ${title} as required by the Cambridge syllabus.` },
+    ]},
+    { kind: "tip", text: `For **${title}**: focus on definitions, key diagrams, and step-by-step explanations. Always use subject-specific vocabulary. Apply your answer to any context given in the question.` },
+    { kind: "warning", text: "Common mistake: Giving vague answers without applying to the specific context. Always link your answer back to the question using the stimulus material provided." },
+    { kind: "highlight", text: `**${title}** is a key topic in IGCSE ${subject}. Focus on: definitions → examples → application → evaluation.`, color: "blue" },
   ];
 }
 

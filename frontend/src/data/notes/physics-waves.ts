@@ -9,7 +9,13 @@ export const physicsWavesNotes: NoteChapter = {
       blocks: [
         {
           kind: "intro",
-          text: "Waves transfer energy without transferring matter; particles oscillate about a fixed point.",
+          text: "Waves transfer energy without transferring matter; particles oscillate about a fixed point. Understanding wave properties is essential for all of Unit 3.",
+        },
+        {
+          kind: "video",
+          youtubeId: "Rbuhdo0AZDU",
+          title: "Waves — IGCSE Physics Complete Revision",
+          caption: "Covers transverse vs longitudinal, wave equation, reflection, refraction and diffraction",
         },
         {
           kind: "keyterms",
@@ -133,6 +139,12 @@ export const physicsWavesNotes: NoteChapter = {
         {
           kind: "intro",
           text: "All electromagnetic (EM) waves travel at the speed of light (3 × 10⁸ m/s) in a vacuum and are transverse waves.",
+        },
+        {
+          kind: "video",
+          youtubeId: "cfXzwh3KadE",
+          title: "The Electromagnetic Spectrum — IGCSE Physics",
+          caption: "All 7 types, their properties, uses and dangers explained",
         },
         {
           kind: "table",
