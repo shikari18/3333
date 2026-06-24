@@ -192,6 +192,7 @@ export const physicsWavesNotes: NoteChapter = {
             label: "Sound CANNOT travel through",
             items: ["Vacuum", "Space", "Any region with no particles"],
           },
+        },
         {
           kind: "bullets",
           items: [
@@ -238,6 +239,7 @@ export const physicsWavesNotes: NoteChapter = {
               "Arrive second at seismograph",
             ],
           },
+        },
         {
           kind: "highlight",
           text: "The fact that S-waves cannot pass through the outer core tells us the outer core is LIQUID. P-waves slow down and refract as they pass through the core, creating a shadow zone.",

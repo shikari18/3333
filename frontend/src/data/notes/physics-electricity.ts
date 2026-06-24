@@ -69,6 +69,7 @@ export const physicsElectricityNotes: NoteChapter = {
               "Used in: household wiring, most electronics",
             ],
           },
+        },
         {
           kind: "highlight",
           text: "Worked example: 4Ω and 6Ω in parallel.\n1/R = 1/4 + 1/6 = 3/12 + 2/12 = 5/12\nR = 12/5 = 2.4Ω\nNote: always less than the smallest (4Ω).",

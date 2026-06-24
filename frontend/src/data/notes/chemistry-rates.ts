@@ -71,6 +71,7 @@ export const chemistryRatesNotes: NoteChapter = {
               "Same ΔH (energy change)",
             ],
           },
+        },
         {
           kind: "table",
           headers: ["Industrial process", "Catalyst", "Reaction"],

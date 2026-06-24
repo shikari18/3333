@@ -23,6 +23,7 @@ export const physicsForcesNotes: NoteChapter = {
             label: "Vector quantities (magnitude + direction)",
             items: ["Velocity", "Displacement", "Acceleration", "Force", "Momentum", "Weight"],
           },
+        },
         {
           kind: "keyterms",
           terms: [
@@ -187,6 +188,7 @@ export const physicsForcesNotes: NoteChapter = {
               "Momentum is still conserved",
             ],
           },
+        },
         {
           kind: "keyterms",
           terms: [

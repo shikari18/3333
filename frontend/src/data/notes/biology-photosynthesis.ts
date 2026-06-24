@@ -198,6 +198,7 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
               "Releases energy as ATP",
             ],
           },
+        },
         {
           kind: "highlight",
           text: "Compensation point: the light intensity at which the rate of photosynthesis exactly equals the rate of respiration — no net gas exchange occurs. Below this point, the plant uses more O₂ than it produces.",

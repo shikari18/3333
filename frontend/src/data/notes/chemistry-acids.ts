@@ -55,6 +55,7 @@ export const chemistryAcidsNotes: NoteChapter = {
               "Higher pH for same concentration",
             ],
           },
+        },
         {
           kind: "tip",
           text: "Universal indicator gives a colour range (red → purple). A pH probe gives a precise numerical value. For exam questions about measuring pH accurately, always recommend a pH probe over universal indicator.",

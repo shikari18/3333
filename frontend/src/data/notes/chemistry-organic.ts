@@ -126,6 +126,7 @@ export const chemistryOrganicNotes: NoteChapter = {
               "Used in clothing, ropes, parachutes",
             ],
           },
+        },
         {
           kind: "warning",
           text: "Plastics are non-biodegradable — they persist in the environment for hundreds of years. This causes pollution of oceans and land. Solutions include recycling, using biodegradable alternatives, and reducing plastic use.",
@@ -170,6 +171,7 @@ export const chemistryOrganicNotes: NoteChapter = {
               "Produces pure ethanol directly",
             ],
           },
+        },
         {
           kind: "bullets",
           items: [
