@@ -559,9 +559,11 @@ function FullScreenChapterReader({ chapter, onClose }: FullScreenReaderProps) {
         </div>
       </div>
 
-      {/* Main scrollable body */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-3xl mx-auto px-5 md:px-10 lg:px-16 py-12">
+      {/* Main split-screen body */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Left: Notes content scroll area */}
+        <div className="flex-1 overflow-y-auto bg-white">
+          <div className="max-w-3xl mx-auto px-5 md:px-10 lg:px-16 py-12">
           {/* Note Title Header */}
           <div className="mb-10">
             <p className="text-xs font-bold text-primary uppercase tracking-widest mb-3">{chapter.subject} · Revision Notes</p>
@@ -646,6 +648,17 @@ function FullScreenChapterReader({ chapter, onClose }: FullScreenReaderProps) {
               </button>
             </div>
           </div>
+          </div>
+        </div>
+
+        {/* Right: Embedded AI Chat Sidebar (Desktop Only) */}
+        <div className="hidden lg:block w-[360px] xl:w-[400px] border-l border-slate-100 bg-white shrink-0 h-full">
+          <NoteAiChat
+            noteTitle={chapter.title}
+            noteSubject={chapter.subject}
+            noteContext={chapter.summary}
+            inline
+          />
         </div>
       </div>
 
@@ -700,12 +713,14 @@ function FullScreenChapterReader({ chapter, onClose }: FullScreenReaderProps) {
         </div>
       )}
 
-      {/* Floating AI Chat */}
-      <NoteAiChat
-        noteTitle={chapter.title}
-        noteSubject={chapter.subject}
-        noteContext={chapter.summary}
-      />
+      {/* Floating AI Chat (Mobile/Tablet Only) */}
+      <div className="lg:hidden">
+        <NoteAiChat
+          noteTitle={chapter.title}
+          noteSubject={chapter.subject}
+          noteContext={chapter.summary}
+        />
+      </div>
     </div>
   );
 }

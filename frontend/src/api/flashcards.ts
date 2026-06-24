@@ -6,7 +6,7 @@
 import { api } from '@/lib/api-client';
 
 export type FlashcardDeck = {
-  id: number;
+  id: number | string;
   subject: string;
   name: string;
   description: string;
@@ -17,8 +17,8 @@ export type FlashcardDeck = {
 };
 
 export type Flashcard = {
-  id: number;
-  deck_id: number;
+  id: number | string;
+  deck_id: number | string;
   front: string;
   back: string;
   topic: string;

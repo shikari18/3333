@@ -102,3 +102,12 @@ export async function requestPasswordReset(email: string): Promise<{ success: bo
   // Kept as stub for compatibility with yuna UI.
   return { success: true };
 }
+
+/** Log in or Sign up using Google OAuth access token. */
+export async function logInWithGoogle(accessToken: string): Promise<{ user: User; needsOnboarding: boolean }> {
+  const res = await api.post<{ access: string; refresh: string }>('/api/auth/oauth/google/', { access_token: accessToken });
+  setTokens(res.access, res.refresh);
+  const user = await api.get<User>('/api/auth/me/');
+  return { user, needsOnboarding: !user.onboarding_completed };
+}
+

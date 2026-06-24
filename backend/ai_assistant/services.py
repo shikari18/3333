@@ -152,12 +152,12 @@ GROQ_API_URL      = "https://api.groq.com/openai/v1/chat/completions"
 #
 # ──────────────────────────────────────────────────────────────────────────────
 
-FLOWAI_SYSTEM_PROMPT = r"""You are Flow AI, the funny, cool, and absolutely awesome AI study partner built into Flow State.
+FLOWAI_SYSTEM_PROMPT = r"""You are Flow AI, the funny, cool, and absolutely awesome AI study partner built into Flow State. Never mention Gemini, Google, or any AI model names. If asked who you are, you are Flow AI.
 
 Your identity:
 - Name: Flow AI (the "Third Member" of the study squad)
-- Personality: Witty, high-energy, collegiate, and brilliantly supportive. You are the genius friend who makes studying feel like a hangout.
-- Purpose: Help students crush their academic goals while keeping the vibe upbeat and fun.
+- Personality: Witty, high-energy, collegiate, cheery, optimistic, friendly, and brilliantly supportive. You are the genius friend who makes studying feel like a hangout.
+- Purpose: Help students crush their academic goals while keeping the vibe upbeat, positive, and fun. Bring high energy, celebrate all success, and be encouraging at all times!
 
 PHONETIC RECOGNITION (CRITICAL):
 - Our platform is "Flow State" and our parent company is "NITE".
@@ -2152,17 +2152,17 @@ class AIService:
 
     def _get_style_suffix(self, prompt: str) -> str:
         """
-        Returns a specific style suffix based on prompt analysis to improve visual quality.
+        Returns a simple flat 2D educational style suffix for diagram clarity.
         """
         prompt_l = prompt.lower()
-        if any(k in prompt_l for k in ['medical', 'anatomy', 'organ', 'heart', 'diagram', 'science', 'biological']):
-            return "Professional medical illustration, clean scientific diagram, 4k, high resolution, white background"
+        if any(k in prompt_l for k in ['medical', 'anatomy', 'organ', 'heart', 'diagram', 'science', 'biological', 'chemistry', 'physics', 'biology']):
+            return "simple flat 2D educational diagram, clean white background, labeled arrows, textbook style, no shading, minimalist, IGCSE syllabus"
         if any(k in prompt_l for k in ['app', 'ui', 'interface', 'dashboard', 'website']):
-            return "Modern UI design, sleek app interface, high-end digital design, minimalist, 4k"
+            return "simple flat 2D UI wireframe, minimal design, clean lines, white background"
         if any(k in prompt_l for k in ['logo', 'icon', 'symbol', 'branding']):
-            return "Professional vector logo design, minimalist, clean lines, high quality, white background"
+            return "simple flat 2D vector icon, clean lines, white background, minimal"
         
-        return "Professional digital art illustration, photorealistic, vibrant colors, detailed, 4k, masterpiece"
+        return "simple flat 2D educational illustration, bright colors, clean lines, white background, textbook style"
 
     def generate_image(self, prompt: str, model: str = 'turbo') -> str:
         """
@@ -2213,7 +2213,7 @@ class AIService:
 
                 current_prompt = prompt if poll_model == 'flux' else prompt.split(',')[0]
                 encoded_prompt = requests.utils.quote(f"{current_prompt}. {style}")
-                poll_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true&model={poll_model}&seed={abs(hash(prompt)) % 9999}"
+                poll_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=800&height=600&nologo=true&model={poll_model}&seed={abs(hash(prompt)) % 9999}"
 
                 res = requests.get(poll_url, timeout=poll_timeout)
                 if res.status_code == 200 and len(res.content) > 1000:

@@ -20,6 +20,7 @@ import { Route as NotesRouteImport } from './routes/notes'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LibraryRouteImport } from './routes/library'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as GoogleSigninMockRouteImport } from './routes/google-signin-mock'
 import { Route as FlashcardsRouteImport } from './routes/flashcards'
 import { Route as ExamPrepRouteImport } from './routes/exam-prep'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -84,6 +85,11 @@ const HomeRoute = HomeRouteImport.update({
   path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GoogleSigninMockRoute = GoogleSigninMockRouteImport.update({
+  id: '/google-signin-mock',
+  path: '/google-signin-mock',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FlashcardsRoute = FlashcardsRouteImport.update({
   id: '/flashcards',
   path: '/flashcards',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/exam-prep': typeof ExamPrepRoute
   '/flashcards': typeof FlashcardsRoute
+  '/google-signin-mock': typeof GoogleSigninMockRoute
   '/home': typeof HomeRoute
   '/library': typeof LibraryRoute
   '/login': typeof LoginRoute
@@ -153,6 +160,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/exam-prep': typeof ExamPrepRoute
   '/flashcards': typeof FlashcardsRoute
+  '/google-signin-mock': typeof GoogleSigninMockRoute
   '/home': typeof HomeRoute
   '/library': typeof LibraryRoute
   '/login': typeof LoginRoute
@@ -175,6 +183,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/exam-prep': typeof ExamPrepRoute
   '/flashcards': typeof FlashcardsRoute
+  '/google-signin-mock': typeof GoogleSigninMockRoute
   '/home': typeof HomeRoute
   '/library': typeof LibraryRoute
   '/login': typeof LoginRoute
@@ -198,6 +207,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exam-prep'
     | '/flashcards'
+    | '/google-signin-mock'
     | '/home'
     | '/library'
     | '/login'
@@ -219,6 +229,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exam-prep'
     | '/flashcards'
+    | '/google-signin-mock'
     | '/home'
     | '/library'
     | '/login'
@@ -240,6 +251,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/exam-prep'
     | '/flashcards'
+    | '/google-signin-mock'
     | '/home'
     | '/library'
     | '/login'
@@ -262,6 +274,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   ExamPrepRoute: typeof ExamPrepRoute
   FlashcardsRoute: typeof FlashcardsRoute
+  GoogleSigninMockRoute: typeof GoogleSigninMockRoute
   HomeRoute: typeof HomeRoute
   LibraryRoute: typeof LibraryRoute
   LoginRoute: typeof LoginRoute
@@ -358,6 +371,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/google-signin-mock': {
+      id: '/google-signin-mock'
+      path: '/google-signin-mock'
+      fullPath: '/google-signin-mock'
+      preLoaderRoute: typeof GoogleSigninMockRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/flashcards': {
       id: '/flashcards'
       path: '/flashcards'
@@ -422,6 +442,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   ExamPrepRoute: ExamPrepRoute,
   FlashcardsRoute: FlashcardsRoute,
+  GoogleSigninMockRoute: GoogleSigninMockRoute,
   HomeRoute: HomeRoute,
   LibraryRoute: LibraryRoute,
   LoginRoute: LoginRoute,

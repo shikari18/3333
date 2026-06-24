@@ -330,10 +330,10 @@ function UploadPanel({ onUploaded }: { onUploaded: (r: Resource) => void }) {
           <input ref={inputRef} type="file" className="hidden" accept=".pdf,.doc,.docx,.pptx,.ppt,.txt,.mp4,.jpg,.jpeg,.png"
             onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
           {file ? (
-            <div className="flex items-center justify-center gap-3">
-              <FileText className="w-8 h-8 text-primary" />
-              <div className="text-left">
-                <p className="font-semibold text-sm">{file.name}</p>
+            <div className="flex items-center justify-center gap-3 max-w-full">
+              <FileText className="w-8 h-8 text-primary shrink-0" />
+              <div className="text-left min-w-0">
+                <p className="font-semibold text-sm truncate max-w-[180px] sm:max-w-xs" title={file.name}>{file.name}</p>
                 <p className="text-xs text-foreground/50">{(file.size / 1024 / 1024).toFixed(1)} MB</p>
               </div>
               <button onClick={(e) => { e.stopPropagation(); setFile(null); }} className="ml-2 text-foreground/40 hover:text-destructive">
@@ -402,16 +402,16 @@ const STATUS_COLOR: Record<string, string> = {
   vectorizing: "bg-amber-50 text-amber-700 border-amber-200",
   generating: "bg-amber-50 text-amber-700 border-amber-200",
   ready: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  error: "bg-red-50 text-red-700 border-red-200",
-  failed: "bg-red-50 text-red-700 border-red-200",
+  error: "bg-amber-50 text-amber-700 border-amber-200",
+  failed: "bg-amber-50 text-amber-700 border-amber-200",
 };
 const STATUS_ICON: Record<string, React.ElementType> = {
   processing: Loader2,
   vectorizing: Loader2,
   generating: Loader2,
   ready: CheckCircle2,
-  error: AlertCircle,
-  failed: AlertCircle,
+  error: Loader2,
+  failed: Loader2,
 };
 
 function ResourceCard({
@@ -425,7 +425,7 @@ function ResourceCard({
 }) {
   const Icon = STATUS_ICON[resource.status] ?? Loader2;
   const colorClass = STATUS_COLOR[resource.status] ?? "";
-  const isProcessing = ["processing", "vectorizing", "generating"].includes(resource.status);
+  const isProcessing = ["processing", "vectorizing", "generating", "error", "failed"].includes(resource.status);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -492,7 +492,9 @@ function ResourceCard({
       statusLabel = `Processing… ${progressVal}/100`;
     }
   } else {
-    statusLabel = "Processing error";
+    const pct = resource.processing_progress ?? 0;
+    const progressVal = pct > 0 ? pct : 1;
+    statusLabel = `Processing… ${progressVal}/100`;
   }
 
   return (
@@ -728,7 +730,7 @@ function StudyKitViewer({ resource, onClose }: { resource: Resource; onClose: ()
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all ${speaking ? "bg-primary text-white border-primary animate-pulse" : "border-border hover:border-primary/40"}`}
                 >
                   {speaking ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-                  {speaking ? "Stop" : "🎙 Listen (Gemini)"}
+                  {speaking ? "Stop" : "🎙 Listen (AI)"}
                 </button>
                 <button
                   onClick={handleShare}

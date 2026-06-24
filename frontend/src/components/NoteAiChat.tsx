@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { Bot, X, Send, Mic, MicOff, Image as ImageIcon, ChevronDown, Volume2 } from "lucide-react";
+import { Bot, X, Send, Mic, MicOff, Image as ImageIcon, ChevronDown, Volume2, Square, RotateCcw } from "lucide-react";
+import { startGeminiListen, type ListenHandle } from "@/lib/gemini-listen";
 import { generateDiagramImage } from "@/lib/imageGen";
 import { speakGemini, type GeminiSpeechHandle } from "@/lib/gemini-speech";
 
@@ -16,6 +17,7 @@ interface NoteAiChatProps {
   noteTitle: string;
   noteSubject?: string;
   noteContext?: string; // summary or key topics from the note
+  inline?: boolean;
 }
 
 // ── Inline markdown parser ─────────────────────────────────────────────────────
@@ -166,6 +168,7 @@ function NoteImage({ prompt }: { prompt: string }) {
   const [src, setSrc] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [imgError, setImgError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -181,14 +184,18 @@ function NoteImage({ prompt }: { prompt: string }) {
     });
 
     return () => { cancelled = true; };
-  }, [prompt]);
+  }, [prompt, retryCount]);
+
+  const handleRetry = () => {
+    setRetryCount(c => c + 1);
+  };
 
   return (
     <figure className="mt-2 rounded-xl overflow-hidden border border-border shadow-sm">
       {loading && (
         <div className="h-28 bg-gradient-to-br from-primary/5 to-violet-500/5 animate-pulse flex flex-col items-center justify-center gap-1.5">
           <ImageIcon className="w-5 h-5 text-primary/40 animate-pulse" />
-          <span className="text-[10px] text-foreground/40">Generating with Gemini AI...</span>
+           <span className="text-[10px] text-foreground/40">Generating with AI...</span>
         </div>
       )}
       {src && !src.startsWith("data:") && (
@@ -209,8 +216,16 @@ function NoteImage({ prompt }: { prompt: string }) {
         />
       )}
       {imgError && (
-        <div className="h-16 flex items-center justify-center text-[10px] text-foreground/40 gap-1">
-          <ImageIcon className="w-3 h-3" /> Unable to generate diagram
+        <div className="h-20 flex flex-col items-center justify-center gap-2">
+          <div className="flex items-center gap-1 text-[10px] text-foreground/40">
+            <ImageIcon className="w-3 h-3" /> Unable to generate diagram
+          </div>
+          <button
+            onClick={handleRetry}
+            className="flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-semibold hover:bg-primary/20 transition-colors border border-primary/20"
+          >
+            <RotateCcw className="w-3 h-3" /> Retry
+          </button>
         </div>
       )}
       <figcaption className="text-[9px] text-foreground/40 text-center px-2 py-1.5 italic border-t border-border bg-muted/10">
@@ -219,6 +234,7 @@ function NoteImage({ prompt }: { prompt: string }) {
     </figure>
   );
 }
+
 
 // ── Typewriter ─────────────────────────────────────────────────────────────────
 function TypewriterText({ text, onDone }: { text: string; onDone?: () => void }) {
@@ -246,17 +262,18 @@ function TypewriterText({ text, onDone }: { text: string; onDone?: () => void })
 }
 
 // ── Main Component ─────────────────────────────────────────────────────────────
-export function NoteAiChat({ noteTitle, noteSubject, noteContext }: NoteAiChatProps) {
-  const [open, setOpen] = useState(false);
+export function NoteAiChat({ noteTitle, noteSubject, noteContext, inline }: NoteAiChatProps) {
+  const [open, setOpen] = useState(inline || false);
   const [messages, setMessages] = useState<NoteAiMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [listening, setListening] = useState(false);
   const [speakingIndex, setSpeakingIndex] = useState<number | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<ListenHandle | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const speechHandleRef = useRef<GeminiSpeechHandle | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Stop TTS speech on unmount/close
   useEffect(() => {
@@ -312,7 +329,7 @@ export function NoteAiChat({ noteTitle, noteSubject, noteContext }: NoteAiChatPr
     setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
   }, [messages, loading]);
 
-  const systemPrompt = `You are Yumna, an expert IGCSE tutor. The student is currently reading notes about "${noteTitle}"${noteSubject ? ` in ${noteSubject}` : ""}.
+   const systemPrompt = `You are Yumna, an expert IGCSE tutor. You are warm, cheery, encouraging, and highly energetic! Use positive reinforcement (e.g. 'Great question!', 'You're doing awesome!', 'Let's tackle this together!'). Never mention Gemini, Google, or any AI model names. If asked who you are, you are Yumna. The student is currently reading notes about "${noteTitle}"${noteSubject ? ` in ${noteSubject}` : ""}.
 ${noteContext ? `\nNote context: ${noteContext}` : ""}
 
 Answer questions SPECIFICALLY about this topic. Use rich formatting:
@@ -327,12 +344,21 @@ If explaining any scientific processes, structures, cycles, comparisons, or conc
 
 Be thorough but concise. Reference IGCSE exam context.`;
 
+  function stopGeneration() {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setLoading(false);
+  }
+
   async function sendMessage(text?: string) {
     const msg = (text ?? input).trim();
     if (!msg || loading) return;
     setInput("");
     setMessages(prev => [...prev, { role: "user", text: msg }]);
     setLoading(true);
+
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     try {
       const history = messages
@@ -347,6 +373,7 @@ Be thorough but concise. Reference IGCSE exam context.`;
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
           {
             method: "POST",
+            signal: controller.signal,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               contents: [
@@ -365,47 +392,59 @@ Be thorough but concise. Reference IGCSE exam context.`;
           const d = await geminiRes.json();
           reply = d.candidates?.[0]?.content?.parts?.[0]?.text || "";
         }
-      } catch { /* fallback */ }
+      } catch (e: any) { if (e?.name === "AbortError") { return; } /* fallback */ }
 
       if (!reply && GROQ_KEY) {
-        const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${GROQ_KEY}` },
-          body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
-            messages: [{ role: "system", content: systemPrompt }, ...history.map(h => ({ role: h.role, content: h.text })), { role: "user", content: msg }],
-            temperature: 0.7, max_tokens: 1200,
-          }),
-        });
-        if (groqRes.ok) {
-          const d = await groqRes.json();
-          reply = d.choices?.[0]?.message?.content || "";
-        }
+        try {
+          const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            signal: controller.signal,
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${GROQ_KEY}` },
+            body: JSON.stringify({
+              model: "llama-3.3-70b-versatile",
+              messages: [{ role: "system", content: systemPrompt }, ...history.map(h => ({ role: h.role, content: h.text })), { role: "user", content: msg }],
+              temperature: 0.7, max_tokens: 1200,
+            }),
+          });
+          if (groqRes.ok) {
+            const d = await groqRes.json();
+            reply = d.choices?.[0]?.message?.content || "";
+          }
+        } catch (e: any) { if (e?.name === "AbortError") { return; } }
       }
 
+      if (controller.signal.aborted) return;
       if (!reply) reply = "Sorry, I couldn't connect right now. Please try again.";
 
       setLoading(false);
+      abortRef.current = null;
       setMessages(prev => [...prev, { role: "assistant", text: reply, isStreaming: true }]);
     } catch (err: any) {
+      if (err?.name === "AbortError") return;
       setLoading(false);
+      abortRef.current = null;
       setMessages(prev => [...prev, { role: "assistant", text: `Error: ${err?.message || "Please try again."}` }]);
     }
   }
 
   function toggleVoice() {
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) { alert("Use Chrome for voice input."); return; }
-    if (listening) { recognitionRef.current?.stop(); setListening(false); return; }
-    const rec = new SR();
-    rec.lang = "en-US";
-    rec.interimResults = false;
-    rec.onresult = (e: any) => { sendMessage(e.results[0][0].transcript); setListening(false); };
-    rec.onerror = () => setListening(false);
-    rec.onend = () => setListening(false);
-    recognitionRef.current = rec;
-    rec.start();
+    if (listening) {
+      recognitionRef.current?.stop();
+      recognitionRef.current = null;
+      setListening(false);
+      return;
+    }
     setListening(true);
+    recognitionRef.current = startGeminiListen({
+      onStart: () => setListening(true),
+      onTranscript: (text) => {
+        setListening(false);
+        recognitionRef.current = null;
+        sendMessage(text);
+      },
+      onError: () => { setListening(false); recognitionRef.current = null; },
+      onStop: () => { setListening(false); recognitionRef.current = null; },
+    });
   }
 
   const QUICK_QUESTIONS = [
@@ -418,7 +457,7 @@ Be thorough but concise. Reference IGCSE exam context.`;
   return (
     <>
       {/* Floating trigger button */}
-      {!open && (
+      {!inline && !open && (
         <button
           onClick={() => setOpen(true)}
           className="fixed bottom-6 right-6 z-[160] w-14 h-14 rounded-full bg-gradient-to-br from-primary to-purple-600 text-white shadow-2xl shadow-primary/40 flex items-center justify-center hover:scale-110 transition-all duration-300 group"
@@ -433,9 +472,12 @@ Be thorough but concise. Reference IGCSE exam context.`;
       {/* Chat Panel */}
       {open && (
         <div
-          ref={panelRef}
-          className="fixed bottom-6 right-6 z-[160] w-[360px] max-h-[580px] flex flex-col bg-white rounded-3xl shadow-2xl border border-border overflow-hidden"
-          style={{ boxShadow: "0 20px 60px rgba(0,0,0,0.15), 0 4px 20px rgba(138,43,226,0.12)" }}
+          ref={inline ? undefined : panelRef}
+          className={inline
+            ? "w-full h-full flex flex-col bg-white"
+            : "fixed bottom-6 right-6 z-[160] w-[360px] max-h-[580px] flex flex-col bg-white rounded-3xl shadow-2xl border border-border overflow-hidden"
+          }
+          style={inline ? undefined : { boxShadow: "0 20px 60px rgba(0,0,0,0.15), 0 4px 20px rgba(138,43,226,0.12)" }}
         >
           {/* Header */}
           <div className="bg-gradient-to-r from-primary to-purple-600 px-4 py-3.5 flex items-center justify-between shrink-0">
@@ -448,12 +490,14 @@ Be thorough but concise. Reference IGCSE exam context.`;
                 <p className="text-white/60 text-[10px] truncate max-w-[200px]">{noteTitle}</p>
               </div>
             </div>
-            <button
-              onClick={() => setOpen(false)}
-              className="p-1.5 rounded-full hover:bg-white/20 text-white/80 hover:text-white transition-colors"
-            >
-              <ChevronDown className="w-5 h-5" />
-            </button>
+            {!inline && (
+              <button
+                onClick={() => setOpen(false)}
+                className="p-1.5 rounded-full hover:bg-white/20 text-white/80 hover:text-white transition-colors"
+              >
+                <ChevronDown className="w-5 h-5" />
+              </button>
+            )}
           </div>
 
           {/* Messages */}
@@ -469,12 +513,7 @@ Be thorough but concise. Reference IGCSE exam context.`;
 
             {messages.map((m, i) => (
               <div key={i} className={`flex gap-2 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-                {m.role === "assistant" && (
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center shrink-0 mt-0.5">
-                    <span className="text-white text-[9px] font-bold">Y</span>
-                  </div>
-                )}
-                <div className="flex flex-col gap-1 max-w-[85%]">
+                <div className="flex flex-col gap-1 max-w-[94%]">
                   <div className={`rounded-2xl px-3 py-2.5 ${
                     m.role === "assistant"
                       ? "bg-pink-softer text-foreground rounded-tl-none text-xs"
@@ -559,13 +598,23 @@ Be thorough but concise. Reference IGCSE exam context.`;
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={e => e.key === "Enter" && sendMessage()}
               />
-              <button
-                onClick={() => sendMessage()}
-                disabled={!input.trim() || loading}
-                className="p-1 rounded-full bg-primary text-white disabled:opacity-30 transition-opacity shrink-0"
-              >
-                <Send className="w-3.5 h-3.5" />
-              </button>
+              {loading ? (
+                <button
+                  onClick={stopGeneration}
+                  className="p-1 rounded-full bg-red-500 text-white transition-all shrink-0 hover:bg-red-600 animate-pulse"
+                  title="Stop generating"
+                >
+                  <Square className="w-3.5 h-3.5" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => sendMessage()}
+                  disabled={!input.trim()}
+                  className="p-1 rounded-full bg-primary text-white disabled:opacity-30 transition-opacity shrink-0"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
         </div>

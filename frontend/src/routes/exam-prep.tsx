@@ -12,6 +12,9 @@ import { useProfile } from "@/lib/profile-context";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 
+import { SUBJECT_LIST } from "./subjects";
+import { SubjectDropdown } from "@/components/SubjectDropdown";
+
 export const Route = createFileRoute("/exam-prep")({
   head: () => ({ meta: [{ title: "Exam Prep — ExamGlow" }] }),
   component: ExamPrepPage,
@@ -41,7 +44,6 @@ type AnyQuestion = MCQQuestion | WrittenQuestion;
 
 const isMCQ = (q: AnyQuestion): q is MCQQuestion => "options" in q;
 
-const SUBJECTS = ["Biology", "Chemistry", "Physics", "Mathematics", "Geography", "English", "ICT/CS"];
 const DURATIONS = [
   { label: "15 minutes", value: 900 },
   { label: "30 minutes", value: 1800 },
@@ -85,17 +87,13 @@ function SetupScreen({
         {/* Subject */}
         <div>
           <h2 className="font-bold mb-3">1. Choose Subject</h2>
-          <div className="flex flex-wrap gap-2">
-            {SUBJECTS.map((s) => (
-              <button
-                key={s}
-                onClick={() => setSubject(s)}
-                className={`px-4 py-2 rounded-full text-sm font-semibold border transition-colors ${subject === s ? "bg-primary text-primary-foreground border-primary" : "border-border hover:border-primary/40"}`}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
+          <SubjectDropdown
+            value={subject}
+            onChange={(val) => setSubject(val || SUBJECT_LIST[0] || "Biology")}
+            subjects={SUBJECT_LIST}
+            placeholder="Select Subject..."
+            buttonClassName="rounded-2xl px-5 py-4 text-sm font-semibold hover:border-primary/40"
+          />
         </div>
 
         {/* Mode */}

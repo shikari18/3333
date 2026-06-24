@@ -932,8 +932,8 @@ class GenerateTopicNotesView(APIView):
                     page.setdefault('blocks', []).append({
                         'kind': 'image',
                         'prompt': (
-                            f"IGCSE textbook educational diagram for '{topic}' about '{section_title}'. "
-                            f"Clean white background, labeled arrows, textbook style."
+                            f"Simple flat 2D educational diagram for IGCSE '{topic}' showing '{section_title}'. "
+                            f"White background, labeled arrows, textbook style, minimal, no shading."
                         ),
                         'caption': f'Diagram: {section_title}',
                         'side': 'full',
@@ -946,8 +946,10 @@ class GenerateTopicNotesView(APIView):
                 for block in page.get('blocks', []):
                     if block.get('kind') == 'image' and block.get('prompt') and not block.get('src'):
                         img_prompt = block['prompt']
-                        encoded_prompt = urllib.parse.quote(img_prompt)
-                        block['src'] = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true&seed={random.randint(1, 99999)}"
+                        style_suffix = "simple flat 2D educational diagram, white background, labeled, textbook style, minimal, no shading"
+                        full_img_prompt = f"{img_prompt}. {style_suffix}."
+                        encoded_prompt = urllib.parse.quote(full_img_prompt)
+                        block['src'] = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=800&height=600&nologo=true&seed={random.randint(1, 99999)}"
 
             return Response(note_data)
 
@@ -1245,3 +1247,4 @@ class AgentAudioView(APIView):
             'execution_result': execution_result,
             'audio_url': audio_url
         })
+

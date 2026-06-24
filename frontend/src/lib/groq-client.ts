@@ -19,6 +19,7 @@ export interface GroqOptions {
   model?: string;
   temperature?: number;
   max_tokens?: number;
+  signal?: AbortSignal;
 }
 
 /**
@@ -41,6 +42,7 @@ export async function groqChat(
       "Content-Type": "application/json",
       Authorization: `Bearer ${GROQ_API_KEY}`,
     },
+    signal: opts.signal,
     body: JSON.stringify({
       model: opts.model ?? DEFAULT_MODEL,
       temperature: opts.temperature ?? 0.7,

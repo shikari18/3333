@@ -3,7 +3,7 @@ from .views import (
     SyllabusProgressListView, SyllabusProgressToggleView,
     QuizSetListView, QuizDetailView, QuizSubmitView,
     FlashcardDeckListView, FlashcardDeckDetailView, FlashcardProgressView, DueFlashcardsView,
-    PastPaperAttemptView,
+    PastPaperAttemptView, PastPaperProxyView, CambridgePapersView,
     StudyGoalListView, StudyGoalDetailView,
     BookmarkView, BookmarkCheckView,
     DashboardView,
@@ -30,6 +30,8 @@ urlpatterns = [
 
     # Past Papers
     path('past-papers/', PastPaperAttemptView.as_view(), name='past-paper-list'),
+    path('past-papers/proxy/', PastPaperProxyView.as_view(), name='past-paper-proxy'),
+    path('past-papers/cambridge/', CambridgePapersView.as_view(), name='cambridge-papers'),
 
     # Study Goals
     path('goals/', StudyGoalListView.as_view(), name='study-goal-list'),

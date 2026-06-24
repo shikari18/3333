@@ -6,7 +6,7 @@
 import { api } from '@/lib/api-client';
 
 export type QuizSet = {
-  id: number;
+  id: number | string;
   subject: string;
   title: string;
   description: string;
@@ -19,8 +19,8 @@ export type QuizSet = {
 };
 
 export type QuizQuestion = {
-  id: number;
-  quiz_set_id: number;
+  id: number | string;
+  quiz_set_id: number | string;
   question: string;
   option_a: string;
   option_b: string;

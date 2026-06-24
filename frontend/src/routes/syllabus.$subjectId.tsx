@@ -5,7 +5,8 @@ import { getSyllabusData } from "@/data/syllabus";
 import { 
   ArrowLeft, FileText, ChevronLeft, ChevronRight, X, 
   Download, Printer, ZoomIn, ZoomOut, Trophy,
-  Bot, Sparkles, Volume2, VolumeX, Play, Pause, Send, HelpCircle
+  Bot, Sparkles, Volume2, VolumeX, Play, Pause, Send, HelpCircle,
+  Plus, Minus, BookOpen, MessageCircleQuestion, Square
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { playSpeechConversation, stopAllSpeech, speakSingleTurn, type SpeechTurn } from "@/lib/speech-utils";
@@ -48,6 +49,234 @@ function getSubjectCategory(name: string, code: string): SubjectCategory {
   return "language";
 }
 
+// ─── Math LaTeX cleaner ────────────────────────────────────────────────────────
+function cleanMathLaTeX(text: string): string {
+  if (!text) return "";
+  let s = text;
+  s = s.replace(/\\\[([\s\S]*?)\\\]/g, "$1");
+  s = s.replace(/\\\(([\s\S]*?)\\\)/g, "$1");
+  s = s.replace(/\$\$(.*?)\$\$/g, "$1");
+  s = s.replace(/\$(.*?)\$/g, "$1");
+
+  const superscripts: Record<string, string> = {
+    "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹",
+    "+": "⁺", "-": "⁻", "=": "⁼", "(": "⁽", ")": "⁾", "n": "ⁿ", "x": "ˣ", "i": "ⁱ"
+  };
+  const subscripts: Record<string, string> = {
+    "0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄", "5": "₅", "6": "₆", "7": "₇", "8": "₈", "9": "₉",
+    "+": "₊", "-": "₋", "=": "₌", "(": "₍", ")": "₎", "a": "ₐ", "e": "ₑ", "h": "ₕ", "i": "ᵢ", "j": "ⱼ",
+    "k": "ₖ", "l": "ₗ", "m": "ₘ", "n": "ₙ", "o": "ₒ", "p": "ₚ", "r": "ᵣ", "s": "ₛ", "t": "ₜ", "u": "ᵤ", "v": "ᵥ", "x": "ₓ"
+  };
+
+  s = s.replace(/\^([0-9+\-=()nx])/g, (match, p1) => superscripts[p1] || match);
+  s = s.replace(/\^{([0-9+\-=()nx]+)}/g, (match, p1) => {
+    return p1.split("").map((c: string) => superscripts[c] || c).join("");
+  });
+  
+  s = s.replace(/_([0-9+\-=()aehijklmnoprstuvx])/g, (match, p1) => subscripts[p1] || match);
+  s = s.replace(/_{([0-9+\-=()aehijklmnoprstuvx]+)}/g, (match, p1) => {
+    return p1.split("").map((c: string) => subscripts[c] || c).join("");
+  });
+
+  s = s.replace(/\\frac\s*{(.*?)}\s*{(.*?)}/g, "($1)/($2)");
+  s = s.replace(/\\sqrt\s*{(.*?)}/g, "√$1");
+  s = s.replace(/\\text\s*{(.*?)}/g, "$1");
+  s = s.replace(/\\mathrm\s*{(.*?)}/g, "$1");
+  s = s.replace(/\\left\(/g, "(").replace(/\\right\)/g, ")");
+  s = s.replace(/\\left\[/g, "[").replace(/\\right\]/g, "]");
+  s = s.replace(/\\left\\{/g, "{").replace(/\\right\\}/g, "}");
+
+  const latexSymbols: [RegExp, string][] = [
+    [/\\times\b/g, "×"],
+    [/\\div\b/g, "÷"],
+    [/\\pm\b/g, "±"],
+    [/\\approx\b/g, "≈"],
+    [/\\leq?\b/g, "≤"],
+    [/\\geq?\b/g, "≥"],
+    [/\\neq\b/g, "≠"],
+    [/\\cdot\b/g, "·"],
+    [/\\degree\b/g, "°"],
+    [/\\theta\b/g, "θ"],
+    [/\\pi\b/g, "π"],
+    [/\\alpha\b/g, "α"],
+    [/\\beta\b/g, "β"],
+    [/\\gamma\b/g, "γ"],
+    [/\\Delta\b/g, "Δ"],
+    [/\\lambda\b/g, "λ"],
+    [/\\mu\b/g, "μ"],
+    [/\\phi\b/g, "φ"],
+    [/\\sigma\b/g, "σ"],
+    [/\\omega\b/g, "ω"],
+    [/\\infty\b/g, "∞"],
+    [/\\quad\b/g, "  "],
+    [/\\qquad\b/g, "    "],
+    [/\\,/g, " "],
+    [/\\!/g, ""],
+  ];
+
+  for (const [pattern, replacement] of latexSymbols) {
+    s = s.replace(pattern, replacement);
+  }
+
+  s = s.replace(/\\/g, "");
+  return s;
+}
+
+// ─── Inline markdown parser ───────────────────────────────────────────────────
+function parseInlineText(text: string): React.ReactNode {
+  if (!text) return null;
+  const cleaned = cleanMathLaTeX(text);
+  const parts = cleaned.split(/(\*\*[^*]+\*\*|==\S[^=]*\S==|\*[^*]+\*)/g);
+  return (
+    <>
+      {parts.map((part, i) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return <strong key={i} className="font-extrabold text-foreground" style={{ fontWeight: 850 }}>{part.slice(2, -2)}</strong>;
+        }
+        if (part.startsWith("==") && part.endsWith("==")) {
+          return <mark key={i} className="bg-primary/20 text-primary px-1 rounded not-italic font-medium">{part.slice(2, -2)}</mark>;
+        }
+        if (part.startsWith("*") && part.endsWith("*")) {
+          return <em key={i} className="italic">{part.slice(1, -1)}</em>;
+        }
+        return <span key={i}>{part}</span>;
+      })}
+    </>
+  );
+}
+
+// Render multiline structured summaries and sections (supporting tables, bullet lists, numbered lists)
+function renderStructuredContent(text: string): React.ReactNode {
+  if (!text) return null;
+  const normalized = text.replace(/\/n/g, "\n").replace(/\\n/g, "\n");
+  const lines = normalized.split("\n");
+  const elements: React.ReactNode[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (!trimmed) { i++; continue; }
+
+    // Table parsing
+    if (trimmed.startsWith("|")) {
+      const tableLines: string[] = [];
+      while (i < lines.length && lines[i].trim().startsWith("|")) {
+        tableLines.push(lines[i].trim());
+        i++;
+      }
+      
+      const parsedRows = tableLines
+        .map(line => line.split("|").map(cell => cell.trim()).filter((_, idx, arr) => idx > 0 && idx < arr.length - 1))
+        .filter(row => !row.every(cell => cell.startsWith("---") || cell.startsWith(":-") || cell.startsWith("-:")));
+      
+      if (parsedRows.length > 0) {
+        const headers = parsedRows[0];
+        const bodyRows = parsedRows.slice(1);
+        elements.push(
+          <div key={`table${i}`} className="overflow-hidden rounded-xl border border-border bg-white shadow-sm my-4 max-w-full">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-[11px] text-foreground/85">
+                <thead className="bg-muted/40 border-b border-border text-foreground font-bold">
+                  <tr>
+                    {headers.map((h, j) => (
+                      <th key={j} className="px-4 py-2 text-[11px] font-semibold">
+                        {parseInlineText(h)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border bg-white text-foreground/80">
+                  {bodyRows.map((row, rIdx) => (
+                    <tr key={rIdx} className="hover:bg-muted/10 transition-colors">
+                      {row.map((cell, cIdx) => (
+                        <td key={cIdx} className="px-4 py-2 text-[11px] leading-relaxed">
+                          {parseInlineText(cell)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        );
+        continue;
+      }
+    }
+
+    // Numbered list
+    if (/^\d+\.\s/.test(trimmed)) {
+      const items: string[] = [];
+      while (i < lines.length && /^\d+\.\s/.test(lines[i].trim())) {
+        items.push(lines[i].trim().replace(/^\d+\.\s/, ""));
+        i++;
+      }
+      elements.push(
+        <ol key={`ol${i}`} className="space-y-1.5 my-3 list-decimal list-inside pl-2 text-[11px]">
+          {items.map((item, j) => (
+            <li key={j} className="text-[11px] text-foreground/75 leading-relaxed">
+              <span>{parseInlineText(item)}</span>
+            </li>
+          ))}
+        </ol>
+      );
+      continue;
+    }
+
+    // Bullets
+    if (trimmed.startsWith("- ") || trimmed.startsWith("• ") || trimmed.startsWith("* ")) {
+      const items: string[] = [];
+      while (i < lines.length && (lines[i].trim().startsWith("- ") || lines[i].trim().startsWith("• ") || lines[i].trim().startsWith("* "))) {
+        items.push(lines[i].trim().replace(/^[-•*]\s/, ""));
+        i++;
+      }
+      elements.push(
+        <ul key={`ul${i}`} className="space-y-1.5 my-3 pl-2 text-[11px]">
+          {items.map((item, j) => (
+            <li key={j} className="flex items-start gap-2 text-[11px] text-foreground/75">
+              <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-primary mt-2" />
+              <span className="flex-1 leading-relaxed">{parseInlineText(item)}</span>
+            </li>
+          ))}
+        </ul>
+      );
+      continue;
+    }
+
+    elements.push(<p key={i} className="text-[11px] leading-relaxed my-2">{parseInlineText(trimmed)}</p>);
+    i++;
+  }
+
+  return <div className="space-y-1">{elements}</div>;
+}
+
+// ── Visual Aid Image Loader Component ──────────────────────────────────────────
+function VisualAidImage({ src, alt }: { src: string; alt: string }) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  if (error) return null;
+
+  return (
+    <div className="relative w-full bg-slate-50 min-h-32 flex items-center justify-center">
+      {loading && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/50 gap-2">
+          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span className="text-[9px] text-slate-400 font-bold tracking-wider uppercase animate-pulse">Generating visual aid...</span>
+        </div>
+      )}
+      <img
+        src={src}
+        alt={alt}
+        className={`w-full object-cover max-h-48 transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"}`}
+        onLoad={() => setLoading(false)}
+        onError={() => setError(true)}
+      />
+    </div>
+  );
+}
+
 // ── Syllabus PDF Reader Component ──────────────────────────────────────────────
 interface PDFReaderProps {
   subjectName: string;
@@ -61,18 +290,34 @@ interface PDFReaderProps {
 function SyllabusPDFReader({ subjectName, subjectCode, subjectId, yearRange, fileName, onClose }: PDFReaderProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [zoom, setZoom] = useState(100);
+  const [viewportWidth, setViewportWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1000);
+
+  useEffect(() => {
+    const handleResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const fitScale = viewportWidth < 850 ? (viewportWidth - 24) / 800 : 1;
+  const activeScale = (zoom / 100) * fitScale;
   
   // AI Chat States
   const [aiChatOpen, setAiChatOpen] = useState(false);
   const [inputText, setInputText] = useState("");
   const [messages, setMessages] = useState<Array<{ role: "user" | "assistant" | "smith" | "jones"; text: string; speaker?: string; imageUrl?: string }>>([]);
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const [audioState, setAudioState] = useState<"idle" | "speaking" | "teaching">("idle");
   const [speakingTurnIndex, setSpeakingTurnIndex] = useState<number | null>(null);
-  // 5-minute teach session timer (seconds)
+  // 40-minute teach session timer (seconds)
   const [teachTimer, setTeachTimer] = useState<number | null>(null);
   const teachTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  
+  // Teaching session tracking
+  const [teachingPageNum, setTeachingPageNum] = useState<number | null>(null);
+  const [qaMode, setQaMode] = useState(false);
+  const sessionIdRef = useRef(0); // increment to cancel active session
+  const chatAbortRef = useRef<AbortController | null>(null); // for stopping AI chat responses
+
   const audioControllerRef = useRef<{ stop: () => void } | null>(null);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -109,15 +354,13 @@ function SyllabusPDFReader({ subjectName, subjectCode, subjectId, yearRange, fil
   useEffect(() => {
     if (teachTimer === null) return;
     if (teachTimer <= 0) {
-      setTeachTimer(null);
-      if (teachTimerRef.current) clearInterval(teachTimerRef.current);
-      return;
+      handleStopAudio();
     }
   }, [teachTimer]);
 
-  const startTeachTimer = () => {
+  const startTeachTimer = (seconds = 2400) => {
     if (teachTimerRef.current) clearInterval(teachTimerRef.current);
-    setTeachTimer(300);
+    setTeachTimer(seconds);
     teachTimerRef.current = setInterval(() => {
       setTeachTimer(prev => {
         if (prev === null || prev <= 1) {
@@ -129,6 +372,17 @@ function SyllabusPDFReader({ subjectName, subjectCode, subjectId, yearRange, fil
     }, 1000);
   };
 
+  const adjustTimer = (delta: number) => {
+    if (delta < 0) {
+      const ok = window.confirm(
+        `⚠️ Reducing time means the AIs may rush and not cover everything.\n` +
+        `The less time you give, the harder it is for them to teach you everything.\n\nAre you sure you want to reduce the time?`
+      );
+      if (!ok) return;
+    }
+    setTeachTimer(prev => prev !== null ? Math.max(60, prev + delta) : null);
+  };
+
   const formatTimer = (secs: number) => {
     const m = Math.floor(secs / 60).toString().padStart(2, "0");
     const s = (secs % 60).toString().padStart(2, "0");
@@ -138,9 +392,78 @@ function SyllabusPDFReader({ subjectName, subjectCode, subjectId, yearRange, fil
   // Build image URL for visual topics via Pollinations.ai (free, no key needed)
   const buildImageUrl = (topic: string, subject: string) => {
     const prompt = encodeURIComponent(
-      `Educational diagram: ${topic} for IGCSE ${subject} students, clear infographic style, white background, labeled`
+      `Extremely simple minimal educational drawing: ${topic} for IGCSE ${subject} students, basic clean lines on plain white background, zero tiny text, minimal shapes, very clear and easy to understand`
     );
-    return `https://image.pollinations.ai/prompt/${prompt}?width=480&height=300&nologo=true&seed=${Math.floor(Math.random()*9999)}`;
+    return `https://image.pollinations.ai/prompt/${prompt}?width=640&height=400&nologo=true&seed=${Math.floor(Math.random()*9999)}`;
+  };
+
+  // Build content summary for any page number
+  const buildPageContentSummary = (pageNum: number): string => {
+    const objs = getObjectivesForPage(pageNum - 8);
+    const aims = getCategoryAims();
+    if (pageNum === 1) return `Subject: ${cleanName}, Code: ${subjectCode}, Year range: ${yearRange}.`;
+    if (pageNum === 2) return `Cambridge philosophy, learner attributes: confident, responsible, reflective, innovative, engaged. Duke University endorsement of rigour.`;
+    if (pageNum === 3) return `Table of Contents: ${objectives.map(o => `Chapter ${o.code}: ${o.title}`).join("; ")}.`;
+    if (pageNum === 4) return `Educational aims: ${aims.join("; ")}.`;
+    if (pageNum === 5) return `Curriculum overview: ${objectives.map(o => `${o.code} ${o.title} — ${o.description}`).join(" | ")}.`;
+    if (pageNum === 6) return `Assessment structure: tiered Core and Extended papers, durations, mark allocations, percentage weightings.`;
+    if (pageNum === 7) return `Assessment objectives: AO1 Knowledge & understanding, AO2 Handling information & problem solving, AO3 Experimental skills & investigation (if applicable).`;
+    if (pageNum >= 8 && pageNum <= 13) {
+      if (objs.length > 0) {
+        return objs.map(o =>
+          `${o.code}: ${o.title}. ${o.description}. Sub-topics: ${o.subObjectives?.map(so => `${so.code} ${so.title}: ${so.description}`).join("; ") || "See syllabus"}.`
+        ).join(" || ");
+      }
+      return `Syllabus conventions: command words (describe, explain, calculate, estimate), SI units, significant figures rules, mathematical notation.`;
+    }
+    return `Syllabus page ${pageNum}.`;
+  };
+
+  // Generate a 6-turn teaching script for one page via Groq
+  interface TeachTurn extends SpeechTurn { needsImage?: boolean; }
+
+  const generatePageScript = async (pageNum: number, contentSummary: string): Promise<TeachTurn[]> => {
+    const pageTitle = getPageTitle(pageNum);
+    const systemPrompt = `You are writing an educational podcast script. Two human professors are teaching the student who is listening to this lesson. Never mention Gemini, Google, or any AI models. Sophia and Marcus are real human professors, not AI agents. They should have a very bright, cheery, encouraging, and friendly personality, celebrating the student's learning!
+Prof. Sophia Jones (female, warm, cheery, encouraging, explains core concepts with real-world analogies) and Dr. Marcus Smith (male, deep-voiced, analytical, enthusiastic, friendly, breaks down exam objectives and key terms).Dialogues must flow like a real conversation.
+They must explicitly talk TO the student, breaking down key syllabus topics from the current page, and staying strictly on-point.
+The dialogue must flow like a real conversation between two co-teachers:
+- Sophia speaks first, introducing a concept and explaining it with a real-world analogy.
+- Marcus asks Sophia a direct clarifying question about it.
+- Sophia answers his question, and then asks Marcus to explain a related detail or next sub-topic.
+- Marcus answers and teaches that detail with deep analytical insight.
+- They take turns explaining and asking/answering questions, rather than one person asking and answering their own question.
+Output ONLY a raw JSON array of turns.`;
+
+    const userPrompt = `Write a 6-turn interactive teaching script for Page ${pageNum} ("${pageTitle}") of IGCSE ${cleanName} (${subjectCode}).
+    
+Current Page Content:
+${contentSummary}
+
+Strict script guidelines:
+- Turn 1: Prof. Sophia Jones — introduces the page's core topic, explaining it clearly with a real-world analogy (2-3 sentences, speaking to the student).
+- Turn 2: Dr. Marcus Smith — asks Sophia a direct clarifying question about what she just explained (1-2 sentences).
+- Turn 3: Prof. Sophia Jones — answers Marcus's question clearly, then asks Marcus to explain the next key syllabus point/objective on this page (2-3 sentences).
+- Turn 4: Dr. Marcus Smith — answers Sophia's question, teaching that key syllabus objective in detail (2-3 sentences).
+- Turn 5: Prof. Sophia/Dr. Marcus — explains a high-yield exam tip, diagram, or common student pitfall for this page (2-3 sentences). Set "needsImage": true on this turn if it contains a graph, cycle, equation, or complex process.
+- Turn 6: The other professor — summarizes the key takeaway of this page in 2 sentences.
+
+Output ONLY this JSON array format (no markdown code blocks, no backticks, no other text):
+[
+  {"speaker":"Prof. Sophia Jones","gender":"female","text":"..."},
+  {"speaker":"Dr. Marcus Smith","gender":"male","text":"..."},
+  {"speaker":"Prof. Sophia Jones","gender":"female","text":"..."},
+  {"speaker":"Dr. Marcus Smith","gender":"male","text":"..."},
+  {"speaker":"Prof. Sophia/Dr. Marcus","gender":"female/male","text":"...", "needsImage":true/false},
+  {"speaker":"Prof. Sophia/Dr. Marcus","gender":"female/male","text":"..."}
+]`;
+
+    const raw = await groqAsk(systemPrompt, userPrompt, { max_tokens: 1400, temperature: 0.72 });
+    let json = raw.trim();
+    if (json.startsWith("```")) json = json.replace(/^```(json)?/, "").replace(/```$/, "").trim();
+    const s = json.indexOf("["); const e = json.lastIndexOf("]");
+    if (s !== -1 && e > s) json = json.slice(s, e + 1);
+    return JSON.parse(json) as TeachTurn[];
   };
 
   const handlePrint = () => {
@@ -703,7 +1026,7 @@ function SyllabusPDFReader({ subjectName, subjectCode, subjectId, yearRange, fil
     setIsTyping(true);
 
     try {
-      const systemPrompt = `You are a warm, expert IGCSE tutor. Your job is to teach students the syllabus content in a thorough, engaging, and easy-to-understand way. Speak directly to the student. Do not use headers or bullet points — write in flowing, natural paragraphs as if you are speaking. Be extremely detailed and comprehensive.`;
+      const systemPrompt = `You are a warm, expert IGCSE tutor with a cheery, bright, and encouraging personality. Your job is to teach students the syllabus content in a thorough, engaging, and easy-to-understand way, celebrating their curiosity! Never mention Gemini, Google, or any AI model names. If asked who you are, you are an expert human tutor on ExamGlow. Speak directly to the student. Do not use headers or bullet points — write in flowing, natural paragraphs as if you are speaking. Be extremely detailed and comprehensive.`;
 
       const userPrompt = `Teach me everything on Page ${currentPage} ("${activePageTitle}") of the IGCSE ${clean} (${subjectCode}) syllabus.
 
@@ -740,143 +1063,92 @@ Give a complete, long, detailed lesson covering every single concept, term, aim,
     }
   };
 
-  // ── AI Teaching Conversation (5-minute session) ──
+  // ── 30-Minute All-Pages AI Teaching Session ──
   const handleAiTeach = async () => {
-    // Stop any active speech first
-    if (audioControllerRef.current) {
-      audioControllerRef.current.stop();
-      audioControllerRef.current = null;
-    }
+    // Stop any active session
+    sessionIdRef.current++;
+    const mySession = sessionIdRef.current;
+    if (audioControllerRef.current) { audioControllerRef.current.stop(); audioControllerRef.current = null; }
     if (teachTimerRef.current) clearInterval(teachTimerRef.current);
     setAudioState("idle");
     setSpeakingTurnIndex(null);
     setTeachTimer(null);
-
-    const clean = cleanSubjectName(subjectName);
-    const activePageTitle = getPageTitle(currentPage);
-    const aims = getCategoryAims().join("\n* ");
-    const objs = getObjectivesForPage(currentPage - 8);
-
-    let contentSummary = "";
-    if (currentPage === 1) {
-      contentSummary = `Subject: ${clean}, Code: ${subjectCode}, Years: ${yearRange}, Cover Page.`;
-    } else if (currentPage === 2) {
-      contentSummary = `Philosophy, pathway, and Cambridge Learner Attributes: confident, responsible, reflective, innovative, engaged. Duke University endorsement of rigour.`;
-    } else if (currentPage === 3) {
-      contentSummary = `Table of Contents. Chapters: ${objectives.map(o => `Chapter ${o.code}: ${o.title}`).join(", ")}.`;
-    } else if (currentPage === 4) {
-      contentSummary = `Educational Aims:\n* ${aims}`;
-    } else if (currentPage === 5) {
-      contentSummary = `Curriculum Content Overview. Chapters:\n${objectives.map(o => `* Chapter ${o.code}: ${o.title} - ${o.description}`).join("\n")}`;
-    } else if (currentPage === 6) {
-      contentSummary = `Details of the Assessment: tiered paper structure, core vs extended, durations, marks, and percentage weightings.`;
-    } else if (currentPage === 7) {
-      contentSummary = `Assessment Objectives: AO1 (Knowledge with understanding), AO2 (Handling information and problem solving), AO3 (Experimental skills and investigation) if applicable, and weightings.`;
-    } else if (currentPage >= 8 && currentPage <= 13) {
-      if (objs.length > 0) {
-        contentSummary = `Subject Content Guide:\n${objs.map(o => `Chapter ${o.code}: ${o.title}\nDescription: ${o.description}\nSub-topics:\n${o.subObjectives?.map(so => `- ${so.code} ${so.title}: ${so.description}`).join("\n")}`).join("\n\n")}`;
-      } else {
-        contentSummary = `Syllabus Review and Conventions: Command words (explain, describe, calculate, estimate), units, mathematical conventions, and three significant figures rules.`;
-      }
-    }
+    setQaMode(false);
+    setTeachingPageNum(null);
 
     setAiChatOpen(true);
-    setIsTyping(true);
+    setMessages([{ role: "assistant", text: `🎓 **40-Minute Teaching Session**\nProf. Sophia Jones & Dr. Marcus Smith will now teach you every page of the IGCSE ${cleanName} syllabus from start to finish. Sit back, listen, and learn!` }]);
+    setAudioState("teaching");
+    startTeachTimer(2400);
 
-    try {
-      const systemPrompt = `You are writing a script for a 5-minute teaching conversation between two AI professors who are teaching a student together. Prof. AI Jones (female, warm, relatable) ALWAYS speaks first and explains concepts clearly. Dr. AI Smith (male, analytical, enthusiastic) follows up by asking a clarifying question about what Prof. Jones just said, then answers it himself to go deeper. They alternate this way — explain, then question-and-answer — covering every concept on the page. They always remember they are teaching the student watching and listening. Output ONLY a raw JSON array. No markdown, no code fences, no extra text.`;
+    for (let pg = 1; pg <= totalPages; pg++) {
+      if (sessionIdRef.current !== mySession) break;
 
-      const userPrompt = `Generate a 10-turn teaching script for Page ${currentPage} ("${activePageTitle}") of the IGCSE ${clean} (${subjectCode}) syllabus.
+      // Advance the visible page
+      setCurrentPage(pg);
+      setTeachingPageNum(pg);
 
-Page content:
-${contentSummary}
+      // Page announcement
+      setMessages(prev => [...prev, {
+        role: "assistant",
+        text: `\n📖 **Page ${pg} of ${totalPages}: ${getPageTitle(pg)}**`
+      }]);
 
-Strict rules:
-- Turn 1: Prof. AI Jones starts — introduces and explains the first key concept on this page (3-4 sentences, warm and clear).
-- Turn 2: Dr. AI Smith asks a genuine question about what Prof. Jones just said, then answers it himself with a deeper explanation (3-4 sentences).
-- Turns 3-10: continue alternating exactly like this — Jones explains the next concept, Smith asks and answers about it — until ALL concepts on the page are covered.
-- Both professors know the student is listening and learning. They speak to teach, not to debate.
-- Also add a field "needsImage": true on turns where a diagram or visual would REALLY help (e.g. graphs, structures, processes, anatomy). Otherwise omit it.
-- Each turn: 3-4 sentences max. Conversational and educational.
-- Output ONLY this JSON array:
-[{"speaker":"Prof. AI Jones","gender":"female","text":"..."},
-{"speaker":"Dr. AI Smith","gender":"male","text":"..."},
-...up to 10 turns total]`;
-
-      const rawAnswer = await groqAsk(systemPrompt, userPrompt, { max_tokens: 3500, temperature: 0.75 });
-
-      setIsTyping(false);
-
-      // Extract JSON array robustly
-      let rawJson = rawAnswer.trim();
-      if (rawJson.startsWith("```")) {
-        rawJson = rawJson.replace(/^```(json)?/, "").replace(/```$/, "").trim();
-      }
-      const jsonStart = rawJson.indexOf("[");
-      const jsonEnd = rawJson.lastIndexOf("]");
-      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
-        rawJson = rawJson.slice(jsonStart, jsonEnd + 1);
-      }
-
-      interface TeachTurn extends SpeechTurn { needsImage?: boolean; }
-      let turns: TeachTurn[];
+      // Generate script for this page
+      let turns: TeachTurn[] = [];
       try {
-        turns = JSON.parse(rawJson);
-      } catch (e) {
-        console.warn("AI returned invalid JSON for teach session, parsing as paragraphs", e);
-        const paragraphs = rawJson.split("\n\n").filter(p => p.trim());
-        turns = paragraphs.map((p, i) => ({
-          speaker: i % 2 === 0 ? "Prof. AI Jones" : "Dr. AI Smith",
-          gender: (i % 2 === 0 ? "female" : "male") as "female" | "male",
-          text: p.replace(/^(Prof\.\s*AI\s*Jones|Dr\.\s*AI\s*Smith|Jones|Smith):\s*/i, "").trim()
-        })).slice(0, 10);
+        setIsTyping(true);
+        const summary = buildPageContentSummary(pg);
+        turns = await generatePageScript(pg, summary);
+        setIsTyping(false);
+      } catch (err) {
+        setIsTyping(false);
+        console.warn(`Page ${pg} script generation failed, skipping`, err);
+        setMessages(prev => [...prev, { role: "assistant", text: `⚠️ Could not generate script for page ${pg}, moving on...` }]);
+        continue;
       }
 
-      setMessages(prev => [
-        ...prev,
-        { role: "assistant", text: `🎓 **AI Teaching Session — Page ${currentPage}** (5 min)\n*Prof. Jones & Dr. Smith are teaching you together. Sit back and learn!*` }
-      ]);
+      if (sessionIdRef.current !== mySession) break;
 
-      setAudioState("teaching");
-      startTeachTimer();
-
-      audioControllerRef.current = playSpeechConversation(
-        turns,
-        (idx) => {
-          setSpeakingTurnIndex(idx);
-          const turn = turns[idx] as TeachTurn;
-          // Add text message
-          setMessages(prev => [
-            ...prev,
-            {
+      // Play all turns for this page and wait for completion
+      await new Promise<void>((resolve) => {
+        const ctrl = playSpeechConversation(
+          turns,
+          (idx) => {
+            if (sessionIdRef.current !== mySession) { ctrl.stop(); return; }
+            setSpeakingTurnIndex(idx);
+            const turn = turns[idx] as TeachTurn;
+            setMessages(prev => [...prev, {
               role: turn.gender === "female" ? "jones" : "smith",
               text: turn.text,
               speaker: turn.speaker,
-              imageUrl: turn.needsImage
-                ? buildImageUrl(turn.text.split(".")[0], clean)
-                : undefined
-            }
-          ]);
-        },
-        () => {
-          setAudioState("idle");
-          setSpeakingTurnIndex(null);
-          if (teachTimerRef.current) clearInterval(teachTimerRef.current);
-          setTeachTimer(null);
-          setMessages(prev => [
-            ...prev,
-            { role: "assistant", text: "✅ Teaching session complete! Feel free to ask any follow-up questions below." }
-          ]);
-        }
-      );
-    } catch (err) {
-      console.error("AI teach session failed", err);
-      setIsTyping(false);
-      setMessages(prev => [
-        ...prev,
-        { role: "assistant", text: `❌ Could not start teaching session: ${err instanceof Error ? err.message : "Unknown error"}` }
-      ]);
+              imageUrl: (turn.needsImage || idx === 4) ? buildImageUrl(turn.text.split(".")[0], cleanName) : undefined
+            }]);
+          },
+          () => { resolve(); }
+        );
+        audioControllerRef.current = { stop: () => { ctrl.stop(); resolve(); } };
+      });
+
+      setSpeakingTurnIndex(null);
+      if (sessionIdRef.current !== mySession) break;
+
+      // Brief pause between pages
+      await new Promise(r => setTimeout(r, 600));
     }
+
+    if (sessionIdRef.current !== mySession) return;
+
+    // All pages done — enter Q&A
+    setAudioState("idle");
+    setTeachingPageNum(null);
+    if (teachTimerRef.current) clearInterval(teachTimerRef.current);
+    setTeachTimer(null);
+    setQaMode(true);
+    setMessages(prev => [...prev, {
+      role: "assistant",
+      text: `✅ **Teaching Complete!** Prof. Jones & Dr. Smith have covered all ${totalPages} pages of the IGCSE ${cleanName} syllabus.\n\nDo you have any questions? Ask anything you’re unsure about and Dr. Smith will answer.`
+    }]);
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -888,144 +1160,158 @@ Strict rules:
     setInputText("");
     setIsTyping(true);
 
-    // Query Groq directly — no backend needed
-    // Detect if user wants a long answer
-    const wantsLong = /long|detail|explain everything|full|comprehensive|elaborate/i.test(userMsg);
-    const maxTok = wantsLong ? 1800 : 400;
-    try {
-      const systemPrompt = `You are a concise IGCSE tutor specialising in ${cleanName} (code ${subjectCode}), Page ${currentPage} (${getPageTitle(currentPage)}). Answer clearly and helpfully. ${wantsLong ? "Give a thorough, detailed explanation." : "Keep your answer short — 2-4 sentences unless the student asks for more detail."}  Use plain text only, no markdown.`;
+    const controller = new AbortController();
+    chatAbortRef.current = controller;
 
-      const answer = await groqAsk(systemPrompt, userMsg, { max_tokens: maxTok, temperature: 0.65 });
-      setMessages(prev => [...prev, { role: "assistant", text: answer }]);
+    const wantsLong = /long|detail|explain everything|full|comprehensive|elaborate/i.test(userMsg);
+    const maxTok = wantsLong ? 2000 : 450;
+
+    try {
+      // In Q&A mode Dr. Smith answers in character; otherwise general tutor
+      const systemPrompt = qaMode
+        ? `You are Dr. Marcus Smith, a bright, cheery, and highly encouraging IGCSE professor who just finished teaching the entire ${cleanName} (code ${subjectCode}) syllabus. Never mention Gemini, Google, or any AI model names. The student is asking a follow-up question. Answer in character as Dr. Smith — warm, enthusiastic, friendly, and thorough. ${wantsLong ? "Give a detailed explanation." : "Keep your answer clear and concise, 2-5 sentences."}  Plain text only.`
+        : `You are a cheery, friendly, and concise IGCSE tutor specialising in ${cleanName} (code ${subjectCode}), currently on Page ${currentPage} (${getPageTitle(currentPage)}). Never mention Gemini, Google, or any AI model names. Be warm and encouraging in your explanation. ${wantsLong ? "Give a thorough, detailed explanation." : "Keep your answer short — 2-4 sentences."}  Plain text only.`;
+
+      const answer = await groqAsk(systemPrompt, userMsg, { max_tokens: maxTok, temperature: 0.65, signal: controller.signal });
+
+      if (controller.signal.aborted) return;
+      chatAbortRef.current = null;
+
+      // In Q&A mode, show answer as Dr. Smith
+      if (qaMode) {
+        setMessages(prev => [...prev, { role: "smith", text: answer, speaker: "Dr. Marcus Smith" }]);
+        // Speak the answer aloud as Dr. Smith (male voice)
+        speakSingleTurn(answer, "male", () => {}, () => {});
+      } else {
+        setMessages(prev => [...prev, { role: "assistant", text: answer }]);
+      }
       setIsTyping(false);
     } catch (err) {
+      if ((err as any)?.name === "AbortError") return;
       console.error("AI chat failed", err);
-      setMessages(prev => [
-        ...prev,
-        { role: "assistant", text: `❌ Could not reach AI: ${err instanceof Error ? err.message : "Unknown error"}.` }
-      ]);
+      setMessages(prev => [...prev, { role: "assistant", text: `❌ Could not reach AI: ${err instanceof Error ? err.message : "Unknown error"}.` }]);
       setIsTyping(false);
     }
   };
 
+  const handleStopChat = () => {
+    chatAbortRef.current?.abort();
+    chatAbortRef.current = null;
+    setIsTyping(false);
+  };
+
   const handleStopAudio = () => {
+    // Invalidate any running teaching session
+    sessionIdRef.current++;
     if (audioControllerRef.current) {
       audioControllerRef.current.stop();
       audioControllerRef.current = null;
     }
     setAudioState("idle");
     setSpeakingTurnIndex(null);
+    setTeachingPageNum(null);
+    if (teachTimerRef.current) clearInterval(teachTimerRef.current);
+    setTeachTimer(null);
   };
 
   return (
     <div className="fixed inset-0 z-[200] bg-slate-900/95 flex flex-col animate-fade-in font-sans">
       {/* Top Controls Toolbar */}
-      <div className="h-14 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-4 text-white shrink-0 shadow-md">
-        <div className="flex items-center gap-3 min-w-0">
-          <FileText className="w-5 h-5 text-red-400 shrink-0" />
+      <div className="h-14 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-3 text-white shrink-0 shadow-md">
+        <div className="flex items-center gap-2 min-w-0 max-w-[35%] sm:max-w-none">
+          <FileText className="w-4.5 h-4.5 text-red-400 shrink-0" />
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold truncate">{fileName}</h3>
-            <p className="text-[10px] text-slate-400">
-              Page {currentPage} of {totalPages} ({getPageTitle(currentPage)})
+            <h3 className="text-xs sm:text-sm font-bold truncate text-slate-100">{cleanName}</h3>
+            <p className="text-[8px] sm:text-[10px] text-slate-400 truncate">
+              Pg {currentPage} ({getPageTitle(currentPage)})
             </p>
           </div>
         </div>
 
         {/* Toolbar Middle: Navigation & Zoom */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1 bg-slate-900/60 rounded-lg p-0.5 border border-slate-700">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-0.5 bg-slate-900/60 rounded-lg p-0.5 border border-slate-700">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="p-1.5 rounded hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
+              className="p-1 sm:p-1.5 rounded hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
               title="Previous Page"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3.5 h-3.5" />
             </button>
-            <span className="text-xs px-2.5 font-mono min-w-[3.5rem] text-center">
-              P. {currentPage} / {totalPages}
+            <span className="text-[10px] sm:text-xs px-1 sm:px-2.5 font-mono min-w-[2.8rem] sm:min-w-[3.5rem] text-center">
+              P. {currentPage}/{totalPages}
             </span>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="p-1.5 rounded hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
+              className="p-1 sm:p-1.5 rounded hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
               title="Next Page"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1.5 bg-slate-900/60 rounded-lg p-0.5 border border-slate-700">
-            <button
-              onClick={() => setZoom((z) => Math.max(70, z - 10))}
-              disabled={zoom === 70}
-              className="p-1.5 rounded hover:bg-slate-700 disabled:opacity-40 transition-colors cursor-pointer"
-              title="Zoom Out"
-            >
-              <ZoomOut className="w-4 h-4" />
-            </button>
-            <span className="text-xs px-1 font-mono min-w-[3rem] text-center">{zoom}%</span>
-            <button
-              onClick={() => setZoom((z) => Math.min(150, z + 10))}
-              disabled={zoom === 150}
-              className="p-1.5 rounded hover:bg-slate-700 disabled:opacity-40 transition-colors cursor-pointer"
-              title="Zoom In"
-            >
-              <ZoomIn className="w-4 h-4" />
-            </button>
-          </div>
+
         </div>
 
         {/* Toolbar Action / Close */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {audioState !== "idle" && (
             <button
               onClick={handleStopAudio}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer"
+              className="flex items-center gap-1 px-2 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-[10px] sm:text-xs font-bold transition-all shadow-sm cursor-pointer"
               title="Stop speech"
             >
-              <VolumeX className="w-4 h-4 animate-pulse" />
-              <span>Stop Audio</span>
+              <VolumeX className="w-3.5 h-3.5" />
+              <span className="hidden xs:inline">Stop</span>
             </button>
           )}
           <button
             onClick={handlePrint}
-            className="p-2 rounded hover:bg-slate-700 transition-colors hidden md:block cursor-pointer"
+            className="p-1.5 rounded hover:bg-slate-700 transition-colors hidden md:block cursor-pointer"
             title="Print Document"
           >
             <Printer className="w-4.5 h-4.5" />
           </button>
           <button
             onClick={handleDownload}
-            className="p-2 rounded hover:bg-slate-700 transition-colors hidden md:block cursor-pointer"
+            className="p-1.5 rounded hover:bg-slate-700 transition-colors hidden md:block cursor-pointer"
             title="Download PDF"
           >
             <Download className="w-4.5 h-4.5" />
           </button>
-          <div className="h-6 w-px bg-slate-700 mx-1 hidden md:block" />
+          <div className="h-6 w-px bg-slate-700 mx-0.5 hidden md:block" />
           <button
             onClick={onClose}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-650 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm cursor-pointer"
+            className="flex items-center gap-1 px-2.5 py-1.5 bg-red-650 hover:bg-red-700 text-white rounded-lg text-[10px] sm:text-xs font-bold transition-all shadow-sm cursor-pointer"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Close</span>
           </button>
         </div>
       </div>
 
       {/* Main Canvas Scroll Area */}
-      <div className="flex-1 overflow-auto p-4 md:p-8 flex justify-center bg-slate-800 relative">
-        <div 
-          className="bg-white shadow-2xl relative select-text transition-all duration-300 origin-top flex flex-col justify-between"
-          style={{ 
-            width: "800px", 
-            minHeight: "1100px",
-            transform: `scale(${zoom / 100})`,
-            marginBottom: `${Math.max(0, (zoom / 100 - 1) * 1100) + 32}px`,
-            marginTop: "8px"
+      <div className="flex-1 overflow-auto p-2 sm:p-4 md:p-8 flex bg-slate-800 relative">
+        <div
+          style={{
+            width: `${800 * activeScale}px`,
+            height: `${1100 * activeScale}px`,
+            position: "relative",
+            margin: "auto",
+            transition: "width 0.3s ease, height 0.3s ease",
           }}
         >
-          {/* Document Content Pages */}
+          <div 
+            className="bg-white shadow-2xl absolute left-0 top-0 select-text transition-all duration-300 origin-top-left flex flex-col justify-between"
+            style={{ 
+              width: "800px", 
+              height: "1100px",
+              transform: `scale(${activeScale})`,
+            }}
+          >
+            {/* Document Content Pages */}
           <div className="p-12 flex-1 flex flex-col justify-between text-slate-850">
             {/* Page Rendering based on currentPage state */}
             <>
@@ -1398,19 +1684,28 @@ Strict rules:
           </div>
         </div>
       </div>
+    </div>
 
       {/* Floating AI Bot Panel in Bottom Right */}
-      <div className="fixed bottom-6 right-6 z-[250] flex flex-col items-end">
+      <div className="fixed bottom-3 right-3 sm:bottom-6 sm:right-6 z-[250] flex flex-col items-end max-w-[calc(100vw-1.5rem)] sm:max-w-none">
         {/* Chat Pane */}
         {aiChatOpen && (
-          <div className="w-96 h-[480px] bg-white border border-slate-200 rounded-3xl shadow-2xl flex flex-col overflow-hidden mb-4 animate-slide-up animate-duration-200">
+          <div className="w-[calc(100vw-1.5rem)] sm:w-96 h-[410px] sm:h-[480px] bg-white border border-slate-200 rounded-3xl shadow-2xl flex flex-col overflow-hidden mb-4 animate-slide-up animate-duration-200">
             {/* Chat Header */}
             <div className="p-4 bg-gradient-to-r from-primary to-purple-600 text-white flex justify-between items-center shrink-0 shadow-md">
-              <div className="flex items-center gap-2">
-                <Bot className="w-5 h-5" />
-                <div>
-                  <h4 className="text-sm font-bold leading-none">AI Tutor: {cleanName}</h4>
-                  <p className="text-[10px] text-white/80 mt-1">Syllabus Helper — Page {currentPage}</p>
+              <div className="flex items-center gap-2 min-w-0">
+                {qaMode ? <MessageCircleQuestion className="w-5 h-5 shrink-0" /> : <Bot className="w-5 h-5 shrink-0" />}
+                <div className="min-w-0">
+                  <h4 className="text-sm font-bold leading-none truncate">
+                    {qaMode ? "Q&A with Dr. Smith" : `AI Tutor: ${cleanName}`}
+                  </h4>
+                  <p className="text-[10px] text-white/80 mt-1">
+                    {teachingPageNum !== null
+                      ? `Teaching Page ${teachingPageNum} of ${totalPages}…`
+                      : qaMode
+                      ? "Ask anything — Dr. Smith will answer aloud"
+                      : `Syllabus Helper — Page ${currentPage}`}
+                  </p>
                 </div>
               </div>
               <button 
@@ -1446,13 +1741,33 @@ Strict rules:
               </div>
               {/* 5-minute countdown timer */}
               {teachTimer !== null && (
-                <div className="flex items-center justify-center gap-2 bg-purple-50 border border-purple-100 rounded-xl py-1.5 px-3">
-                  <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
-                  <span className="text-[11px] font-bold text-purple-700">Session Timer:</span>
-                  <span className={`text-[13px] font-black font-mono ${
-                    teachTimer <= 30 ? "text-red-600" : "text-purple-800"
-                  }`}>{formatTimer(teachTimer)}</span>
-                  <span className="text-[10px] text-purple-400">/ 05:00</span>
+                <div className="flex items-center justify-between gap-1 bg-purple-50 border border-purple-100 rounded-xl py-1.5 px-2.5">
+                  <button
+                    onClick={() => adjustTimer(-300)}
+                    title="Remove 5 minutes (warning: AIs may rush)"
+                    className="w-6 h-6 rounded-lg bg-white border border-red-200 text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+                    {teachingPageNum !== null && (
+                      <span className="text-[10px] font-bold text-purple-600 bg-purple-100 px-1.5 py-0.5 rounded-md">
+                        Pg {teachingPageNum}/{totalPages}
+                      </span>
+                    )}
+                    <span className={`text-[14px] font-black font-mono ${
+                      teachTimer <= 60 ? "text-red-600 animate-pulse" : "text-purple-800"
+                    }`}>{formatTimer(teachTimer)}</span>
+                    <span className="text-[9px] text-purple-400">/ 40:00</span>
+                  </div>
+                  <button
+                    onClick={() => adjustTimer(300)}
+                    title="Add 5 minutes"
+                    className="w-6 h-6 rounded-lg bg-white border border-green-200 text-green-600 hover:bg-green-50 flex items-center justify-center transition-colors cursor-pointer"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
                 </div>
               )}
             </div>
@@ -1462,7 +1777,11 @@ Strict rules:
               {messages.length === 0 && (
                 <div className="text-center py-8 text-slate-400">
                   <Bot className="w-8 h-8 mx-auto mb-2 text-slate-300" />
-                  <p className="text-[11px]">Ask a question, click <strong>Teach Me This</strong> for a solo lesson, or <strong>AI Teach Session</strong> for a 5-min interactive audio session with Prof. Jones &amp; Dr. Smith!</p>
+                  <p className="text-[11px] leading-relaxed">
+                    Ask a question, click <strong>Teach Me This</strong> for a solo lesson,<br/>
+                    or <strong>AI Teach Session</strong> for a full 40-min walkthrough<br/>
+                    where Prof. Sophia &amp; Dr. Smith teach every page!
+                  </p>
                 </div>
               )}
               
@@ -1470,6 +1789,11 @@ Strict rules:
                 const isUser = msg.role === "user";
                 const isSmith = msg.role === "smith";
                 const isJones = msg.role === "jones";
+                
+                // During teaching mode, don't render the dialogue turns as chat bubbles
+                if (audioState === "teaching" && (isSmith || isJones)) {
+                  return null;
+                }
                 
                 let bgClass = "bg-slate-100 text-slate-800";
                 let alignClass = "justify-start";
@@ -1491,26 +1815,22 @@ Strict rules:
                   avatarLetter = "J";
                 }
 
-                // A turn is actively speaking if its index matches the current speaking index
-                const isActiveSpeaking = speakingTurnIndex !== null &&
-                  ((isSmith || isJones) && speakingTurnIndex === idx - (messages.findIndex(m => m.role === "smith" || m.role === "jones")));
+                // Highlight the most recently added smith/jones turn while speaking
+                const smithJonesMsgs = messages.filter(m => m.role === "smith" || m.role === "jones");
+                const mySmithJonesIdx = isSmith || isJones ? smithJonesMsgs.indexOf(msg) : -1;
+                const isActiveSpeaking = speakingTurnIndex !== null && mySmithJonesIdx === speakingTurnIndex;
                 const isTutorSpeaking = msg.role === "assistant" && audioState === "speaking" && idx === messages.length - 1;
 
                 return (
                   <div key={idx} className={`flex ${alignClass} items-end gap-2 animate-fade-in`}>
-                    {!isUser && (
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-[10px] font-black ${avatarColor} shadow-sm`}>
-                        {avatarLetter}
-                      </div>
-                    )}
-                    <div className="max-w-[78%] min-w-[80px]">
+                    <div className="max-w-[87%] min-w-[80px]">
                       <span className="text-[9px] text-slate-400 font-bold block mb-0.5 ml-1">
                         {label} {(isActiveSpeaking || isTutorSpeaking) && <span className="text-amber-500">🗣️</span>}
                       </span>
                       <div className={`px-3 py-2 rounded-2xl text-[11px] leading-[1.55] shadow-sm ${bgClass} ${
                         (isActiveSpeaking || isTutorSpeaking) ? "ring-2 ring-amber-400" : ""
                       }`}>
-                        {msg.text}
+                        {renderStructuredContent(msg.text)}
                       </div>
                       {/* Inline image if this turn has a visual */}
                       {msg.imageUrl && (
@@ -1531,13 +1851,105 @@ Strict rules:
 
               {isTyping && (
                 <div className="flex justify-start items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs font-bold animate-bounce">
-                    T
-                  </div>
                   <div className="p-3 bg-slate-100 text-slate-500 rounded-2xl text-xs italic">
                     AI is writing response...
                   </div>
                 </div>
+              )}
+              {/* Active Speaker Immersive Card during Teaching */}
+              {audioState === "teaching" && speakingTurnIndex !== null && (
+                (() => {
+                  const speakMsgs = messages.filter(m => m.role === "smith" || m.role === "jones");
+                  const activeMsg = speakMsgs[speakingTurnIndex];
+                  if (!activeMsg) return null;
+
+                  const isSophia = activeMsg.role === "jones";
+
+                  return (
+                    <div className="mx-3 mb-3 bg-slate-50 border border-slate-200/85 rounded-2xl p-4 flex flex-col gap-4 shadow-sm select-none animate-fade-in">
+                      {/* Two Teachers Side-by-Side */}
+                      <div className="grid grid-cols-2 gap-3">
+                        {/* Sophia Jones Card */}
+                        <div className={`p-3 rounded-xl border transition-all duration-355 flex flex-col items-center text-center ${
+                          isSophia 
+                            ? "bg-white border-rose-400 shadow-md shadow-rose-100 scale-[1.03] ring-1 ring-rose-300"
+                            : "bg-slate-100/60 border-slate-250 opacity-60 scale-100"
+                        }`}>
+                          <div className={`w-11 h-11 rounded-full flex items-center justify-center text-base font-bold shadow-sm relative ${
+                            isSophia ? "bg-rose-500 text-white animate-pulse" : "bg-slate-400 text-white"
+                          }`}>
+                            J
+                            {isSophia && (
+                              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+                              </span>
+                            )}
+                          </div>
+                          <h5 className="text-[11px] font-bold text-slate-800 mt-2">Prof. Sophia Jones</h5>
+                          <span className="text-[9px] font-semibold text-slate-400 block mt-0.5">Analogy Expert</span>
+                          
+                          {isSophia && (
+                            <div className="flex items-center gap-0.5 h-3 px-1.5 py-0.5 bg-rose-50 rounded-md border border-rose-100 mt-2">
+                              <span className="w-0.5 bg-rose-500 rounded-full h-1.5" style={{ animation: "wave 1.2s ease-in-out infinite alternate" }} />
+                              <span className="w-0.5 bg-rose-500 rounded-full h-2.5" style={{ animation: "wave 0.8s ease-in-out infinite alternate 0.2s" }} />
+                              <span className="w-0.5 bg-rose-500 rounded-full h-1" style={{ animation: "wave 1.0s ease-in-out infinite alternate 0.4s" }} />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Marcus Smith Card */}
+                        <div className={`p-3 rounded-xl border transition-all duration-355 flex flex-col items-center text-center ${
+                          !isSophia 
+                            ? "bg-white border-blue-400 shadow-md shadow-blue-100 scale-[1.03] ring-1 ring-blue-300"
+                            : "bg-slate-100/60 border-slate-250 opacity-60 scale-100"
+                        }`}>
+                          <div className={`w-11 h-11 rounded-full flex items-center justify-center text-base font-bold shadow-sm relative ${
+                            !isSophia ? "bg-blue-500 text-white animate-pulse" : "bg-slate-400 text-white"
+                          }`}>
+                            S
+                            {!isSophia && (
+                              <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                              </span>
+                            )}
+                          </div>
+                          <h5 className="text-[11px] font-bold text-slate-800 mt-2">Dr. Marcus Smith</h5>
+                          <span className="text-[9px] font-semibold text-slate-400 block mt-0.5">Exam Insights</span>
+
+                          {!isSophia && (
+                            <div className="flex items-center gap-0.5 h-3 px-1.5 py-0.5 bg-blue-50 rounded-md border border-blue-100 mt-2">
+                              <span className="w-0.5 bg-blue-500 rounded-full h-1.5" style={{ animation: "wave 1.2s ease-in-out infinite alternate" }} />
+                              <span className="w-0.5 bg-blue-500 rounded-full h-2.5" style={{ animation: "wave 0.8s ease-in-out infinite alternate 0.2s" }} />
+                              <span className="w-0.5 bg-blue-500 rounded-full h-1" style={{ animation: "wave 1.0s ease-in-out infinite alternate 0.4s" }} />
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Active Visual Aid / Diagram with click-to-expand lightbox */}
+                      {activeMsg.imageUrl && (
+                        <div 
+                          onClick={() => setLightboxUrl(activeMsg.imageUrl!)}
+                          className="rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-white animate-scale-up cursor-pointer hover:border-primary/45 transition-colors relative group"
+                        >
+                          <VisualAidImage src={activeMsg.imageUrl} alt="Educational illustration" />
+                          <div className="text-[9px] text-center text-slate-500 py-1.5 bg-slate-50 font-semibold border-t border-slate-100 flex items-center justify-center gap-1.5 group-hover:text-primary transition-colors">
+                            <span>🔍 Click diagram to expand view</span>
+                          </div>
+                        </div>
+                      )}
+                      
+                      <style>{`
+                        @keyframes wave {
+                          0% { height: 4px; }
+                          100% { height: 12px; }
+                        }
+                      `}</style>
+                    </div>
+                  );
+                })()
               )}
               <div ref={chatEndRef} />
             </div>
@@ -1551,12 +1963,23 @@ Strict rules:
                 placeholder="Ask about exam structure or topics..."
                 className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none focus:border-primary/40 focus:ring-2 focus:ring-primary/5 transition-all text-slate-800"
               />
-              <button 
-                type="submit"
-                className="p-2 bg-primary hover:bg-primary/95 text-white rounded-xl transition-all shadow-sm shrink-0 flex items-center justify-center cursor-pointer"
-              >
-                <Send className="w-4 h-4" />
-              </button>
+              {isTyping ? (
+                <button
+                  type="button"
+                  onClick={handleStopChat}
+                  className="p-2 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-all shadow-sm shrink-0 flex items-center justify-center cursor-pointer animate-pulse"
+                  title="Stop generating"
+                >
+                  <Square className="w-4 h-4" />
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  className="p-2 bg-primary hover:bg-primary/95 text-white rounded-xl transition-all shadow-sm shrink-0 flex items-center justify-center cursor-pointer"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              )}
             </form>
           </div>
         )}
@@ -1580,6 +2003,53 @@ Strict rules:
               )}
             </div>
           )}
+        </button>
+      </div>
+
+      {/* Lightbox Expanded Image Overlay */}
+      {lightboxUrl && (
+        <div 
+          onClick={() => setLightboxUrl(null)}
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/90 p-4 animate-in fade-in duration-200 cursor-pointer"
+        >
+          <button
+            onClick={() => setLightboxUrl(null)}
+            className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all cursor-pointer border border-white/10 z-[110]"
+            title="Close expanded view"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          <div className="max-w-5xl max-h-[85vh] w-full flex flex-col items-center justify-center" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={lightboxUrl}
+              alt="Expanded educational diagram"
+              className="w-auto h-auto max-w-full max-h-[80vh] object-contain rounded-2xl border border-white/10 shadow-2xl animate-scale-up"
+            />
+            <p className="text-white/60 text-xs mt-4 tracking-wider uppercase font-semibold">
+              Expanded View · click anywhere or close to return
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Canvas Zoom Pill */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[240] flex items-center gap-2 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-slate-700 shadow-xl">
+        <button
+          onClick={() => setZoom((z) => Math.max(50, z - 10))}
+          disabled={zoom === 50}
+          className="p-1.5 rounded-full hover:bg-slate-800 disabled:opacity-40 transition-colors cursor-pointer text-white"
+          title="Zoom Out"
+        >
+          <ZoomOut className="w-4 h-4" />
+        </button>
+        <span className="text-xs font-mono font-semibold px-2 min-w-[3.2rem] text-center text-white">{zoom}%</span>
+        <button
+          onClick={() => setZoom((z) => Math.min(250, z + 10))}
+          disabled={zoom === 250}
+          className="p-1.5 rounded-full hover:bg-slate-800 disabled:opacity-40 transition-colors cursor-pointer text-white"
+          title="Zoom In"
+        >
+          <ZoomIn className="w-4 h-4" />
         </button>
       </div>
     </div>
@@ -1694,8 +2164,8 @@ function SyllabusPage() {
           </div>
         </div>
 
-        {/* Syllabuses PDF List section exactly as screenshot */}
-        <div className="bg-white border border-slate-150 rounded-[2rem] p-8 md:p-10 shadow-sm">
+        {/* Syllabuses PDF List section with premium card design */}
+        <div className="bg-white border border-slate-150 rounded-[2rem] p-6 sm:p-8 md:p-10 shadow-sm">
           <div className="flex items-center gap-4 border-b border-slate-100 pb-4 mb-6">
             <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center border border-red-100 shrink-0">
               <FileText className="w-6 h-6 text-red-500" />
@@ -1710,29 +2180,58 @@ function SyllabusPage() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {pdfList.map((pdf, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActivePdf({ yearRange: pdf.yearRange, fileName: pdf.fileName })}
-                className="w-full flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-slate-50/30 hover:bg-slate-50 hover:border-slate-300 transition-all text-left group hover:scale-[1.005] cursor-pointer"
-              >
-                <div className="w-10 h-10 rounded-xl bg-red-100/50 flex items-center justify-center text-red-650 shrink-0 group-hover:scale-110 transition-transform">
-                  <FileText className="w-5 h-5" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {pdfList.map((pdf, idx) => {
+              const isUpdate = pdf.yearRange.toLowerCase().includes("update");
+              const cleanYear = pdf.yearRange.replace(" update", "");
+              
+              return (
+                <div
+                  key={idx}
+                  onClick={() => setActivePdf({ yearRange: pdf.yearRange, fileName: pdf.fileName })}
+                  className="bg-slate-50/40 border border-slate-150 rounded-2xl p-5 hover:bg-white hover:border-red-250 hover:shadow-md transition-all duration-300 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
+                >
+                  {/* Top Color Accent Line */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-400 to-rose-500 opacity-60 group-hover:opacity-100 transition-opacity" />
+                  
+                  <div>
+                    {/* Header: Icon and Year Badge */}
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                      <div className="w-9 h-9 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center text-red-500 shrink-0 group-hover:scale-110 transition-transform duration-300">
+                        <FileText className="w-4.5 h-4.5" />
+                      </div>
+                      <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                        isUpdate 
+                          ? "bg-amber-50 text-amber-700 border border-amber-100" 
+                          : "bg-red-50 text-red-700 border border-red-100"
+                      }`}>
+                        {cleanYear}
+                      </span>
+                    </div>
+
+                    {/* Clean Title */}
+                    <h3 className="font-bold text-slate-850 text-sm tracking-tight leading-tight group-hover:text-primary transition-colors duration-200">
+                      {isUpdate ? "Syllabus Update Details" : "Official Syllabus Guide"}
+                    </h3>
+                    
+                    {/* Size and info metadata (hiding raw internal file name) */}
+                    <div className="mt-2">
+                      <p className="text-[11px] text-slate-500 flex items-center gap-1.5 font-serif">
+                        <span className="font-sans font-semibold text-[10px] px-1 py-0.2 bg-slate-200/50 rounded text-slate-650 uppercase">PDF</span>
+                        <span>{pdf.size} · Official Release</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Read Link */}
+                  <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-primary">
+                    <span className="group-hover:translate-x-1 transition-transform duration-300 flex items-center gap-1">
+                      Read Document <span className="font-sans">→</span>
+                    </span>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-slate-800 text-sm group-hover:text-primary transition-colors">
-                    {pdf.yearRange} Syllabus
-                  </p>
-                  <p className="text-[10px] text-slate-400 font-mono mt-0.5">
-                    {pdf.fileName} (PDF, {pdf.size})
-                  </p>
-                </div>
-                <span className="text-xs font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity pr-2">
-                  Open Document →
-                </span>
-              </button>
-            ))}
+              );
+            })}
           </div>
         </div>
       </main>

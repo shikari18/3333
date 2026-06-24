@@ -2,8 +2,13 @@
 ExamGlow API views — syllabus, quizzes, flashcards, past papers, goals, bookmarks.
 These mirror the createServerFn handlers in yuna's src/api/*.ts files.
 """
+import re
+import requests
 from django.db.models import Count, Max, Avg, ExpressionWrapper, FloatField, F, Q
 from django.utils import timezone
+from django.http import StreamingHttpResponse
+from django.views.decorators.clickjacking import xframe_options_exempt
+from django.utils.decorators import method_decorator
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -473,3 +478,230 @@ class DashboardView(APIView):
             'totalAttempts': quiz_stats['total_attempts'] or 0,
             'activity': activity,
         })
+
+
+class CambridgePapersView(APIView):
+    """
+    Scrapes the Cambridge International official page for a given IGCSE subject
+    and returns real, proxiable PDF links for question papers and mark schemes.
+    Results are cached in-memory per subject to avoid repeated requests.
+    """
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+
+    SESSION_MONTHS = {
+        'May/June': 'june',
+        'Oct/Nov': 'november',
+        'Feb/Mar': 'march',
+    }
+
+    # Known Cambridge URL slugs (subject name segment only, code appended automatically)
+    SUBJECT_SLUGS = {
+        '0580': 'mathematics',
+        '0607': 'mathematics-international',
+        '0610': 'biology',
+        '0620': 'chemistry',
+        '0625': 'physics',
+        '0452': 'accounting',
+        '0450': 'business-studies',
+        '0455': 'economics',
+        '0478': 'computer-science',
+        '0460': 'geography',
+        '0470': 'history',
+        '0500': 'english-language',
+        '0522': 'english-literature',
+        '0495': 'sociology',
+        '0417': 'information-and-communication-technology',
+        '0411': 'art-and-design',
+    }
+
+    XTREME_FOLDERS = {
+        '0580': 'Mathematics (0580)',
+        '0610': 'Biology (0610)',
+        '0620': 'Chemistry (0620)',
+        '0625': 'Physics (0625)',
+        '0452': 'Accounting (0452)',
+        '0478': 'Computer Science (0478)',
+        '0455': 'Economics (0455)',
+        '0450': 'Business Studies (0450)',
+        '0460': 'Geography (0460)',
+        '0470': 'History (0470)',
+        '0500': 'English - First Language (0500)',
+    }
+
+    _page_cache: dict = {}
+
+    def _get_cambridge_pdfs(self, code: str, name: str):
+        if code in self._page_cache:
+            return self._page_cache[code]
+
+        slug_name = self.SUBJECT_SLUGS.get(code)
+        if not slug_name:
+            slug_name = name.lower().strip().replace(' ', '-')
+
+        cambridge_url = (
+            f'https://www.cambridgeinternational.org/programmes-and-qualifications/'
+            f'cambridge-igcse-{slug_name}-{code}/past-papers/'
+        )
+
+        try:
+            h = {
+                'User-Agent': (
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                    'AppleWebKit/537.36 (KHTML, like Gecko) '
+                    'Chrome/124.0.0.0 Safari/537.36'
+                )
+            }
+            r = requests.get(cambridge_url, headers=h, timeout=15)
+            if r.status_code != 200:
+                result = ([], cambridge_url)
+                self._page_cache[code] = result
+                return result
+
+            hrefs = re.findall(r'href="([^"]*\.pdf)"', r.text, re.IGNORECASE)
+            pdf_links = []
+            for href in hrefs:
+                full = (
+                    href if href.startswith('http')
+                    else f'https://www.cambridgeinternational.org{href}'
+                )
+                pdf_links.append(full)
+
+            result = (pdf_links, cambridge_url)
+            self._page_cache[code] = result
+            return result
+        except Exception:
+            result = ([], cambridge_url)
+            self._page_cache[code] = result
+            return result
+
+    def get(self, request):
+        code = request.query_params.get('code', '').strip()
+        name = request.query_params.get('name', '').strip()
+        folder_param = request.query_params.get('folder', '').strip()
+        year = request.query_params.get('year', '').strip()
+        session = request.query_params.get('session', '').strip()
+        paper_num = request.query_params.get('paper', '').strip()
+        variant = request.query_params.get('variant', '1').strip()
+
+        if not code:
+            return Response({'error': 'code is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        pdf_links, cambridge_url = self._get_cambridge_pdfs(code, name)
+
+        # If no filters, return everything we found
+        if not year:
+            return Response({'pdfs': pdf_links, 'cambridge_url': cambridge_url})
+
+        month = self.SESSION_MONTHS.get(session, 'june')
+        paper_variant = f'{paper_num}{variant}'  # e.g. "11", "21", "31"
+
+        qp_url = None
+        ms_url = None
+
+        for url in pdf_links:
+            fn = url.split('/')[-1].lower()
+            # Must contain the year and the session month
+            if year not in fn:
+                continue
+            if month not in fn:
+                continue
+            # Must match paper number + variant (e.g. "paper-11" or filename ending "-11.pdf")
+            if f'paper-{paper_variant}' not in fn and not fn.endswith(f'-{paper_variant}.pdf'):
+                continue
+
+            if 'question-paper' in fn:
+                qp_url = url
+            elif 'mark-scheme' in fn:
+                ms_url = url
+
+        # Fallback to XtremePapers if Cambridge official site is missing the papers
+        if not qp_url or not ms_url:
+            s_char = 's' if session == 'May/June' else 'w' if session == 'Oct/Nov' else 'm'
+            yy = year[-2:]
+            fn_qp = f"{code}_{s_char}{yy}_qp_{paper_num}{variant}.pdf"
+            fn_ms = f"{code}_{s_char}{yy}_ms_{paper_num}{variant}.pdf"
+
+            folder = folder_param
+            if not folder:
+                folder = self.XTREME_FOLDERS.get(code)
+                if not folder:
+                    folder = f"{name} ({code})"
+
+            import urllib.parse
+            folder_encoded = urllib.parse.quote(folder)
+
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            }
+
+            if not qp_url:
+                test_url = f"https://papers.xtremepape.rs/CAIE/IGCSE/{folder_encoded}/{fn_qp}"
+                try:
+                    r = requests.head(test_url, headers=headers, timeout=5)
+                    if r.status_code == 200:
+                        qp_url = test_url
+                except Exception:
+                    pass
+
+            if not ms_url:
+                test_url = f"https://papers.xtremepape.rs/CAIE/IGCSE/{folder_encoded}/{fn_ms}"
+                try:
+                    r = requests.head(test_url, headers=headers, timeout=5)
+                    if r.status_code == 200:
+                        ms_url = test_url
+                except Exception:
+                    pass
+
+        return Response({
+            'qp': qp_url,
+            'ms': ms_url,
+            'cambridge_url': cambridge_url,
+            'found': bool(qp_url or ms_url),
+        })
+
+
+@method_decorator(xframe_options_exempt, name='dispatch')
+class PastPaperProxyView(APIView):
+    """
+    Proxy PDF requests from external hosts like PapaCambridge to bypass referrer block.
+    """
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+
+    def get(self, request):
+        target_url = request.query_params.get('url')
+        if not target_url:
+            return Response({'error': 'url query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Allow PDF URLs or PapaCambridge past papers URLs
+        if not (target_url.startswith('https://pastpapers.papacambridge.com/') or 
+                target_url.startswith('https://www.cambridgeinternational.org/') or 
+                target_url.startswith('https://papers.xtremepape.rs/') or 
+                target_url.lower().endswith('.pdf')):
+            return Response({'error': 'Invalid target URL.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        }
+
+        try:
+            response = requests.get(target_url, headers=headers, stream=True, timeout=20)
+            if response.status_code != 200:
+                return Response(
+                    {'error': f'Failed to fetch PDF from mirror: HTTP {response.status_code}'},
+                    status=response.status_code
+                )
+
+            proxy_response = StreamingHttpResponse(
+                response.iter_content(chunk_size=8192),
+                content_type='application/pdf'
+            )
+            proxy_response['Content-Disposition'] = 'inline; filename="paper.pdf"'
+
+            if 'Content-Length' in response.headers:
+                proxy_response['Content-Length'] = response.headers['Content-Length']
+
+            return proxy_response
+        except requests.RequestException as e:
+            return Response({'error': f'Proxy request failed: {str(e)}'}, status=status.HTTP_502_BAD_GATEWAY)

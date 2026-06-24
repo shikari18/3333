@@ -106,6 +106,6 @@ export const allPastPapers: PastPaper[] = [
 ];
 
 export const SUBJECTS = ["Biology", "Chemistry", "Physics", "Mathematics"];
-export const YEARS = ["2023", "2022", "2021", "2020", "2019"];
+export const YEARS = ["2024", "2023", "2022", "2021", "2020", "2019"];
 export const PAPER_TYPES = ["Paper 2", "Paper 4", "Paper 6"];
 export const DIFFICULTIES = ["Extended", "Core", "Practical"];

@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import {
   X, Send, Mic, MicOff, User, Volume2, VolumeX,
-  Plus, History, Radio, Image as ImageIcon, Bot,
+  Plus, History, Radio, Image as ImageIcon, Bot, Square,
 } from "lucide-react";
+import { startGeminiListen, type ListenHandle } from "@/lib/gemini-listen";
 import { VoiceOrb } from "./VoiceOrb";
 import { generateDiagramImage } from "@/lib/imageGen";
 import { speakGemini, type GeminiSpeechHandle } from "@/lib/gemini-speech";
+import { useProfile } from "@/lib/profile-context";
 
 interface Message {
   role: "user" | "assistant";
@@ -29,29 +31,12 @@ const SUGGESTIONS = [
 ];
 
 const STORAGE_KEY = "examglow_ai_history_v2";
-const INITIAL_MESSAGE: Message = {
-  role: "assistant",
-  text: "Hi! I'm **Yumna**, your personal ExamGlow AI tutor 🌸\n\nI'm here to help you truly understand your IGCSE subjects. Ask me anything — I'll explain concepts step-by-step, give you examples, and make sure you really *get it*!\n\nYou can also tap the 🎙️ button below to **switch to voice mode** and talk with me directly!",
-};
+// INITIAL_MESSAGE is now generated dynamically inside AiPanel using profile data.
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || "";
 
-const SYSTEM_PROMPT = `You are Yumna, an expert IGCSE tutor and AI assistant for ExamGlow. You are warm, encouraging, and extremely knowledgeable.
-
-When answering questions, format your responses using this markdown syntax:
-- Use **bold text** for key terms and important concepts
-- Use *italic* for emphasis  
-- Use ## for section headings
-- Use ### for sub-headings
-- Use numbered lists (1. 2. 3.) for steps or ordered content
-- Use bullet points (- or •) for lists
-- Use /n for new lines where needed
-- Use ==highlight== to highlight critical facts
-- Keep responses well-structured and easy to read
-
-Include diagrams/images when helpful — if you want to show an educational diagram, include [IMAGE: detailed description of what the diagram should show] on its own line and I will generate it.
-
-Be conversational, encouraging, and thorough. Break complex topics into digestible parts. Reference IGCSE mark-scheme language where relevant.`;
+// SYSTEM_PROMPT is now built dynamically inside the component using profile data.
+// See buildSystemPrompt() inside AiPanel.
 
 // ── Markdown renderer ──────────────────────────────────────────────────────────
 function parseInline(text: string): React.ReactNode[] {
@@ -206,7 +191,7 @@ function MessageImage({ prompt }: { prompt: string }) {
       {loading && (
         <div className="h-40 flex flex-col items-center justify-center bg-gradient-to-br from-primary/5 to-violet-500/5 animate-pulse gap-2">
           <ImageIcon className="w-6 h-6 text-primary/40 animate-pulse" />
-          <span className="text-[11px] text-foreground/40 font-medium">Generating diagram with Gemini AI...</span>
+          <span className="text-[11px] text-foreground/40 font-medium">Generating diagram with AI...</span>
         </div>
       )}
       {src && !src.startsWith("data:") && (
@@ -268,7 +253,38 @@ function TypewriterMessage({ text, onDone }: { text: string; onDone?: () => void
 }
 
 export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
+  const { profile, enrolledSubjects, yearGroup, course } = useProfile();
+  const userName = profile?.first_name || profile?.username || "there";
+
+  const systemPrompt = `You are Yumna, an expert IGCSE tutor and AI assistant for ExamGlow. You are warm, encouraging, cheery, energetic, extremely friendly, and extremely knowledgeable. Never mention Gemini, Google, or any AI model names — you are Yumna.
+
+The student you are tutoring:
+- Name: ${userName}
+- Year Group: ${yearGroup}
+- Course: ${course}
+- Enrolled Subjects: ${enrolledSubjects.length > 0 ? enrolledSubjects.join(", ") : "Not specified"}
+
+Always greet them by name when relevant. Tailor your explanations to their level and subjects. Reference their enrolled subjects when giving examples.
+
+When answering questions, format your responses using this markdown syntax:
+- Use **bold text** for key terms and important concepts
+- Use *italic* for emphasis
+- Use ## for section headings, ### for sub-headings
+- Use numbered lists (1. 2. 3.) for steps or ordered content
+- Use bullet points (- or •) for lists
+- Use /n for new lines where needed
+- Use ==highlight== to highlight critical facts
+
+Include diagrams/images when helpful — if you want to show an educational diagram, include [IMAGE: detailed description of what the diagram should show] on its own line and I will generate it.
+
+Be conversational, encouraging, and thorough. Break complex topics into digestible parts. Reference IGCSE mark-scheme language where relevant.`;
+
+  const initialMessage: Message = {
+    role: "assistant",
+    text: `Hi ${userName}! I'm **Yumna**, your personal ExamGlow AI tutor 🌸\n\nI'm here to help you truly understand your IGCSE subjects${enrolledSubjects.length > 0 ? ` — especially **${enrolledSubjects.slice(0, 3).join("**, **")}**` : ""}. Ask me anything — I'll explain concepts step-by-step, give you examples, and make sure you really *get it*!\n\nYou can also tap the 🎙️ button below to **switch to voice mode** and talk with me directly!`,
+  };
+
+  const [messages, setMessages] = useState<Message[]>([initialMessage]);
   const [input, setInput] = useState("");
   const [listening, setListening] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
@@ -280,7 +296,8 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
   const [speakingIndex, setSpeakingIndex] = useState<number | null>(null);
   const speechHandleRef = useRef<GeminiSpeechHandle | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<ListenHandle | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   // Stop TTS speech on unmount/close
   useEffect(() => {
@@ -363,7 +380,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
       persistHistory([session, ...chatHistory]);
     }
     setActiveChatId(crypto.randomUUID());
-    setMessages([INITIAL_MESSAGE]);
+    setMessages([initialMessage]);
     setInput("");
     setIsTyping(false);
     setHistoryOpen(false);
@@ -378,6 +395,8 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
 
   async function simulateReply(userMsg: string) {
     setIsTyping(true);
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     if (!GROQ_API_KEY || GROQ_API_KEY === "your_groq_api_key_here") {
       setMessages((prev) => [
@@ -385,6 +404,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
         { role: "assistant", text: "AI Tutor not configured. Add `VITE_GROQ_API_KEY` to `.env`." },
       ]);
       setIsTyping(false);
+      abortRef.current = null;
       return;
     }
 
@@ -395,6 +415,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
 
       const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
         method: "POST",
+        signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${GROQ_API_KEY}`,
@@ -402,7 +423,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
         body: JSON.stringify({
           model: "llama-3.3-70b-versatile",
           messages: [
-            { role: "system", content: SYSTEM_PROMPT },
+            { role: "system", content: systemPrompt },
             ...history,
             { role: "user", content: userMsg },
           ],
@@ -411,6 +432,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
         }),
       });
 
+      if (controller.signal.aborted) return;
       if (!response.ok) {
         const err = await response.json().catch(() => ({}));
         throw new Error(err?.error?.message ?? `API error ${response.status}`);
@@ -439,19 +461,30 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
     simulateReply(msg);
   }
 
+  function stopTyping() {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setIsTyping(false);
+  }
+
   function toggleVoice() {
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) { alert("Voice input not supported. Try Chrome."); return; }
-    if (listening) { recognitionRef.current?.stop(); setListening(false); return; }
-    const rec = new SR();
-    rec.lang = "en-US";
-    rec.interimResults = false;
-    rec.onresult = (e: any) => { send(e.results[0][0].transcript); setListening(false); };
-    rec.onerror = () => setListening(false);
-    rec.onend = () => setListening(false);
-    recognitionRef.current = rec;
-    rec.start();
+    if (listening) {
+      recognitionRef.current?.stop();
+      recognitionRef.current = null;
+      setListening(false);
+      return;
+    }
     setListening(true);
+    recognitionRef.current = startGeminiListen({
+      onStart: () => setListening(true),
+      onTranscript: (text) => {
+        setListening(false);
+        recognitionRef.current = null;
+        send(text);
+      },
+      onError: () => { setListening(false); recognitionRef.current = null; },
+      onStop: () => { setListening(false); recognitionRef.current = null; },
+    });
   }
 
   return (
@@ -534,12 +567,7 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
 
           {messages.map((m, i) => (
             <div key={i} className={`flex gap-3 ${m.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
-              <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-bold ${
-                m.role === "assistant" ? "bg-gradient-to-br from-primary to-purple-500 text-white" : "bg-lavender-soft"
-              }`}>
-                {m.role === "assistant" ? "Y" : <User className="w-4 h-4 text-lavender" />}
-              </div>
-              <div className="flex flex-col gap-1 max-w-[80%]">
+              <div className="flex flex-col gap-1 max-w-[89%]">
                 <div className={`rounded-2xl px-4 py-3 text-sm ${
                   m.role === "assistant"
                     ? "bg-pink-softer text-foreground rounded-tl-none"
@@ -627,13 +655,23 @@ export function AiPanel({ open, onClose }: { open: boolean; onClose: () => void 
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
             />
-            <button
-              onClick={() => send()}
-              disabled={!input.trim() || isTyping}
-              className="p-1.5 rounded-full bg-primary text-white disabled:opacity-30 transition-opacity shrink-0"
-            >
-              <Send className="w-4 h-4" />
-            </button>
+            {isTyping ? (
+              <button
+                onClick={stopTyping}
+                className="p-1.5 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all shrink-0 animate-pulse"
+                title="Stop generating"
+              >
+                <Square className="w-4 h-4" />
+              </button>
+            ) : (
+              <button
+                onClick={() => send()}
+                disabled={!input.trim()}
+                className="p-1.5 rounded-full bg-primary text-white disabled:opacity-30 transition-opacity shrink-0"
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            )}
           </div>
           <p className="text-center text-[10px] text-foreground/30 mt-2">
             Yumna · ExamGlow AI ·{" "}

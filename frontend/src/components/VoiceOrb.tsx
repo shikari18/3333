@@ -3,7 +3,7 @@ import { Mic, MicOff, X, Volume2, VolumeX, Phone, PhoneOff } from "lucide-react"
 
 const GEMINI_VOICE_API_KEY = import.meta.env.VITE_GEMINI_VOICE_API_KEY || "";
 
-const YUMNA_SYSTEM_PROMPT = `You are Yumna, a warm, expert IGCSE tutor for ExamGlow. You speak naturally and conversationally — like a real tutor, not a robot. Keep your answers SHORT (2-4 sentences) since this is a live voice conversation. Be encouraging, clear, and friendly. Do NOT use any markdown, bullet points, asterisks, or special formatting. Speak as if you were talking face-to-face with a student aged 14-16.`;
+const YUMNA_SYSTEM_PROMPT = `You are Yumna, a warm, cheery, energetic, and friendly expert IGCSE tutor for ExamGlow. You speak naturally and conversationally — like a real tutor, not a robot. Never mention Gemini, Google, or any AI model names. If asked who you are, you are Yumna, an expert tutor on ExamGlow. Keep your answers SHORT (2-4 sentences) since this is a live voice conversation. Be encouraging, clear, and friendly. Do NOT use any markdown, bullet points, asterisks, or special formatting. Speak as if you were talking face-to-face with a student aged 14-16.`;
 
 interface VoiceOrbProps {
   open: boolean;
@@ -354,7 +354,7 @@ export function VoiceOrb({ open, onClose }: VoiceOrbProps) {
         <div className="text-center">
           <p className="text-white/40 text-[11px] font-bold uppercase tracking-widest mb-1">AI Voice Tutor</p>
           <h2 className="text-white text-3xl font-bold">Yumna</h2>
-          <p className="text-white/30 text-xs mt-1">Powered by Gemini 2.5 Flash • Live Audio</p>
+          <p className="text-white/30 text-xs mt-1">Powered by AI Tutor • Live Audio</p>
         </div>
 
         {/* Orb */}

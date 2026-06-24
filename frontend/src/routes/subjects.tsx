@@ -26,7 +26,7 @@ export const Route = createFileRoute("/subjects")({
   component: Subjects,
 });
 
-const SUBJECT_LIST = [
+export const SUBJECT_LIST = [
   "Accounting - 0452",
   "Accounting (9-1) - 0985",
   "Afrikaans - Second Language - 0548",
@@ -168,6 +168,14 @@ const ACCENT_COLORS = [
   "border-t-indigo-500",
   "border-t-rose-500",
 ];
+
+const getNotesSubjectName = (name: string): string => {
+  const clean = name.replace(/\s*-\s*\d{4}/g, "").replace(/\s*\(9-1\)\s*/g, "").trim();
+  if (clean.includes("Information and Communication Technology") || clean.includes("Computer Science")) {
+    return "ICT/Computer Science";
+  }
+  return clean;
+};
 
 function Subjects() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -318,14 +326,22 @@ function Subjects() {
                           </h3>
                         </div>
 
-                        <div className="mt-5 border-t border-slate-50 pt-4">
+                        <div className="mt-5 border-t border-slate-50 pt-4 flex gap-2">
                           <Link
                             to="/syllabus/$subjectId"
                             params={{ subjectId: subject.subjectId }}
-                            className="w-full py-2.5 rounded-xl border border-slate-200/80 text-xs font-bold inline-flex items-center justify-center gap-1.5 hover:bg-primary hover:text-white hover:border-primary transition-all text-slate-600 bg-white"
+                            className="flex-1 py-2 rounded-xl border border-slate-200/80 text-[10px] font-bold inline-flex items-center justify-center gap-1.5 hover:bg-primary hover:text-white hover:border-primary transition-all text-slate-600 bg-white cursor-pointer"
                           >
-                            <GraduationCap className="w-3.5 h-3.5" />
+                            <GraduationCap className="w-3.5 h-3.5 shrink-0" />
                             <span>View Syllabus</span>
+                          </Link>
+                          <Link
+                            to="/subject-notes/$subject"
+                            params={{ subject: getNotesSubjectName(subject.name) }}
+                            className="flex-1 py-2 rounded-xl border border-slate-200/80 text-[10px] font-bold inline-flex items-center justify-center gap-1.5 hover:bg-amber-600 hover:text-white hover:border-amber-600 transition-all text-slate-600 bg-white cursor-pointer"
+                          >
+                            <BookOpen className="w-3.5 h-3.5 shrink-0" />
+                            <span>View Notes</span>
                           </Link>
                         </div>
                       </div>

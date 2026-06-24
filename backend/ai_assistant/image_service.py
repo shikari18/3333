@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 def get_dynamic_styling(prompt):
     """
-    Detects if the prompt is medical/scientific and returns the appropriate style suffix.
+    Returns a simplified 2D flat style suffix for educational clarity.
     """
     scientific_keywords = [
         'heart', 'lung', 'digestive', 'stomach', 'anatomy', 'medical', 'science', 
@@ -22,10 +22,9 @@ def get_dynamic_styling(prompt):
     is_scientific = any(k in prompt.lower() for k in scientific_keywords)
     
     if is_scientific:
-        return "Professional medical illustration, clean scientific diagram, 4k"
+        return "simple flat 2D educational diagram, clean white background, labeled arrows, textbook style, no shading, minimalist"
     else:
-        # For non-medical topics like 'peacocks' or 'jesters'
-        return "Professional digital art illustration, vibrant colors, detailed, 4k"
+        return "simple flat 2D illustration, bright colors, clean lines, minimal detail, white background, educational style"
 
 def generate_ai_image(prompt):
     """
@@ -71,7 +70,7 @@ def generate_ai_image(prompt):
         logger.info(f"Tier 2 Pollinations: Fast Generation for '{clean_p[:40]}...'")
         full_prompt = f"{prompt}. {style}."
         encoded_prompt = requests.utils.quote(full_prompt)
-        poll_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1024&height=1024&nologo=true&model=flux"
+        poll_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=800&height=600&nologo=true&model=flux"
         
         res = requests.get(poll_url, timeout=12)
         if res.status_code == 200:
@@ -114,7 +113,7 @@ def generate_ai_image(prompt):
     # --- FINAL FALLBACK: Direct Pollinations URL ---
     try:
         encoded_prompt = requests.utils.quote(f"{prompt}. {style}.")
-        return f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=800&height=500&nologo=true&seed={random.randint(1, 99999)}"
+        return f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=800&height=600&nologo=true&seed={random.randint(1, 99999)}"
     except Exception: pass
     
     return None
