@@ -41,7 +41,7 @@ export const biologyNutritionNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Digestive_system_diagram_en.svg/640px-Digestive_system_diagram_en.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Digestive_system_diagram_en.svg/800px-Digestive_system_diagram_en.svg.png",
           caption: "The human digestive system — food travels from mouth → oesophagus → stomach → small intestine → large intestine → rectum → anus",
           side: "right",
         },
@@ -99,7 +99,7 @@ export const biologyNutritionNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Intestinal_villus.svg/640px-Intestinal_villus.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Intestinal_villus.svg/800px-Intestinal_villus.svg.png",
           caption: "Structure of a villus — note the single epithelial cell layer, blood capillaries for glucose/amino acids, and lacteal for fatty acids/glycerol",
           side: "right",
         },

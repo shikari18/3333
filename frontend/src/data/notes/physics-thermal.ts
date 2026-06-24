@@ -9,9 +9,9 @@ export const physicsThermalNotes: NoteChapter = {
       blocks: [
         {
           kind: "video",
-          youtubeId: "vqDbMEdLiCs",
-          title: "Thermal Physics & Radioactivity — IGCSE Physics",
-          caption: "Specific heat capacity, latent heat, gas laws, nuclear decay and half-life",
+          youtubeId: "OTksau0_VoI",
+          title: "Thermal Physics — IGCSE Physics (Cognito)",
+          caption: "Particle theory, states of matter, specific heat capacity and latent heat",
         },
         {
           kind: "definition",

@@ -13,7 +13,7 @@ export const mathematicsGeometryNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Circle-withsegments.svg/640px-Circle-withsegments.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Circle-withsegments.svg/800px-Circle-withsegments.svg.png",
           caption: "Circle components: radius, diameter, chord, arc, sector, segment, tangent",
           side: "right",
         },

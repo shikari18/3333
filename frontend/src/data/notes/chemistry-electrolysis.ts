@@ -157,7 +157,7 @@ export const chemistryElectrolysisNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Activation_energy.svg/640px-Activation_energy.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Activation_energy.svg/800px-Activation_energy.svg.png",
           caption: "Energy profile diagrams — exothermic (products lower than reactants) vs endothermic (products higher than reactants). Activation energy (Ea) is the energy needed to start the reaction.",
           side: "full",
         },

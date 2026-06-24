@@ -28,7 +28,7 @@ export const biologyNervousNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Neuron_Hand-tuned.svg/640px-Neuron_Hand-tuned.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Neuron_Hand-tuned.svg/800px-Neuron_Hand-tuned.svg.png",
           caption: "Structure of a motor neurone — cell body, dendrites (receive signals), axon (transmits signal), myelin sheath (speeds up transmission), axon terminals",
           side: "right",
         },
@@ -96,7 +96,7 @@ export const biologyNervousNotes: NoteChapter = {
       blocks: [
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Schematic_diagram_of_the_human_eye_en.svg/640px-Schematic_diagram_of_the_human_eye_en.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Schematic_diagram_of_the_human_eye_en.svg/800px-Schematic_diagram_of_the_human_eye_en.svg.png",
           caption: "Cross-section of the human eye — cornea, iris, lens, retina, optic nerve, blind spot, fovea",
           side: "right",
         },

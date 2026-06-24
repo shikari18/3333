@@ -40,7 +40,7 @@ export const biologyEcologyNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Ecological_Pyramid.svg/640px-Ecological_Pyramid.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Ecological_Pyramid.svg/800px-Ecological_Pyramid.svg.png",
           caption: "Pyramid of biomass — each level has less biomass than the one below due to energy losses at each trophic level",
           side: "full",
         },

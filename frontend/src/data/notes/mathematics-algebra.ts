@@ -9,9 +9,9 @@ export const mathematicsAlgebraNotes: NoteChapter = {
       blocks: [
         {
           kind: "video",
-          youtubeId: "NybKl3SJhTE",
-          title: "Algebra & Graphs — IGCSE Mathematics 0580",
-          caption: "Expanding brackets, factorising, quadratics, simultaneous equations and graph sketching",
+          youtubeId: "dstRL5xB0Sk",
+          title: "Algebra & Graphs — IGCSE Maths (Cognito)",
+          caption: "Expanding brackets, factorising, quadratics and graph sketching",
         },
         {
           kind: "intro",

@@ -105,7 +105,7 @@ export const biologyGeneticsNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Punnett_square_mendel_flowers.svg/640px-Punnett_square_mendel_flowers.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Punnett_square_mendel_flowers.svg/800px-Punnett_square_mendel_flowers.svg.png",
           caption: "Punnett square for a monohybrid cross — 3:1 phenotype ratio for dominant:recessive",
           side: "full",
         },

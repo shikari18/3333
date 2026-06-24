@@ -9,9 +9,9 @@ export const chemistryAcidsNotes: NoteChapter = {
       blocks: [
         {
           kind: "video",
-          youtubeId: "zNBhHJHPe_U",
-          title: "Acids, Bases & Salts — IGCSE Chemistry",
-          caption: "pH scale, neutralisation reactions, making salts and titration",
+          youtubeId: "vt8fB3MFzLk",
+          title: "Acids, Bases & Salts — IGCSE Chemistry (Cognito)",
+          caption: "pH scale, neutralisation reactions, indicators and making salts",
         },
         {
           kind: "keyterms",

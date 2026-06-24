@@ -13,13 +13,13 @@ export const biologyCellsNotes: NoteChapter = {
         },
         {
           kind: "video",
-          youtubeId: "URUJD5NEXC8",
-          title: "Cell Structure — IGCSE Biology",
-          caption: "Covers animal vs plant cells, organelle functions and exam technique",
+          youtubeId: "46NnjGMKKwM",
+          title: "Cell Structure — IGCSE Biology (Cognito)",
+          caption: "Animal vs plant cells, organelle functions and exam tips",
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Animal_cell_structure_en.svg/640px-Animal_cell_structure_en.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Animal_cell_structure_en.svg/800px-Animal_cell_structure_en.svg.png",
           caption: "Labeled animal cell — note the absence of cell wall, chloroplasts, and large central vacuole",
           side: "full",
         },
@@ -36,12 +36,6 @@ export const biologyCellsNotes: NoteChapter = {
             ["Chloroplasts", "Contain chlorophyll; site of photosynthesis", "✓", "✗"],
             ["Vacuole (large, permanent)", "Filled with cell sap; maintains turgor pressure", "✓", "✗"],
           ],
-        },
-        {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Plant_cell_structure_svg.svg/640px-Plant_cell_structure_svg.svg.png",
-          caption: "Plant cell — showing cell wall, chloroplasts, and large central vacuole absent in animal cells",
-          side: "full",
         },
         {
           kind: "tip",
@@ -76,12 +70,6 @@ export const biologyCellsNotes: NoteChapter = {
           ],
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Prokaryote_cell_diagram.svg/640px-Prokaryote_cell_diagram.svg.png",
-          caption: "Prokaryotic cell (bacterium) — no membrane-bound nucleus, DNA is in the nucleoid region",
-          side: "full",
-        },
-        {
           kind: "comparison",
           left: {
             label: "Prokaryotic cells (bacteria)",
@@ -91,7 +79,6 @@ export const biologyCellsNotes: NoteChapter = {
               "Smaller (1–10 μm)",
               "Has cell wall (peptidoglycan, not cellulose)",
               "May have plasmids (small circular DNA)",
-              "Has flagella for movement in some species",
             ],
           },
           right: {
@@ -101,14 +88,13 @@ export const biologyCellsNotes: NoteChapter = {
               "Has membrane-bound organelles (mitochondria, etc.)",
               "Larger (10–100 μm)",
               "Plant cells have cellulose cell wall",
-              "No plasmids",
               "More complex internal organisation",
             ],
           },
         },
         {
           kind: "tip",
-          text: "Remember the 5-level hierarchy with a mnemonic: **'Careful Teachers Often Supervise Ourselves'** — Cell, Tissue, Organ, System, Organism. This hierarchy is often worth 1 mark per correctly ordered level.",
+          text: "Remember the 5-level hierarchy: **Cell → Tissue → Organ → Organ System → Organism**. This hierarchy is often worth 1 mark per correctly ordered level in exam answers.",
         },
       ],
     },
@@ -122,15 +108,9 @@ export const biologyCellsNotes: NoteChapter = {
         },
         {
           kind: "video",
-          youtubeId: "TFrLnLyRMMk",
-          title: "Diffusion, Osmosis & Active Transport — GCSE Biology",
-          caption: "Clear animated explanation of all three transport mechanisms",
-        },
-        {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Diffusion.svg/640px-Diffusion.svg.png",
-          caption: "Diffusion: net movement of particles from high to low concentration until equilibrium is reached",
-          side: "full",
+          youtubeId: "4Eq8rO3fABM",
+          title: "Osmosis — IGCSE Biology (Cognito)",
+          caption: "Diffusion, osmosis and active transport with clear animated diagrams",
         },
         {
           kind: "bullets",
@@ -172,8 +152,8 @@ export const biologyCellsNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Osmotic_pressure_on_blood_cells_diagram.svg/640px-Osmotic_pressure_on_blood_cells_diagram.svg.png",
-          caption: "Effect of osmosis on animal cells: hypotonic → cell swells/bursts (lysis); hypertonic → cell shrinks (crenation)",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Osmotic_pressure_on_blood_cells_diagram.svg/800px-Osmotic_pressure_on_blood_cells_diagram.svg.png",
+          caption: "Effect of osmosis on animal cells: hypotonic → cell swells/bursts; hypertonic → cell shrinks (crenation)",
           side: "full",
         },
         {
@@ -199,28 +179,26 @@ export const biologyCellsNotes: NoteChapter = {
           kind: "bullets",
           items: [
             {
-              text: "**Plant cells in hypertonic solution (concentrated):**",
+              text: "**Plant cells in hypertonic solution:**",
               sub: [
                 "Water leaves vacuole by osmosis",
-                "Cell membrane pulls away from cell wall",
-                "This is called **plasmolysis** — the cell becomes flaccid",
-                "If severe, the plant wilts",
+                "Cell membrane pulls away from cell wall → **plasmolysis**",
+                "Cell becomes flaccid; plant wilts if severe",
               ],
             },
             {
-              text: "**Plant cells in hypotonic solution (dilute):**",
+              text: "**Plant cells in hypotonic solution:**",
               sub: [
                 "Water enters vacuole by osmosis",
-                "Cell becomes **turgid** (rigid) — cell wall prevents bursting",
-                "**Turgor pressure** supports non-woody plants (keeps them upright)",
-                "The cell wall exerts a **wall pressure** opposing further entry of water",
+                "Cell becomes **turgid** — cell wall prevents bursting",
+                "**Turgor pressure** supports non-woody plants",
               ],
             },
           ],
         },
         {
           kind: "highlight",
-          text: "**Key difference between plant and animal cells in hypotonic solution:** Animal cells burst (no cell wall to resist expansion). Plant cells become turgid but do NOT burst — the cellulose cell wall provides structural support.",
+          text: "**Key difference:** Animal cells burst in hypotonic solution (no cell wall). Plant cells become turgid but do NOT burst — the cellulose cell wall provides structural support.",
           color: "blue",
         },
       ],
@@ -234,20 +212,14 @@ export const biologyCellsNotes: NoteChapter = {
           definition: "the movement of molecules or ions across a membrane **against their concentration gradient** (from low to high concentration), using **energy (ATP)** and **carrier proteins**.",
         },
         {
-          kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Active_transport.svg/640px-Active_transport.svg.png",
-          caption: "Active transport — carrier proteins use ATP to move molecules against their concentration gradient",
-          side: "full",
-        },
-        {
           kind: "comparison",
           left: {
             label: "Active transport",
             items: [
               "Against concentration gradient (low → high)",
-              "Requires ATP (energy) — inhibited by metabolic poisons/lack of O₂",
+              "Requires ATP — stopped by metabolic poisons/lack of O₂",
               "Uses specific carrier proteins",
-              "Examples: mineral ion uptake by root hair cells; glucose reabsorption in kidney tubules; sodium-potassium pump in nerve cells",
+              "Examples: mineral ion uptake by root hair cells; glucose reabsorption in kidney; Na⁺/K⁺ pump in nerve cells",
             ],
           },
           right: {
@@ -256,17 +228,17 @@ export const biologyCellsNotes: NoteChapter = {
               "Down concentration gradient (high → low)",
               "No ATP required — passive process",
               "No carrier proteins needed (simple diffusion)",
-              "Examples: O₂/CO₂ in alveoli; water in osmosis; glucose from gut into blood",
+              "Examples: O₂/CO₂ in alveoli; water movement in osmosis; glucose from gut into blood",
             ],
           },
         },
         {
           kind: "tip",
-          text: "Active transport is used when cells need to absorb substances already at a higher concentration inside the cell than outside — e.g. root hair cells absorbing nitrate ions (NO₃⁻) and potassium ions (K⁺) from dilute soil water. This requires energy from respiration.",
+          text: "Active transport is used when cells need to absorb substances already at higher concentration inside than outside — e.g. root hair cells absorbing NO₃⁻ and K⁺ ions from dilute soil water.",
         },
         {
           kind: "warning",
-          text: "If a question states a cell is treated with a respiratory inhibitor (e.g. cyanide) or placed in anaerobic conditions, active transport STOPS (no ATP). Diffusion and osmosis are unaffected because they require no energy.",
+          text: "If a question states a cell is treated with a respiratory inhibitor (e.g. cyanide) or placed in anaerobic conditions, active transport STOPS (no ATP produced). Diffusion and osmosis are unaffected — they require no energy.",
         },
       ],
     },

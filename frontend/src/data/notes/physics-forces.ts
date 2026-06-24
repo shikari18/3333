@@ -9,9 +9,9 @@ export const physicsForcesNotes: NoteChapter = {
       blocks: [
         {
           kind: "video",
-          youtubeId: "oRKezs9e73Y",
-          title: "Forces & Motion — IGCSE Physics Full Revision",
-          caption: "Covers scalars, vectors, motion graphs, Newton's laws and momentum",
+          youtubeId: "JGwcDCeYRYo",
+          title: "Forces & Motion — IGCSE Physics (Cognito)",
+          caption: "Energy stores, scalars vs vectors, motion graphs and Newton's laws",
         },
         {
           kind: "comparison",
@@ -40,7 +40,7 @@ export const physicsForcesNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Velocity_vs_time_graph.svg/640px-Velocity_vs_time_graph.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Velocity_vs_time_graph.svg/800px-Velocity_vs_time_graph.svg.png",
           caption: "Velocity-time graph: gradient = acceleration (a = Δv/Δt); area under curve = displacement",
           side: "full",
         },
@@ -107,7 +107,7 @@ export const physicsForcesNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/NewtonsLawOfUniversalGravitation.svg/640px-NewtonsLawOfUniversalGravitation.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/NewtonsLawOfUniversalGravitation.svg/800px-NewtonsLawOfUniversalGravitation.svg.png",
           caption: "Free body diagram — always draw all forces acting on an object with arrows showing direction and magnitude",
           side: "right",
         },
@@ -147,7 +147,7 @@ export const physicsForcesNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Velocity_vs_time_graph.svg/640px-Velocity_vs_time_graph.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Velocity_vs_time_graph.svg/800px-Velocity_vs_time_graph.svg.png",
           caption: "Velocity-time graph for a skydiver — curve shows decreasing acceleration as drag increases, then horizontal line at terminal velocity",
           side: "right",
         },

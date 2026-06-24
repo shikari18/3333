@@ -9,9 +9,9 @@ export const chemistryOrganicNotes: NoteChapter = {
       blocks: [
         {
           kind: "video",
-          youtubeId: "HLW2QByWk8I",
-          title: "Organic Chemistry — IGCSE Chemistry",
-          caption: "Alkanes, alkenes, alcohols, addition reactions and polymerisation",
+          youtubeId: "ykIFTtTjoso",
+          title: "Alkanes & Hydrocarbons — IGCSE Chemistry (Cognito)",
+          caption: "What hydrocarbons are, alkane structure, crude oil and fractional distillation",
         },
         {
           kind: "intro",

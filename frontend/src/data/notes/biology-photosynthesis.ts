@@ -14,9 +14,9 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
         },
         {
           kind: "video",
-          youtubeId: "sQK3Yr4Sc_k",
-          title: "Photosynthesis — IGCSE Biology Revision",
-          caption: "Covers the equation, limiting factors, leaf structure and exam tips",
+          youtubeId: "X81OIkeuHJw",
+          title: "Photosynthesis — IGCSE Biology (Cognito)",
+          caption: "What photosynthesis is, how it works, limiting factors and uses of glucose",
         },
         {
           kind: "highlight",
@@ -25,7 +25,7 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Chloroplast_II.svg/640px-Chloroplast_II.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Chloroplast_II.svg/800px-Chloroplast_II.svg.png",
           caption: "Chloroplast structure — contains chlorophyll in thylakoid membranes; stroma is the site of the Calvin cycle",
           side: "right",
         },
@@ -73,7 +73,7 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Photosynthesis_yield_graph.svg/640px-Photosynthesis_yield_graph.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Photosynthesis_yield_graph.svg/800px-Photosynthesis_yield_graph.svg.png",
           caption: "Rate of photosynthesis vs light intensity — plateau shows another factor (CO₂ or temperature) is now limiting",
           side: "full",
         },
@@ -98,9 +98,9 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
         },
         {
           kind: "video",
-          youtubeId: "2BwKE-aCJo4",
-          title: "Aerobic & Anaerobic Respiration — IGCSE Biology",
-          caption: "Explains both types of respiration, oxygen debt and fermentation with clear diagrams",
+          youtubeId: "J0KxRX3fyoI",
+          title: "Aerobic & Anaerobic Respiration — IGCSE Biology (Cognito)",
+          caption: "Respiration equations, oxygen debt, fermentation and exam technique",
         },
         {
           kind: "highlight",

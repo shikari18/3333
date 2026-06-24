@@ -9,9 +9,9 @@ export const chemistryBondingNotes: NoteChapter = {
       blocks: [
         {
           kind: "video",
-          youtubeId: "W_bFGMazWlQ",
-          title: "Atomic Structure & Bonding — IGCSE Chemistry",
-          caption: "Covers atomic structure, ionic bonding, covalent bonding and metallic bonding",
+          youtubeId: "5I_1jRGSR9E",
+          title: "Atomic Structure & Bonding — IGCSE Chemistry (Cognito)",
+          caption: "Atomic structure, ionic bonding, covalent bonding and metallic bonding",
         },
         {
           kind: "intro",
@@ -19,7 +19,7 @@ export const chemistryBondingNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Bohr_atom_model.svg/640px-Bohr_atom_model.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Bohr_atom_model.svg/800px-Bohr_atom_model.svg.png",
           caption: "Bohr model: electrons occupy quantised energy levels (shells) around the nucleus",
           side: "right",
         },
@@ -107,7 +107,7 @@ export const chemistryBondingNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/H2O_2D_labelled.svg/640px-H2O_2D_labelled.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/H2O_2D_labelled.svg/800px-H2O_2D_labelled.svg.png",
           caption: "Water (H₂O): two O-H single covalent bonds. Oxygen has 2 bonding pairs and 2 lone pairs — bent shape.",
           side: "right",
         },

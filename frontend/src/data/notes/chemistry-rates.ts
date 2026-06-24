@@ -9,9 +9,9 @@ export const chemistryRatesNotes: NoteChapter = {
       blocks: [
         {
           kind: "video",
-          youtubeId: "VLudIBQMWXo",
-          title: "Rates of Reaction — IGCSE Chemistry",
-          caption: "Collision theory, factors affecting rate, and equilibrium explained with diagrams",
+          youtubeId: "SPXanyy3-hU",
+          title: "Rates of Reaction — IGCSE Chemistry (Cognito)",
+          caption: "Collision theory, factors affecting rate, and catalysts explained",
         },
         {
           kind: "definition",
@@ -25,7 +25,7 @@ export const chemistryRatesNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Activation_energy.svg/640px-Activation_energy.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Activation_energy.svg/800px-Activation_energy.svg.png",
           caption: "Energy profile diagram — activation energy (Ea) is the minimum energy needed. A catalyst lowers Ea without changing ΔH.",
           side: "right",
         },

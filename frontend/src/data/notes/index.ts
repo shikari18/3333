@@ -80,9 +80,9 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
   // ── ACCOUNTING ──────────────────────────────────────────────────────────────
   if (s.includes("accounting") || t.includes("ledger") || t.includes("double entry") || t.includes("trial balance") || t.includes("depreciation") || t.includes("balance sheet") || t.includes("income statement") || t.includes("bookkeeping")) {
     return [
-      { kind: "video", youtubeId: "aBqFbJKSNoo", title: `${title} — IGCSE Accounting`, caption: "Cambridge IGCSE Accounting 0452 — double entry, ledgers and financial statements" },
+      { kind: "video", youtubeId: "SPXanyy3-hU", title: `${title} — IGCSE Accounting`, caption: "Cambridge IGCSE Accounting 0452 — double entry, ledgers and financial statements" },
       { kind: "intro", text: `**${title}** — ${desc}. This guide covers the key principles, entries, and financial statement structures required for Cambridge IGCSE Accounting (0452).` },
-      { kind: "image", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/T-accounts.svg/640px-T-accounts.svg.png", caption: "T-account format — debits on the left, credits on the right", side: "full" },
+      { kind: "image", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/T-accounts.svg/800px-T-accounts.svg.png", caption: "T-account format — debits on the left, credits on the right", side: "full" },
       { kind: "keyterms", terms: [
         { label: "Double Entry", value: "Every transaction has TWO equal and opposite entries — a debit and a credit." },
         { label: "Debit (DR)", value: "Entry on the LEFT side of a T-account. Increases assets and expenses." },
@@ -107,9 +107,9 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
   // ── ECONOMICS ───────────────────────────────────────────────────────────────
   if (s.includes("economics") || t.includes("demand") || t.includes("supply") || t.includes("market") || t.includes("elasticity") || t.includes("gdp") || t.includes("inflation") || t.includes("fiscal") || t.includes("monetary") || t.includes("trade")) {
     return [
-      { kind: "video", youtubeId: "mUoNDev8oS8", title: `${title} — IGCSE Economics`, caption: "Cambridge IGCSE Economics 0455 — key concepts with diagrams and exam technique" },
+      { kind: "video", youtubeId: "dstRL5xB0Sk", title: `${title} — IGCSE Economics`, caption: "Cambridge IGCSE Economics 0455 — key concepts with diagrams and exam technique" },
       { kind: "intro", text: `**${title}** — ${desc}. This note covers the key economic concepts, diagrams and analysis for Cambridge IGCSE Economics (0455).` },
-      { kind: "image", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Supply-and-demand.svg/640px-Supply-and-demand.svg.png", caption: "Supply and demand diagram — equilibrium where S curve meets D curve", side: "full" },
+      { kind: "image", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Supply-and-demand.svg/800px-Supply-and-demand.svg.png", caption: "Supply and demand diagram — equilibrium where S curve meets D curve", side: "full" },
       { kind: "keyterms", terms: [
         { label: "Demand", value: "The willingness and ability of consumers to purchase a good at various prices in a given time period." },
         { label: "Supply", value: "The willingness and ability of producers to offer a good for sale at various prices in a given time period." },
@@ -127,7 +127,7 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
   // ── BUSINESS STUDIES ────────────────────────────────────────────────────────
   if (s.includes("business") || t.includes("marketing") || t.includes("stakeholder") || t.includes("cash flow") || t.includes("entrepreneur") || t.includes("human resource") || t.includes("production") || t.includes("profit")) {
     return [
-      { kind: "video", youtubeId: "A6G0mvSgYyE", title: `${title} — IGCSE Business Studies`, caption: "Cambridge IGCSE Business Studies 0450 — key concepts and exam technique" },
+      { kind: "video", youtubeId: "JGwcDCeYRYo", title: `${title} — IGCSE Business Studies`, caption: "Cambridge IGCSE Business Studies 0450 — key concepts and exam technique" },
       { kind: "intro", text: `**${title}** — ${desc}. This note covers the essential business concepts and frameworks for Cambridge IGCSE Business Studies (0450).` },
       { kind: "keyterms", terms: [
         { label: "Stakeholder", value: "Any person or group with an interest in a business (shareholders, employees, customers, government, community)." },
@@ -145,7 +145,7 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
   // ── GEOGRAPHY ───────────────────────────────────────────────────────────────
   if (s.includes("geography") || t.includes("river") || t.includes("coast") || t.includes("plate") || t.includes("population") || t.includes("urbanisation") || t.includes("climate") || t.includes("ecosystem") || t.includes("tectonic") || t.includes("development")) {
     return [
-      { kind: "video", youtubeId: "1-PJb7SP8_Y", title: `${title} — IGCSE Geography`, caption: "Cambridge IGCSE Geography 0460 — key processes, case studies and exam technique" },
+      { kind: "video", youtubeId: "r1WV68nraoc", title: `${title} — IGCSE Geography`, caption: "Cambridge IGCSE Geography 0460 — key processes, case studies and exam technique" },
       { kind: "intro", text: `**${title}** — ${desc}. This note covers the key geographical processes, case studies and exam skills for Cambridge IGCSE Geography (0460).` },
       { kind: "image", src: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Tectonic_plate_boundaries.png/640px-Tectonic_plate_boundaries.png", caption: "World tectonic plate boundaries — convergent, divergent, and transform types", side: "full" },
       { kind: "keyterms", terms: [
@@ -166,7 +166,7 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
   // ── HISTORY ──────────────────────────────────────────────────────────────────
   if (s.includes("history") || t.includes("war") || t.includes("versailles") || t.includes("cold war") || t.includes("nazi") || t.includes("revolution") || t.includes("appeasement") || t.includes("league") || t.includes("imperialism")) {
     return [
-      { kind: "video", youtubeId: "Zq8OoCXh9lQ", title: `${title} — IGCSE History`, caption: "Cambridge IGCSE History 0470 — key events, causes, consequences and essay technique" },
+      { kind: "video", youtubeId: "OTksau0_VoI", title: `${title} — IGCSE History`, caption: "Cambridge IGCSE History 0470 — key events, causes, consequences and essay technique" },
       { kind: "intro", text: `**${title}** — ${desc}. This note covers the key historical events, causes, consequences and significance for Cambridge IGCSE History (0470/0977).` },
       { kind: "keyterms", terms: [
         { label: "Appeasement", value: "Policy of making concessions to an aggressor to avoid war. E.g. Munich Agreement 1938." },
@@ -184,7 +184,7 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
   // ── ENGLISH LANGUAGE / LITERATURE ───────────────────────────────────────────
   if (s.includes("english") || t.includes("narrative") || t.includes("descriptive") || t.includes("reading") || t.includes("writing") || t.includes("poetry") || t.includes("prose")) {
     return [
-      { kind: "video", youtubeId: "NybKl3SJhTE", title: `${title} — IGCSE English`, caption: "Cambridge IGCSE English Language 0500 — reading, writing and exam techniques" },
+      { kind: "video", youtubeId: "X81OIkeuHJw", title: `${title} — IGCSE English`, caption: "Cambridge IGCSE English Language 0500 — reading, writing and exam techniques" },
       { kind: "intro", text: `**${title}** — ${desc}. This guide covers the key skills, language techniques and exam strategies for Cambridge IGCSE English (0500/0475).` },
       { kind: "keyterms", terms: [
         { label: "Simile", value: "A comparison using 'like' or 'as' — e.g. 'as cold as ice'" },
@@ -203,7 +203,7 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
   if (s.includes("computer") || s.includes("ict") || t.includes("binary") || t.includes("algorithm") || t.includes("cpu") || t.includes("database") || t.includes("network") || t.includes("programming") || t.includes("security") || t.includes("logic")) {
     if (t.includes("binary") || t.includes("hexadecimal") || t.includes("number system") || t.includes("data representation")) {
       return [
-        { kind: "video", youtubeId: "wgRBpZdoMEI", title: "Number Systems (Binary & Hex) — IGCSE Computer Science", caption: "Conversion between denary, binary and hexadecimal with worked examples" },
+        { kind: "video", youtubeId: "r1WV68nraoc", title: "Number Systems (Binary & Hex) — IGCSE Computer Science", caption: "Conversion between denary, binary and hexadecimal with worked examples" },
         { kind: "intro", text: `**${title}** — ${desc}. Covers binary, hexadecimal and denary conversions for Cambridge IGCSE Computer Science (0478).` },
         { kind: "keyterms", terms: [
           { label: "Denary (Base-10)", value: "Standard decimal system using digits 0–9." },
@@ -217,7 +217,7 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
     }
     if (t.includes("cpu") || t.includes("architecture") || t.includes("hardware") || t.includes("memory")) {
       return [
-        { kind: "video", youtubeId: "Z5JC9Ve1sfI", title: "CPU Architecture & Fetch-Decode-Execute — IGCSE CS", caption: "Covers CPU components, registers and the FDE cycle with diagrams" },
+        { kind: "video", youtubeId: "TIHW5hEoaAw", title: "CPU Architecture & Fetch-Decode-Execute — IGCSE CS", caption: "Covers CPU components, registers and the FDE cycle with diagrams" },
         { kind: "intro", text: `**${title}** — ${desc}. This note covers CPU architecture and memory for Cambridge IGCSE Computer Science (0478).` },
         { kind: "keyterms", terms: [
           { label: "ALU", value: "Arithmetic Logic Unit — performs calculations and logical comparisons." },
@@ -232,7 +232,7 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
     }
     if (t.includes("algorithm") || t.includes("pseudocode") || t.includes("flowchart") || t.includes("problem-solving")) {
       return [
-        { kind: "video", youtubeId: "e_WfC8HwVB8", title: "Algorithms & Pseudocode — IGCSE Computer Science", caption: "Covers decomposition, abstraction, trace tables, searching and sorting" },
+        { kind: "video", youtubeId: "7v2gs8rdQzU", title: "Algorithms & Pseudocode — IGCSE Computer Science", caption: "Covers decomposition, abstraction, trace tables, searching and sorting" },
         { kind: "intro", text: `**${title}** — ${desc}. Covers algorithmic thinking for Cambridge IGCSE Computer Science (0478).` },
         { kind: "keyterms", terms: [
           { label: "Algorithm", value: "A step-by-step set of instructions to solve a problem." },
@@ -246,7 +246,7 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
     }
     if (t.includes("database") || t.includes("sql") || t.includes("query")) {
       return [
-        { kind: "video", youtubeId: "FR4QIeZaPeM", title: "Databases & SQL — IGCSE Computer Science", caption: "Covers database concepts, primary/foreign keys, and SQL SELECT queries" },
+        { kind: "video", youtubeId: "5I_1jRGSR9E", title: "Databases & SQL — IGCSE Computer Science", caption: "Covers database concepts, primary/foreign keys, and SQL SELECT queries" },
         { kind: "intro", text: `**${title}** — ${desc}. This note covers database design and SQL for Cambridge IGCSE Computer Science (0478).` },
         { kind: "keyterms", terms: [
           { label: "Primary Key", value: "A field that uniquely identifies each record in a table. Cannot be NULL or duplicate." },
@@ -259,7 +259,7 @@ function getDynamicBlocks(title: string, desc: string, code: string, subject: st
     }
     // CS fallback
     return [
-      { kind: "video", youtubeId: "AQDCe585Lnc", title: `${title} — IGCSE Computer Science`, caption: "Cambridge IGCSE Computer Science 0478 revision" },
+      { kind: "video", youtubeId: "vt8fB3MFzLk", title: `${title} — IGCSE Computer Science`, caption: "Cambridge IGCSE Computer Science 0478 revision" },
       { kind: "intro", text: `**${title}** — ${desc}.` },
       { kind: "keyterms", terms: [
         { label: "Data", value: "Raw facts and figures without context." },

@@ -9,9 +9,9 @@ export const physicsElectricityNotes: NoteChapter = {
       blocks: [
         {
           kind: "video",
-          youtubeId: "F_vLWkkNkhQ",
-          title: "Electricity & Circuits — IGCSE Physics",
-          caption: "Ohm's law, series vs parallel circuits, resistance and power calculations",
+          youtubeId: "TIHW5hEoaAw",
+          title: "Electricity & Circuits — IGCSE Physics (Cognito)",
+          caption: "Charge, current, voltage, resistance, Ohm's law and circuit calculations",
         },
         {
           kind: "keyterms",
@@ -28,7 +28,7 @@ export const physicsElectricityNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ohm%27s_Law_Graph.svg/640px-Ohm%27s_Law_Graph.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Ohm%27s_Law_Graph.svg/800px-Ohm%27s_Law_Graph.svg.png",
           caption: "I-V graph for an ohmic resistor — straight line through origin. Gradient = 1/R (constant resistance).",
           side: "right",
         },

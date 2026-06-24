@@ -13,9 +13,9 @@ export const physicsWavesNotes: NoteChapter = {
         },
         {
           kind: "video",
-          youtubeId: "Rbuhdo0AZDU",
-          title: "Waves — IGCSE Physics Complete Revision",
-          caption: "Covers transverse vs longitudinal, wave equation, reflection, refraction and diffraction",
+          youtubeId: "r1WV68nraoc",
+          title: "Waves — IGCSE Physics (Cognito)",
+          caption: "Transverse vs longitudinal waves, wave equation, reflection, refraction and diffraction",
         },
         {
           kind: "keyterms",
@@ -61,7 +61,7 @@ export const physicsWavesNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Sine_wavelength.svg/640px-Sine_wavelength.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Sine_wavelength.svg/800px-Sine_wavelength.svg.png",
           caption: "Transverse wave showing amplitude, wavelength, crest and trough",
           side: "right",
         },
@@ -90,7 +90,7 @@ export const physicsWavesNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Reflection_angles.svg/640px-Reflection_angles.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Reflection_angles.svg/800px-Reflection_angles.svg.png",
           caption: "Angle of incidence = Angle of reflection. Both measured from the normal (perpendicular to surface).",
           side: "right",
         },
@@ -109,7 +109,7 @@ export const physicsWavesNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Snells_law.svg/640px-Snells_law.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Snells_law.svg/800px-Snells_law.svg.png",
           caption: "Refraction: light bends towards the normal entering a denser medium (n₁sinθ₁ = n₂sinθ₂)",
           side: "right",
         },
@@ -142,9 +142,9 @@ export const physicsWavesNotes: NoteChapter = {
         },
         {
           kind: "video",
-          youtubeId: "cfXzwh3KadE",
-          title: "The Electromagnetic Spectrum — IGCSE Physics",
-          caption: "All 7 types, their properties, uses and dangers explained",
+          youtubeId: "7v2gs8rdQzU",
+          title: "Electromagnetic Spectrum — IGCSE Physics (Cognito)",
+          caption: "All 7 types of EM waves, their properties, uses and dangers",
         },
         {
           kind: "table",
@@ -251,7 +251,7 @@ export const physicsWavesNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Earthquake_wave_shadow_zone.svg/640px-Earthquake_wave_shadow_zone.svg.png",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Earthquake_wave_shadow_zone.svg/800px-Earthquake_wave_shadow_zone.svg.png",
           caption: "Seismic wave paths through the Earth — S-wave shadow zone reveals the liquid outer core",
           side: "full",
         },
