@@ -239,7 +239,6 @@ function ImageBlock({ block }: { block: NoteBlock & { kind: "image" } }) {
         alt={block.caption || "Diagram"} 
         onError={() => setError(true)}
         referrerPolicy="no-referrer"
-        crossOrigin="anonymous"
         className="w-full object-contain max-h-72" 
       />
       {block.caption && (
