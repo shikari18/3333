@@ -19,8 +19,8 @@ export const biologyCellsNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/cc7c0da98dd7e0bb4de6e8ff7f79364434c2ce57",
-          caption: "Typical animal cell — showing nucleus, mitochondria, ribosomes, ER, Golgi apparatus and cell membrane (OpenStax Biology 2e, CC BY-NC-SA)",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Animal_cell_structure_en.svg/800px-Animal_cell_structure_en.svg.png",
+          caption: "Labeled animal cell — nucleus, mitochondria, ribosomes, cell membrane. No cell wall or chloroplasts.",
           side: "full",
         },
         {
@@ -111,8 +111,7 @@ export const biologyCellsNotes: NoteChapter = {
           youtubeId: "4Eq8rO3fABM",
           title: "Osmosis — IGCSE Biology (Cognito)",
           caption: "Diffusion, osmosis and active transport with clear animated diagrams",
-        },
-        {
+        },        {
           kind: "bullets",
           items: [
             {
@@ -157,8 +156,8 @@ export const biologyCellsNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/c6c4df582eab01ae81196d6c55cc5d86f61a2eb6",
-          caption: "Plant cell — showing cell wall, chloroplasts, and central vacuole (absent in animal cells). Source: OpenStax Biology 2e, CC BY-NC-SA",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Plant_cell_structure_svg.svg/800px-Plant_cell_structure_svg.svg.png",
+          caption: "Plant cell — has cell wall (cellulose), chloroplasts, and large permanent vacuole absent in animal cells.",
           side: "full",
         },
         {

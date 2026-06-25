@@ -25,8 +25,8 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/0a7f415e3b677d985fef41084daa17c875901b67",
-          caption: "Chloroplast — outer membrane, inner membrane, thylakoid stacks (grana), and stroma. Light reactions occur in thylakoids; Calvin cycle in stroma. Source: OpenStax Biology 2e, CC BY-NC-SA",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Chloroplast_II.svg/800px-Chloroplast_II.svg.png",
+          caption: "Chloroplast — thylakoid membranes (grana) absorb light; stroma is where the Calvin cycle occurs.",
           side: "full",
         },
         {
@@ -73,8 +73,8 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
         },
         {
           kind: "image",
-          src: "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/5f8c742746e94f1b77a7305fe9b253da7a814c06",
-          caption: "Photosynthesis equation: 6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂. Source: OpenStax Biology 2e, CC BY-NC-SA",
+          src: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Photosynthesis_yield_graph.svg/800px-Photosynthesis_yield_graph.svg.png",
+          caption: "Rate of photosynthesis vs light intensity — plateau shows another factor (CO₂ or temperature) is now limiting.",
           side: "full",
         },
         {
