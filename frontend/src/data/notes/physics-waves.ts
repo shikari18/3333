@@ -60,9 +60,10 @@ export const physicsWavesNotes: NoteChapter = {
           ],
         },
         {
-          kind: "highlight",
-          text: "**Transverse wave diagram:**\n• **Crest** = top | **Trough** = bottom\n• **Amplitude** = distance from rest to crest\n• **Wavelength (λ)** = distance from one crest to the next\n• **Frequency** = waves passing a point per second (Hz)",
-          color: "blue",
+          kind: "image",
+          src: "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/cc312943957148589e115a83f8a833b8d8f1a64a",
+          caption: "Wave diagram — wavelength λ is the distance between adjacent crests; amplitude X is displacement from rest to crest. Source: OpenStax Physics, CC BY-NC-SA",
+          side: "full",
         },
         {
           kind: "definition",

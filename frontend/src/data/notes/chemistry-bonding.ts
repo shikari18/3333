@@ -71,9 +71,10 @@ export const chemistryBondingNotes: NoteChapter = {
           definition: "the electrostatic attraction between oppositely charged ions. A metal loses electrons to form a positive ion (cation); a non-metal gains electrons to form a negative ion (anion).",
         },
         {
-          kind: "highlight",
-          text: "**NaCl ionic lattice:**\n• Na⁺ and Cl⁻ arranged alternately in a 3D lattice\n• Each Na⁺ surrounded by 6 Cl⁻, each Cl⁻ surrounded by 6 Na⁺\n• Strong electrostatic forces in ALL directions → high melting point, brittle",
-          color: "blue",
+          kind: "image",
+          src: "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/193888153fd102102a9be86bb6a21cfd3ff64944",
+          caption: "NaCl ionic lattice — Na⁺ (small) and Cl⁻ (large) ions arranged alternately, held by strong electrostatic forces in all directions. Source: OpenStax Chemistry 2e, CC BY-NC-SA",
+          side: "full",
         },
         {
           kind: "bullets",

@@ -18,9 +18,10 @@ export const biologyCellsNotes: NoteChapter = {
           caption: "Animal vs plant cells, organelle functions and exam tips",
         },
         {
-          kind: "highlight",
-          text: "**Animal cell** — has nucleus, cytoplasm, cell membrane, mitochondria, ribosomes\n**Plant cell** — has all of the above PLUS: cell wall (cellulose), chloroplasts, large permanent vacuole\n**Key rule:** If an organelle is in the animal cell column only, it has no cell wall or chloroplasts.",
-          color: "blue",
+          kind: "image",
+          src: "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/cc7c0da98dd7e0bb4de6e8ff7f79364434c2ce57",
+          caption: "Typical animal cell — showing nucleus, mitochondria, ribosomes, ER, Golgi apparatus and cell membrane (OpenStax Biology 2e, CC BY-NC-SA)",
+          side: "full",
         },
         {
           kind: "table",
@@ -153,6 +154,12 @@ export const biologyCellsNotes: NoteChapter = {
           kind: "highlight",
           text: "**Osmosis effects on cells:**\n• **Hypotonic** (dilute) → water enters → animal cell bursts / plant cell becomes turgid\n• **Isotonic** → no net movement → cell unchanged\n• **Hypertonic** (concentrated) → water leaves → animal cell shrinks (crenation) / plant cell undergoes plasmolysis",
           color: "blue",
+        },
+        {
+          kind: "image",
+          src: "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/c6c4df582eab01ae81196d6c55cc5d86f61a2eb6",
+          caption: "Plant cell — showing cell wall, chloroplasts, and central vacuole (absent in animal cells). Source: OpenStax Biology 2e, CC BY-NC-SA",
+          side: "full",
         },
         {
           kind: "comparison",

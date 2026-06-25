@@ -24,9 +24,10 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
           color: "green",
         },
         {
-          kind: "highlight",
-          text: "**Chloroplast structure:**\n• **Thylakoid membranes** — contain chlorophyll; site of light-dependent reactions\n• **Granum** — stack of thylakoids (increased surface area for light absorption)\n• **Stroma** — fluid-filled space; site of the Calvin cycle\n• **Double membrane** — surrounds the chloroplast",
-          color: "green",
+          kind: "image",
+          src: "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/0a7f415e3b677d985fef41084daa17c875901b67",
+          caption: "Chloroplast — outer membrane, inner membrane, thylakoid stacks (grana), and stroma. Light reactions occur in thylakoids; Calvin cycle in stroma. Source: OpenStax Biology 2e, CC BY-NC-SA",
+          side: "full",
         },
         {
           kind: "keyterms",
@@ -71,9 +72,10 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
           ],
         },
         {
-          kind: "highlight",
-          text: "**Limiting factor graph shapes:**\n• Light intensity → rate rises then plateaus (CO₂ or temp now limiting)\n• CO₂ concentration → rate rises then plateaus (light or temp now limiting)\n• Temperature → rises to peak ~40°C then falls sharply (enzymes denature)\n\nAt the plateau: increasing that factor has NO further effect until the limiting factor is addressed.",
-          color: "green",
+          kind: "image",
+          src: "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/5f8c742746e94f1b77a7305fe9b253da7a814c06",
+          caption: "Photosynthesis equation: 6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂. Source: OpenStax Biology 2e, CC BY-NC-SA",
+          side: "full",
         },
         {
           kind: "tip",
@@ -106,9 +108,10 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
           color: "blue",
         },
         {
-          kind: "highlight",
-          text: "**Mitochondria structure:**\n• **Inner membrane** folded into **cristae** → increased surface area for ATP synthesis enzymes\n• **Matrix** — contains Krebs cycle enzymes and circular DNA\n• Cells needing lots of energy (muscle, liver) have many mitochondria with densely packed cristae",
-          color: "blue",
+          kind: "image",
+          src: "https://openstax.org/apps/image-cdn/v1/f=webp/apps/archive/20260604.144757/resources/00abe6130e466e45f70e9e3b98dca42bdcd1409a",
+          caption: "Mitochondrion — folded inner membrane (cristae) greatly increases surface area for ATP synthesis. Source: OpenStax Biology 2e, CC BY-NC-SA",
+          side: "full",
         },
         {
           kind: "bullets",
