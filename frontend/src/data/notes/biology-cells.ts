@@ -151,7 +151,7 @@ export const biologyCellsNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Osmosis effects on cells:**\n• **Hypotonic solution** (dilute) → water enters → animal cell bursts (lysis) / plant cell becomes turgid\n• **Isotonic solution** → no net movement → cell stays the same\n• **Hypertonic solution** (concentrated) → water leaves → animal cell shrinks (crenation) / plant cell undergoes plasmolysis",
+          text: "**Osmosis effects on cells:**\n• **Hypotonic** (dilute) → water enters → animal cell bursts / plant cell becomes turgid\n• **Isotonic** → no net movement → cell unchanged\n• **Hypertonic** (concentrated) → water leaves → animal cell shrinks (crenation) / plant cell undergoes plasmolysis",
           color: "blue",
         },
         {

@@ -28,7 +28,7 @@ export const physicsElectricityNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Ohm's Law I-V graph shapes:**\n• **Ohmic resistor** — straight line through origin (constant resistance)\n• **Filament bulb** — S-shaped curve (resistance increases as temperature increases)\n• **Diode** — no current in reverse; current flows only above ~0.6V forward\n• Gradient of I-V graph = 1/R (steeper = lower resistance)",
+          text: "**I-V graph shapes:**\n• **Ohmic resistor** — straight line through origin (constant resistance)\n• **Filament bulb** — S-shaped curve (resistance increases as temperature rises)\n• **Diode** — no current in reverse; flows only above ~0.6V forward bias\n• Gradient of I-V graph = 1/R (steeper = lower resistance)",
           color: "blue",
         },
         {
@@ -149,7 +149,7 @@ export const physicsElectricityNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Magnetic field lines around a bar magnet:**\n• Lines go from **North pole** to **South pole** outside the magnet\n• Closer lines = stronger field (denser near the poles)\n• Lines never cross each other\n• Inside the magnet, lines go from South to North\n• A compass needle aligns with field lines — North end points in the field direction",
+          text: "**Magnetic field lines (bar magnet):**\n• Lines go from **North** to **South** outside the magnet\n• Denser lines near poles = stronger field\n• Lines never cross\n• Inside the magnet: lines go South → North\n• A compass needle aligns with field lines",
           color: "blue",
         },
         {
@@ -172,6 +172,7 @@ export const physicsElectricityNotes: NoteChapter = {
               "Uses Fleming's Right-Hand Rule",
             ],
           },
+        },
       ],
     },
     {

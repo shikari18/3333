@@ -40,7 +40,7 @@ export const biologyEcologyNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Pyramid of biomass:**\n• Each level (trophic level) has LESS biomass than the one below\n• Energy is lost at each level as heat (respiration), waste, and uneaten material\n• Only ~10% of energy passes from one trophic level to the next\n• This is why food chains rarely have more than 4–5 levels — too little energy remains",
+          text: "**Pyramid of biomass:**\n• Each trophic level has LESS biomass than the one below\n• Only ~10% of energy passes to the next level — rest lost as heat, waste, uneaten material\n• This is why food chains rarely exceed 4–5 levels — too little energy remains",
           color: "green",
         },
       ],
@@ -199,6 +199,7 @@ export const biologyEcologyNotes: NoteChapter = {
               "International climate agreements",
             ],
           },
+        },
       ],
     },
   ],

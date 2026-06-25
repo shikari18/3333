@@ -74,7 +74,7 @@ export const chemistryOrganicNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Ethene (C₂H₄) — the simplest alkene:**\n• Contains a **C=C double bond** (one sigma + one pi bond)\n• Double bond makes it **unsaturated** and highly reactive\n• General formula for alkenes: **CₙH₂ₙ**\n• Ethene: H₂C=CH₂ — all 6 atoms in a flat (planar) arrangement around the double bond",
+          text: "**Ethene (C₂H₄) — simplest alkene:**\n• Contains a **C=C double bond** (unsaturated)\n• General formula for alkenes: **CₙH₂ₙ**\n• Reactive towards addition reactions (bromine water test: orange → colourless)\n• All 6 atoms are in the same plane around the double bond",
           color: "blue",
         },
         {

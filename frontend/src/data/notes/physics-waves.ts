@@ -61,7 +61,7 @@ export const physicsWavesNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Transverse wave diagram:**\n• **Crest** = top of the wave | **Trough** = bottom\n• **Amplitude** = distance from rest position to crest\n• **Wavelength (λ)** = distance from one crest to the next crest\n• **Frequency** = number of complete waves per second (Hz)",
+          text: "**Transverse wave diagram:**\n• **Crest** = top | **Trough** = bottom\n• **Amplitude** = distance from rest to crest\n• **Wavelength (λ)** = distance from one crest to the next\n• **Frequency** = waves passing a point per second (Hz)",
           color: "blue",
         },
         {
@@ -89,7 +89,7 @@ export const physicsWavesNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Reflection law:** Angle of incidence = Angle of reflection (both measured from the **normal** — the line perpendicular to the surface at the point of incidence)",
+          text: "**Reflection:** Angle of incidence = Angle of reflection (both measured from the **normal** — perpendicular to surface at point of incidence)",
           color: "pink",
         },
         {
@@ -107,7 +107,7 @@ export const physicsWavesNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Refraction — Snell's Law:** n₁sinθ₁ = n₂sinθ₂\n• Entering denser medium (e.g. air → glass): speed decreases, bends **toward** the normal\n• Entering less dense medium (e.g. glass → air): speed increases, bends **away** from the normal\n• Frequency stays the SAME; wavelength changes",
+          text: "**Refraction — Snell's Law:** n₁sinθ₁ = n₂sinθ₂\n• Denser medium (e.g. air→glass): speed decreases, bends **toward** normal\n• Less dense medium (e.g. glass→air): speed increases, bends **away** from normal\n• Frequency stays the SAME; wavelength changes",
           color: "blue",
         },
         {
@@ -124,7 +124,7 @@ export const physicsWavesNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Diffraction:** Maximum diffraction occurs when gap width ≈ wavelength. Larger wavelength or narrower gap → more spreading. Frequency, wavelength and speed are all unchanged by diffraction.",
+          text: "**Diffraction:** Maximum diffraction when gap width ≈ wavelength. Larger wavelength or narrower gap → more spreading. Frequency, wavelength and speed are all unchanged.",
           color: "green",
         },
       ],
@@ -247,7 +247,7 @@ export const physicsWavesNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Seismic shadow zones:**\n• S-waves cannot reach the zone 103°–180° from the earthquake (blocked by liquid outer core)\n• P-waves are refracted by the core, creating a shadow zone 103°–142° away\n• The existence of the S-wave shadow zone is the main evidence that the outer core is **liquid**",
+          text: "**Seismic shadow zones:**\n• S-waves cannot pass through liquid outer core → shadow zone 103°–180° from quake\n• P-waves refract through core → shadow zone 103°–142° away\n• S-wave shadow zone is the main evidence that the **outer core is liquid**",
           color: "blue",
         },
       ],

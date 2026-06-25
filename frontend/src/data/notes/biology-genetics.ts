@@ -14,7 +14,7 @@ export const biologyGeneticsNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**DNA double helix structure:**\n• Two strands wound around each other in a double helix\n• Each strand made of nucleotides linked by covalent bonds (sugar-phosphate backbone)\n• Strands held together by **complementary base pairs**: A pairs with T (2 hydrogen bonds), C pairs with G (3 hydrogen bonds)\n• Strands are **antiparallel** (run in opposite directions 3'→5' and 5'→3')",
+          text: "**DNA double helix:**\n• Two strands wound in a double helix held by complementary base pairs\n• **A pairs with T** (2 hydrogen bonds) | **C pairs with G** (3 hydrogen bonds)\n• Strands are antiparallel (run 3'→5' and 5'→3')\n• Sugar-phosphate backbone on the outside; bases on the inside",
           color: "blue",
         },
         {
@@ -104,7 +104,7 @@ export const biologyGeneticsNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Punnett square — monohybrid cross example (Tt × Tt):**\n\n|   | T | t |\n|---|---|---|\n| **T** | TT | Tt |\n| **t** | Tt | tt |\n\n• Genotype ratio: 1 TT : 2 Tt : 1 tt\n• Phenotype ratio: **3 tall : 1 short** (3 dominant : 1 recessive)\n• Always use a Punnett square in exam answers — show the cross clearly",
+          text: "**Punnett square — Tt × Tt cross:**\n\n|   | **T** | **t** |\n|---|---|---|\n| **T** | TT | Tt |\n| **t** | Tt | tt |\n\nGenotype ratio: 1 TT : 2 Tt : 1 tt\nPhenotype ratio: **3 dominant : 1 recessive**",
           color: "green",
         },
       ],

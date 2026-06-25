@@ -68,6 +68,7 @@ export const physicsThermalNotes: NoteChapter = {
               "Much larger than fusion (bonds fully broken)",
             ],
           },
+        },
       ],
     },
     {

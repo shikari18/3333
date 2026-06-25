@@ -28,7 +28,7 @@ export const biologyNervousNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Neurone structure:**\n• **Cell body** — contains nucleus and cytoplasm\n• **Dendrites** — short extensions that RECEIVE nerve impulses from other neurones\n• **Axon** — long fibre that TRANSMITS impulses away from cell body\n• **Myelin sheath** — fatty insulation around axon; speeds up transmission and prevents signal loss\n• **Axon terminals** — release neurotransmitters across the synapse to the next neurone",
+          text: "**Neurone structure:**\n• **Dendrites** — receive impulses from other neurones\n• **Cell body** — contains nucleus\n• **Axon** — long fibre transmitting impulses away from cell body\n• **Myelin sheath** — fatty insulation, speeds up transmission\n• **Axon terminals** — release neurotransmitters across the synapse",
           color: "blue",
         },
         {
@@ -95,7 +95,7 @@ export const biologyNervousNotes: NoteChapter = {
       blocks: [
         {
           kind: "highlight",
-          text: "**Eye structure — key parts:**\n• **Cornea** — transparent outer layer; does MOST of the light refraction\n• **Iris** — coloured ring; controls pupil size (circular muscles = constrict; radial muscles = dilate)\n• **Lens** — fine-tunes focus by changing shape (accommodation)\n• **Retina** — contains rod cells (dim light, black/white) and cone cells (bright light, colour)\n• **Fovea** — highest concentration of cone cells; point of sharpest vision\n• **Blind spot** — where optic nerve exits; no photoreceptors here",
+          text: "**Eye structure:**\n• **Cornea** — does most light refraction\n• **Iris** — controls pupil size (circular muscles constrict; radial muscles dilate)\n• **Lens** — fine-tunes focus by changing shape (accommodation)\n• **Retina** — rod cells (dim light) and cone cells (colour)\n• **Fovea** — highest cone density; sharpest vision\n• **Blind spot** — where optic nerve exits; no photoreceptors",
           color: "blue",
         },
         {
@@ -132,6 +132,7 @@ export const biologyNervousNotes: NoteChapter = {
               "More light enters — improves vision",
             ],
           },
+        },
       ],
     },
     {

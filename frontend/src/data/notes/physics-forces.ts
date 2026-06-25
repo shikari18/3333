@@ -40,7 +40,7 @@ export const physicsForcesNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Velocity-time graph shapes:**\n• Horizontal line → constant velocity (zero acceleration)\n• Straight line with positive gradient → uniform acceleration\n• Curved line with decreasing gradient → decreasing acceleration\n• Area under the graph = displacement (count squares or use ½ base × height for triangles)",
+          text: "**Velocity-time graph shapes:**\n• Horizontal line → constant velocity (zero acceleration)\n• Straight line with positive gradient → uniform acceleration\n• Curved line with decreasing gradient → decreasing acceleration\n• Area under the graph = displacement",
           color: "pink",
         },
       ],
@@ -106,7 +106,7 @@ export const physicsForcesNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Free body diagram rules:**\n• Draw the object as a box or dot\n• Draw ALL forces as arrows FROM the object\n• Arrow length represents magnitude\n• Label each force (Weight W↓, Normal reaction N↑, Friction f←, Applied force F→)\n• Resultant force = vector sum of all forces",
+          text: "**Free body diagram rules:**\n• Draw ALL forces as arrows FROM the object\n• Arrow length represents magnitude\n• Label each: Weight W↓, Normal reaction N↑, Friction f←, Applied force F→\n• Resultant force = vector sum of all forces",
           color: "blue",
         },
         {
@@ -145,7 +145,7 @@ export const physicsForcesNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Skydiver velocity-time graph:**\n1. Steep curve upward → high acceleration (weight >> drag)\n2. Curve flattens → decreasing acceleration (drag increasing)\n3. Horizontal line → terminal velocity (weight = drag)\n4. Sharp drop → parachute opens (drag >> weight, decelerates)\n5. Lower horizontal line → new lower terminal velocity",
+          text: "**Skydiver velocity-time graph:**\n1. Steep upward curve → high acceleration (weight >> drag)\n2. Curve flattens → decreasing acceleration\n3. Horizontal line → terminal velocity (weight = drag)\n4. Sharp drop → parachute opens (drag >> weight, decelerates)\n5. New lower horizontal line → new lower terminal velocity",
           color: "green",
         },
         {

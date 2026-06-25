@@ -25,7 +25,7 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Chloroplast structure:**\n• **Thylakoid membranes** — contain chlorophyll; site of the light-dependent reactions (light energy absorbed here)\n• **Granum** — stack of thylakoids (increases surface area for light absorption)\n• **Stroma** — fluid-filled space; site of the Calvin cycle (light-independent reactions)\n• **Double membrane** — outer and inner membranes surrounding the chloroplast",
+          text: "**Chloroplast structure:**\n• **Thylakoid membranes** — contain chlorophyll; site of light-dependent reactions\n• **Granum** — stack of thylakoids (increased surface area for light absorption)\n• **Stroma** — fluid-filled space; site of the Calvin cycle\n• **Double membrane** — surrounds the chloroplast",
           color: "green",
         },
         {
@@ -72,7 +72,7 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Limiting factor graphs — key shapes:**\n• **Light intensity** → rate rises linearly then plateaus (CO₂ or temperature now limiting)\n• **CO₂ concentration** → rate rises then plateaus (light or temperature now limiting)\n• **Temperature** → rate rises to peak (~40°C) then falls sharply (enzymes denature above 40°C)\n\nAt the plateau, increasing that factor has NO further effect until the limiting factor changes.",
+          text: "**Limiting factor graph shapes:**\n• Light intensity → rate rises then plateaus (CO₂ or temp now limiting)\n• CO₂ concentration → rate rises then plateaus (light or temp now limiting)\n• Temperature → rises to peak ~40°C then falls sharply (enzymes denature)\n\nAt the plateau: increasing that factor has NO further effect until the limiting factor is addressed.",
           color: "green",
         },
         {
@@ -107,7 +107,7 @@ export const biologyPhotosynthesisNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Mitochondria structure:**\n• **Outer membrane** — smooth, surrounds the organelle\n• **Inner membrane** — highly folded into **cristae** → greatly increased surface area for ATP synthesis enzymes\n• **Matrix** — fluid interior; contains enzymes for the Krebs cycle and circular DNA\n• More cristae = more mitochondria activity = more ATP produced (e.g. muscle cells have many mitochondria)",
+          text: "**Mitochondria structure:**\n• **Inner membrane** folded into **cristae** → increased surface area for ATP synthesis enzymes\n• **Matrix** — contains Krebs cycle enzymes and circular DNA\n• Cells needing lots of energy (muscle, liver) have many mitochondria with densely packed cristae",
           color: "blue",
         },
         {

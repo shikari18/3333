@@ -19,7 +19,7 @@ export const chemistryBondingNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Bohr model — electron shell filling rules:**\n• Shell 1 (closest to nucleus): max **2** electrons\n• Shell 2: max **8** electrons\n• Shell 3: max **8** electrons (for IGCSE)\n\nExamples: Na (2,8,1) | Cl (2,8,7) | Ca (2,8,8,2) | O (2,6)",
+          text: "**Bohr model — electron shells:**\n• Shell 1: max **2** electrons | Shell 2: max **8** | Shell 3: max **8** (IGCSE)\n\nExamples: Na (2,8,1) | Cl (2,8,7) | Ca (2,8,8,2) | O (2,6) | Mg (2,8,2)",
           color: "blue",
         },
         {
@@ -72,7 +72,7 @@ export const chemistryBondingNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**NaCl giant ionic lattice:**\n• Na⁺ ions and Cl⁻ ions arranged alternately in a 3D lattice\n• Each Na⁺ surrounded by 6 Cl⁻ ions, and each Cl⁻ surrounded by 6 Na⁺ ions\n• Strong electrostatic forces act in ALL directions\n• This is why ionic compounds have high melting points and are brittle",
+          text: "**NaCl ionic lattice:**\n• Na⁺ and Cl⁻ arranged alternately in a 3D lattice\n• Each Na⁺ surrounded by 6 Cl⁻, each Cl⁻ surrounded by 6 Na⁺\n• Strong electrostatic forces in ALL directions → high melting point, brittle",
           color: "blue",
         },
         {
@@ -105,7 +105,7 @@ export const chemistryBondingNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Dot-and-cross diagrams — common molecules:**\n• H₂O — oxygen shares 1 pair with each hydrogen (2 single bonds, 2 lone pairs on O)\n• CO₂ — carbon shares 2 pairs with each oxygen (2 double bonds, linear shape)\n• NH₃ — nitrogen shares 1 pair with each hydrogen (3 single bonds, 1 lone pair on N)\n• CH₄ — carbon shares 1 pair with each hydrogen (4 single bonds, tetrahedral)",
+          text: "**Dot-and-cross diagrams:**\n• H₂O — O shares 1 pair with each H (2 single bonds, 2 lone pairs on O)\n• CO₂ — C shares 2 pairs with each O (2 double bonds, linear)\n• NH₃ — N shares 1 pair with each H (3 single bonds, 1 lone pair on N)\n• CH₄ — C shares 1 pair with each H (4 single bonds, tetrahedral)",
           color: "blue",
         },
         {

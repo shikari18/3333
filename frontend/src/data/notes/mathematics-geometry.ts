@@ -13,7 +13,7 @@ export const mathematicsGeometryNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Circle parts to know:**\n• **Radius** — from centre to circumference\n• **Diameter** — chord through the centre (= 2 × radius)\n• **Chord** — a line joining two points on the circumference\n• **Arc** — part of the circumference between two points\n• **Sector** — region between two radii and an arc (like a pizza slice)\n• **Segment** — region between a chord and an arc\n• **Tangent** — a line that touches the circle at exactly one point",
+          text: "**Circle parts:**\n• **Radius** — centre to circumference | **Diameter** — 2 × radius\n• **Chord** — line joining two points on circumference\n• **Arc** — part of the circumference | **Sector** — pizza-slice region (2 radii + arc)\n• **Segment** — region between a chord and an arc\n• **Tangent** — touches circle at exactly one point (perpendicular to radius at that point)",
           color: "blue",
         },
         {

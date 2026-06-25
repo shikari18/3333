@@ -14,7 +14,7 @@ export const chemistryElectrolysisNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Electrolysis setup:**\n• **Cathode** (negative electrode) — attracts positive ions (cations) → REDUCTION (gain electrons)\n• **Anode** (positive electrode) — attracts negative ions (anions) → OXIDATION (lose electrons)\n• Electrolyte must be **molten** or **dissolved** so ions can move freely\n• Memory aid: **OILRIG** — Oxidation Is Loss, Reduction Is Gain (of electrons)",
+          text: "**Electrolysis setup:**\n• **Cathode** (−) → attracts cations → REDUCTION (gain electrons) — OILRIG\n• **Anode** (+) → attracts anions → OXIDATION (lose electrons)\n• Electrolyte must be molten or dissolved so ions can move\n• Memory: **OIL RIG** — Oxidation Is Loss, Reduction Is Gain",
           color: "blue",
         },
         {
@@ -156,7 +156,7 @@ export const chemistryElectrolysisNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Energy profile diagrams:**\n• **Exothermic** — products are LOWER in energy than reactants. ΔH is negative. Energy is released to surroundings.\n• **Endothermic** — products are HIGHER in energy than reactants. ΔH is positive. Energy is absorbed from surroundings.\n• **Activation energy (Ea)** = the energy barrier that must be overcome for the reaction to start (the peak above the reactants line)",
+          text: "**Energy profile diagrams:**\n• **Exothermic** — products LOWER than reactants, ΔH negative, energy released\n• **Endothermic** — products HIGHER than reactants, ΔH positive, energy absorbed\n• **Activation energy (Ea)** = energy barrier from reactants to peak\n• A **catalyst** lowers Ea WITHOUT changing ΔH or the energy of reactants/products",
           color: "blue",
         },
         {

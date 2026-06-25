@@ -41,7 +41,7 @@ export const biologyNutritionNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Digestive system pathway:**\nMouth → Oesophagus → Stomach → Small intestine (duodenum → ileum) → Large intestine → Rectum → Anus\n\n• **Absorption** occurs mainly in the small intestine (villi increase surface area)\n• **Water reabsorption** occurs in the large intestine\n• Liver produces **bile** (emulsifies fats); pancreas produces amylase, trypsin, lipase",
+          text: "**Digestive system pathway:**\nMouth → Oesophagus → Stomach → Small intestine (duodenum → ileum) → Large intestine → Rectum → Anus\n\n• Absorption in small intestine (villi increase surface area)\n• Water reabsorption in large intestine\n• Liver produces bile (emulsifies fats); pancreas produces amylase, trypsin, lipase",
           color: "blue",
         },
         {
@@ -98,7 +98,7 @@ export const biologyNutritionNotes: NoteChapter = {
         },
         {
           kind: "highlight",
-          text: "**Villus adaptations for absorption:**\n• **Single epithelial cell layer** → very short diffusion distance\n• **Microvilli** on epithelial cells → massively increase surface area\n• **Blood capillaries** inside → absorb glucose and amino acids; maintain steep concentration gradient\n• **Lacteal** (lymph vessel) inside → absorbs fatty acids and glycerol\n• **Rich blood supply** → constantly removes absorbed products to maintain gradient",
+          text: "**Villus adaptations:**\n• **Single epithelial cell layer** → very short diffusion distance\n• **Microvilli** → massively increased surface area\n• **Blood capillaries** → absorb glucose and amino acids; maintain steep concentration gradient\n• **Lacteal** (lymph vessel) → absorbs fatty acids and glycerol",
           color: "green",
         },
         {
