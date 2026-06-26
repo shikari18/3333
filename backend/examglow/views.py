@@ -531,18 +531,25 @@ class CambridgePapersView(APIView):
 
     _page_cache: dict = {}
 
-    def _get_cambridge_pdfs(self, code: str, name: str):
-        if code in self._page_cache:
-            return self._page_cache[code]
+    def _get_cambridge_pdfs(self, code: str, name: str, is_syllabus: bool = False):
+        cache_key = f"{code}-syllabus" if is_syllabus else code
+        if cache_key in self._page_cache:
+            return self._page_cache[cache_key]
 
         slug_name = self.SUBJECT_SLUGS.get(code)
         if not slug_name:
             slug_name = name.lower().strip().replace(' ', '-')
 
-        cambridge_url = (
-            f'https://www.cambridgeinternational.org/programmes-and-qualifications/'
-            f'cambridge-igcse-{slug_name}-{code}/past-papers/'
-        )
+        if is_syllabus:
+            cambridge_url = (
+                f'https://www.cambridgeinternational.org/programmes-and-qualifications/'
+                f'cambridge-igcse-{slug_name}-{code}/'
+            )
+        else:
+            cambridge_url = (
+                f'https://www.cambridgeinternational.org/programmes-and-qualifications/'
+                f'cambridge-igcse-{slug_name}-{code}/past-papers/'
+            )
 
         try:
             h = {
@@ -555,7 +562,7 @@ class CambridgePapersView(APIView):
             r = requests.get(cambridge_url, headers=h, timeout=15)
             if r.status_code != 200:
                 result = ([], cambridge_url)
-                self._page_cache[code] = result
+                self._page_cache[cache_key] = result
                 return result
 
             hrefs = re.findall(r'href="([^"]*\.pdf)"', r.text, re.IGNORECASE)
@@ -568,11 +575,11 @@ class CambridgePapersView(APIView):
                 pdf_links.append(full)
 
             result = (pdf_links, cambridge_url)
-            self._page_cache[code] = result
+            self._page_cache[cache_key] = result
             return result
         except Exception:
             result = ([], cambridge_url)
-            self._page_cache[code] = result
+            self._page_cache[cache_key] = result
             return result
 
     def get(self, request):
@@ -583,14 +590,15 @@ class CambridgePapersView(APIView):
         session = request.query_params.get('session', '').strip()
         paper_num = request.query_params.get('paper', '').strip()
         variant = request.query_params.get('variant', '1').strip()
+        is_syllabus = request.query_params.get('syllabus', '').strip() == '1'
 
         if not code:
             return Response({'error': 'code is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        pdf_links, cambridge_url = self._get_cambridge_pdfs(code, name)
+        pdf_links, cambridge_url = self._get_cambridge_pdfs(code, name, is_syllabus)
 
-        # If no filters, return everything we found
-        if not year:
+        # If syllabus request or no filters, return everything we found
+        if is_syllabus or not year:
             return Response({'pdfs': pdf_links, 'cambridge_url': cambridge_url})
 
         month = self.SESSION_MONTHS.get(session, 'june')
@@ -675,9 +683,9 @@ class PastPaperProxyView(APIView):
             return Response({'error': 'url query parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Allow PDF URLs or PapaCambridge past papers URLs
-        if not (target_url.startswith('https://pastpapers.papacambridge.com/') or 
-                target_url.startswith('https://www.cambridgeinternational.org/') or 
-                target_url.startswith('https://papers.xtremepape.rs/') or 
+        if not (target_url.startswith('https://pastpapers.papacambridge.com/') or
+                target_url.startswith('https://www.cambridgeinternational.org/') or
+                target_url.startswith('https://papers.xtremepape.rs/') or
                 target_url.lower().endswith('.pdf')):
             return Response({'error': 'Invalid target URL.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -705,3 +713,157 @@ class PastPaperProxyView(APIView):
             return proxy_response
         except requests.RequestException as e:
             return Response({'error': f'Proxy request failed: {str(e)}'}, status=status.HTTP_502_BAD_GATEWAY)
+
+
+@method_decorator(xframe_options_exempt, name='dispatch')
+class SyllabusPdfView(APIView):
+    """
+    GET /api/examglow/syllabus/pdf/?code=0452
+    Resolves and streams the official Cambridge IGCSE syllabus PDF for a given subject code.
+
+    Strategy (in order):
+    1. Try scraping the Cambridge subject page for a PDF link matching the subject code.
+    2. Fall back to a curated list of known-good GCE Guide / direct mirror URLs.
+    3. Return 404 if nothing found.
+    """
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+
+    # GCE Guide hosts official Cambridge syllabuses as static PDFs — format is stable.
+    # Pattern: https://www.gceguide.xyz/Cambridge IGCSE/<Subject> (<code>)/<code>_y<yy>_sy.pdf
+    # Also try the Xtreme Papers syllabus mirror.
+    SUBJECT_NAMES = {
+        '0452': 'Accounting',
+        '0610': 'Biology',
+        '0620': 'Chemistry',
+        '0625': 'Physics',
+        '0580': 'Mathematics',
+        '0478': 'Computer Science',
+        '0455': 'Economics',
+        '0450': 'Business Studies',
+        '0500': 'English - First Language',
+        '0460': 'Geography',
+        '0470': 'History',
+        '0606': 'Additional Mathematics',
+        '0417': 'Information and Communication Technology',
+        '0495': 'Sociology',
+    }
+
+    # Cambridge subject page slugs for scraping
+    CAMBRIDGE_SLUGS = {
+        '0452': 'accounting',
+        '0610': 'biology',
+        '0620': 'chemistry',
+        '0625': 'physics',
+        '0580': 'mathematics',
+        '0478': 'computer-science',
+        '0455': 'economics',
+        '0450': 'business-studies',
+        '0500': 'english-first-language',
+        '0460': 'geography',
+        '0470': 'history',
+        '0606': 'additional-mathematics',
+        '0417': 'information-and-communication-technology',
+        '0495': 'sociology',
+    }
+
+    _pdf_cache: dict = {}
+
+    HEADERS = {
+        'User-Agent': (
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+            'AppleWebKit/537.36 (KHTML, like Gecko) '
+            'Chrome/124.0.0.0 Safari/537.36'
+        ),
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    }
+
+    def _try_url(self, url: str) -> bool:
+        """HEAD request to check if URL returns 200."""
+        try:
+            r = requests.head(url, headers=self.HEADERS, timeout=8, allow_redirects=True)
+            return r.status_code == 200
+        except Exception:
+            return False
+
+    def _scrape_cambridge_page(self, code: str) -> str | None:
+        """Try to find a .pdf link on the Cambridge subject page."""
+        slug = self.CAMBRIDGE_SLUGS.get(code)
+        if not slug:
+            return None
+        url = f'https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-{slug}-{code}/'
+        try:
+            r = requests.get(url, headers=self.HEADERS, timeout=12)
+            if r.status_code != 200:
+                return None
+            # Find PDF hrefs that look like syllabus documents
+            hrefs = re.findall(r'href=["\']([^"\']*\.pdf)["\']', r.text, re.IGNORECASE)
+            for href in hrefs:
+                full = href if href.startswith('http') else f'https://www.cambridgeinternational.org{href}'
+                lower = full.lower()
+                if 'syllabus' in lower or code in lower:
+                    return full
+        except Exception:
+            pass
+        return None
+
+    def _gceguide_urls(self, code: str) -> list:
+        """Build candidate GCE Guide PDF URLs for the most recent syllabus years."""
+        name = self.SUBJECT_NAMES.get(code, '')
+        if not name:
+            return []
+        folder = f'{name} ({code})'
+        import urllib.parse
+        enc = urllib.parse.quote(folder)
+        urls = []
+        # Try years from newest to oldest (2026-2028 → 2023-2025 → 2020-2022)
+        for yy in ['26', '23', '20']:
+            urls.append(f'https://www.gceguide.xyz/Cambridge%20IGCSE/{enc}/{code}_y{yy}_sy.pdf')
+        return urls
+
+    def _resolve_pdf_url(self, code: str) -> str | None:
+        if code in self._pdf_cache:
+            return self._pdf_cache[code]
+
+        # 1. Try scraping Cambridge page
+        found = self._scrape_cambridge_page(code)
+        if found:
+            self._pdf_cache[code] = found
+            return found
+
+        # 2. Try GCE Guide mirrors
+        for url in self._gceguide_urls(code):
+            if self._try_url(url):
+                self._pdf_cache[code] = url
+                return url
+
+        self._pdf_cache[code] = None
+        return None
+
+    def get(self, request):
+        code = request.query_params.get('code', '').strip()
+        if not code or not re.match(r'^\d{4}$', code):
+            return Response({'error': 'valid 4-digit code required'}, status=400)
+
+        pdf_url = self._resolve_pdf_url(code)
+        if not pdf_url:
+            return Response({'error': f'Syllabus PDF not found for code {code}'}, status=404)
+
+        # Stream it through our proxy so the browser can display it inline
+        try:
+            r = requests.get(pdf_url, headers=self.HEADERS, stream=True, timeout=30)
+            if r.status_code != 200:
+                # Bust cache and return error
+                self._pdf_cache.pop(code, None)
+                return Response({'error': f'PDF source returned {r.status_code}'}, status=502)
+
+            resp = StreamingHttpResponse(
+                r.iter_content(chunk_size=8192),
+                content_type='application/pdf',
+            )
+            resp['Content-Disposition'] = f'inline; filename="{code}-syllabus.pdf"'
+            if 'Content-Length' in r.headers:
+                resp['Content-Length'] = r.headers['Content-Length']
+            return resp
+        except requests.RequestException as e:
+            return Response({'error': f'Proxy error: {e}'}, status=502)

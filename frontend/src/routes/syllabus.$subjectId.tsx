@@ -14,52 +14,10 @@ import { groqAsk } from "@/lib/groq-client";
 import { API_BASE } from "@/lib/api-client";
 
 // ── Real Cambridge Syllabus PDF URLs per subject code ────────────────────────
-const CAMBRIDGE_SYLLABUS_PDFS: Record<string, { years: string; url: string }[]> = {
-  "0452": [
-    { years: "2023–2025", url: "https://www.cambridgeinternational.org/Images/597034-2023-2025-syllabus.pdf" },
-    { years: "2026–2028", url: "https://www.cambridgeinternational.org/Images/662103-2026-2028-syllabus-.pdf" },
-  ],
-  "0610": [
-    { years: "2023–2025", url: "https://www.cambridgeinternational.org/Images/597036-2023-2025-syllabus.pdf" },
-    { years: "2026–2028", url: "https://www.cambridgeinternational.org/Images/662105-2026-2028-syllabus-.pdf" },
-  ],
-  "0620": [
-    { years: "2023–2025", url: "https://www.cambridgeinternational.org/Images/597038-2023-2025-syllabus.pdf" },
-    { years: "2026–2028", url: "https://www.cambridgeinternational.org/Images/662106-2026-2028-syllabus-.pdf" },
-  ],
-  "0625": [
-    { years: "2023–2025", url: "https://www.cambridgeinternational.org/Images/597056-2023-2025-syllabus.pdf" },
-    { years: "2026–2028", url: "https://www.cambridgeinternational.org/Images/662116-2026-2028-syllabus-.pdf" },
-  ],
-  "0580": [
-    { years: "2023–2025", url: "https://www.cambridgeinternational.org/Images/597049-2023-2025-syllabus.pdf" },
-    { years: "2026–2028", url: "https://www.cambridgeinternational.org/Images/662110-2026-2028-syllabus-.pdf" },
-  ],
-  "0478": [
-    { years: "2023–2025", url: "https://www.cambridgeinternational.org/Images/597040-2023-2025-syllabus.pdf" },
-    { years: "2026–2028", url: "https://www.cambridgeinternational.org/Images/662107-2026-2028-syllabus-.pdf" },
-  ],
-  "0455": [
-    { years: "2023–2025", url: "https://www.cambridgeinternational.org/Images/597042-2023-2025-syllabus.pdf" },
-    { years: "2026–2028", url: "https://www.cambridgeinternational.org/Images/662108-2026-2028-syllabus-.pdf" },
-  ],
-  "0450": [
-    { years: "2023–2025", url: "https://www.cambridgeinternational.org/Images/597037-2023-2025-syllabus.pdf" },
-    { years: "2026–2028", url: "https://www.cambridgeinternational.org/Images/662104-2026-2028-syllabus-.pdf" },
-  ],
-  "0500": [
-    { years: "2023–2025", url: "https://www.cambridgeinternational.org/Images/597043-2023-2025-syllabus.pdf" },
-    { years: "2026–2028", url: "https://www.cambridgeinternational.org/Images/662109-2026-2028-syllabus-.pdf" },
-  ],
-  "0460": [
-    { years: "2023–2025", url: "https://www.cambridgeinternational.org/Images/597045-2023-2025-syllabus.pdf" },
-    { years: "2026–2028", url: "https://www.cambridgeinternational.org/Images/662111-2026-2028-syllabus-.pdf" },
-  ],
-  "0470": [
-    { years: "2023–2025", url: "https://www.cambridgeinternational.org/Images/597054-2023-2025-syllabus.pdf" },
-    { years: "2026–2028", url: "https://www.cambridgeinternational.org/Images/662114-2026-2028-syllabus-.pdf" },
-  ],
-};
+// Syllabus PDFs are served dynamically by the backend endpoint:
+//   GET /api/examglow/syllabus/pdf/?code=<code>
+// which scrapes Cambridge / GCE Guide and streams the PDF directly.
+// No hardcoded URLs needed — the backend handles resolution + proxying.
 
 export const Route = createFileRoute("/syllabus/$subjectId")({
   component: SyllabusPage,
@@ -341,7 +299,10 @@ function SyllabusRealPDFViewer({ subjectName, subjectCode, yearRange, pdfUrl, on
   const [loading, setLoading] = useState(true);
   const [controlsVisible, setControlsVisible] = useState(true);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const proxyUrl = `${API_BASE}/api/examglow/past-papers/proxy/?url=${encodeURIComponent(pdfUrl)}`;
+  // pdfUrl is now the backend stream endpoint directly — no double-proxy needed.
+  // If it's already our backend URL, use it as-is; otherwise wrap through proxy.
+  const resolvedUrl = pdfUrl.startsWith(API_BASE) ? pdfUrl
+    : `${API_BASE}/api/examglow/past-papers/proxy/?url=${encodeURIComponent(pdfUrl)}`;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -391,7 +352,7 @@ function SyllabusRealPDFViewer({ subjectName, subjectCode, yearRange, pdfUrl, on
               AI Teach
             </button>
             <a
-              href={pdfUrl}
+              href={resolvedUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="p-2 hover:bg-white/10 rounded-full transition-colors text-white/60 hover:text-white"
@@ -423,7 +384,7 @@ function SyllabusRealPDFViewer({ subjectName, subjectCode, yearRange, pdfUrl, on
 
       {/* PDF iframe */}
       <iframe
-        src={proxyUrl}
+        src={resolvedUrl}
         className="flex-1 w-full border-0 block"
         title={`${subjectName} ${yearRange} Syllabus PDF`}
         onClick={e => e.stopPropagation()}
@@ -2826,19 +2787,18 @@ function SyllabusPage() {
         "provides a solid foundation for further studies and vocational opportunities."
       ];
 
-  // Real Cambridge syllabus PDF URLs for this subject code
-  const realPdfs = CAMBRIDGE_SYLLABUS_PDFS[subject.code] || [];
-  const pdfList = realPdfs.length > 0
-    ? realPdfs.map((p, idx) => ({
-        yearRange: p.years,
-        fileName: `${cleanName.replace(/\s+/g, "_")}_${p.years}_Syllabus.pdf`,
-        size: idx === 0 ? "~1 MB" : "~800 KB",
-        pdfUrl: p.url,
-      }))
-    : [
-        { yearRange: "2023–2025", fileName: `${cleanName.replace(/\s+/g, "_")}_2023-2025_Syllabus.pdf`, size: "~1 MB", pdfUrl: "" },
-        { yearRange: "2026–2028", fileName: `${cleanName.replace(/\s+/g, "_")}_2026-2028_Syllabus.pdf`, size: "~1 MB", pdfUrl: "" },
-      ];
+  // The backend resolves and streams the official Cambridge syllabus PDF dynamically.
+  // Endpoint: GET /api/examglow/syllabus/pdf/?code=<code>
+  // This replaces all hardcoded /Images/ URLs which are stale and return 404.
+  const syllabusDirectUrl = `${API_BASE}/api/examglow/syllabus/pdf/?code=${subject.code}`;
+  const pdfList = [
+    {
+      yearRange: "Current Syllabus",
+      fileName: `${cleanName.replace(/\s+/g, "_")}_Syllabus.pdf`,
+      size: "~1 MB",
+      pdfUrl: syllabusDirectUrl,
+    },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FCFCFA] font-sans">

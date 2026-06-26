@@ -6,7 +6,7 @@ from .views import (
     PastPaperAttemptView, PastPaperProxyView, CambridgePapersView,
     StudyGoalListView, StudyGoalDetailView,
     BookmarkView, BookmarkCheckView,
-    DashboardView,
+    DashboardView, SyllabusPdfView,
 )
 
 urlpatterns = [
@@ -16,6 +16,7 @@ urlpatterns = [
     # Syllabus
     path('syllabus/progress/', SyllabusProgressListView.as_view(), name='syllabus-progress'),
     path('syllabus/toggle/', SyllabusProgressToggleView.as_view(), name='syllabus-toggle'),
+    path('syllabus/pdf/', SyllabusPdfView.as_view(), name='syllabus-pdf'),
 
     # Quizzes
     path('quizzes/', QuizSetListView.as_view(), name='quiz-list'),
