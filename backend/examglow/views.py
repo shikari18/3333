@@ -993,3 +993,17 @@ class SyllabusPdfView(APIView):
             return resp
         except requests.RequestException as e:
             return Response({'error': f'Proxy error: {e}'}, status=502)
+
+
+class SyllabusAvailableView(APIView):
+    """
+    GET /api/examglow/syllabus/available/
+    Returns a hardcoded list of subject codes that have syllabus entries.
+    Fast — no HTTP requests; just returns all codes present in SUBJECT_NAMES.
+    """
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+
+    def get(self, request):
+        # Return all codes that have subject name mappings (these have GCE Guide entries)
+        return Response({'available': list(SyllabusPdfView.SUBJECT_NAMES.keys())})

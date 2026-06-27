@@ -28,6 +28,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SyllabusSubjectIdRouteImport } from './routes/syllabus.$subjectId'
 import { Route as SubjectNotesSubjectRouteImport } from './routes/subject-notes.$subject'
 import { Route as TopicNotesSubjectIdObjectiveIdRouteImport } from './routes/topic-notes.$subjectId.$objectiveId'
+import { Route as SyllabusNotesCodeNameRouteImport } from './routes/syllabus-notes.$code.$name'
 import { Route as PracticeSubjectIdObjectiveIdRouteImport } from './routes/practice.$subjectId.$objectiveId'
 
 const TopicRoute = TopicRouteImport.update({
@@ -126,6 +127,11 @@ const TopicNotesSubjectIdObjectiveIdRoute =
     path: '/topic-notes/$subjectId/$objectiveId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const SyllabusNotesCodeNameRoute = SyllabusNotesCodeNameRouteImport.update({
+  id: '/syllabus-notes/$code/$name',
+  path: '/syllabus-notes/$code/$name',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PracticeSubjectIdObjectiveIdRoute =
   PracticeSubjectIdObjectiveIdRouteImport.update({
     id: '/practice/$subjectId/$objectiveId',
@@ -153,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/subject-notes/$subject': typeof SubjectNotesSubjectRoute
   '/syllabus/$subjectId': typeof SyllabusSubjectIdRoute
   '/practice/$subjectId/$objectiveId': typeof PracticeSubjectIdObjectiveIdRoute
+  '/syllabus-notes/$code/$name': typeof SyllabusNotesCodeNameRoute
   '/topic-notes/$subjectId/$objectiveId': typeof TopicNotesSubjectIdObjectiveIdRoute
 }
 export interface FileRoutesByTo {
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/subject-notes/$subject': typeof SubjectNotesSubjectRoute
   '/syllabus/$subjectId': typeof SyllabusSubjectIdRoute
   '/practice/$subjectId/$objectiveId': typeof PracticeSubjectIdObjectiveIdRoute
+  '/syllabus-notes/$code/$name': typeof SyllabusNotesCodeNameRoute
   '/topic-notes/$subjectId/$objectiveId': typeof TopicNotesSubjectIdObjectiveIdRoute
 }
 export interface FileRoutesById {
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/subject-notes/$subject': typeof SubjectNotesSubjectRoute
   '/syllabus/$subjectId': typeof SyllabusSubjectIdRoute
   '/practice/$subjectId/$objectiveId': typeof PracticeSubjectIdObjectiveIdRoute
+  '/syllabus-notes/$code/$name': typeof SyllabusNotesCodeNameRoute
   '/topic-notes/$subjectId/$objectiveId': typeof TopicNotesSubjectIdObjectiveIdRoute
 }
 export interface FileRouteTypes {
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/subject-notes/$subject'
     | '/syllabus/$subjectId'
     | '/practice/$subjectId/$objectiveId'
+    | '/syllabus-notes/$code/$name'
     | '/topic-notes/$subjectId/$objectiveId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/subject-notes/$subject'
     | '/syllabus/$subjectId'
     | '/practice/$subjectId/$objectiveId'
+    | '/syllabus-notes/$code/$name'
     | '/topic-notes/$subjectId/$objectiveId'
   id:
     | '__root__'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/subject-notes/$subject'
     | '/syllabus/$subjectId'
     | '/practice/$subjectId/$objectiveId'
+    | '/syllabus-notes/$code/$name'
     | '/topic-notes/$subjectId/$objectiveId'
   fileRoutesById: FileRoutesById
 }
@@ -289,6 +301,7 @@ export interface RootRouteChildren {
   SubjectNotesSubjectRoute: typeof SubjectNotesSubjectRoute
   SyllabusSubjectIdRoute: typeof SyllabusSubjectIdRoute
   PracticeSubjectIdObjectiveIdRoute: typeof PracticeSubjectIdObjectiveIdRoute
+  SyllabusNotesCodeNameRoute: typeof SyllabusNotesCodeNameRoute
   TopicNotesSubjectIdObjectiveIdRoute: typeof TopicNotesSubjectIdObjectiveIdRoute
 }
 
@@ -427,6 +440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TopicNotesSubjectIdObjectiveIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/syllabus-notes/$code/$name': {
+      id: '/syllabus-notes/$code/$name'
+      path: '/syllabus-notes/$code/$name'
+      fullPath: '/syllabus-notes/$code/$name'
+      preLoaderRoute: typeof SyllabusNotesCodeNameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/practice/$subjectId/$objectiveId': {
       id: '/practice/$subjectId/$objectiveId'
       path: '/practice/$subjectId/$objectiveId'
@@ -457,6 +477,7 @@ const rootRouteChildren: RootRouteChildren = {
   SubjectNotesSubjectRoute: SubjectNotesSubjectRoute,
   SyllabusSubjectIdRoute: SyllabusSubjectIdRoute,
   PracticeSubjectIdObjectiveIdRoute: PracticeSubjectIdObjectiveIdRoute,
+  SyllabusNotesCodeNameRoute: SyllabusNotesCodeNameRoute,
   TopicNotesSubjectIdObjectiveIdRoute: TopicNotesSubjectIdObjectiveIdRoute,
 }
 export const routeTree = rootRouteImport

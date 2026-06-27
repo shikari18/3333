@@ -656,14 +656,35 @@ function SyllabusInlineViewer({ subject, onClose }: { subject: SyllabusViewerSta
 function Subjects() {
   const [searchQuery, setSearchQuery] = useState("");
   const [openSyllabus, setOpenSyllabus] = useState<SyllabusViewerState | null>(null);
+  const [availableCodes, setAvailableCodes] = useState<Set<string> | null>(null);
 
-  const parsedSubjects = useMemo(() => SUBJECT_LIST.map((name, index) => ({
-    name,
-    subjectId: getSubjectId(name),
-    firstLetter: name.charAt(0).toUpperCase(),
-    Icon: getSubjectIcon(name),
-    accent: ACCENT_COLORS[index % ACCENT_COLORS.length],
-  })), []);
+  // Fetch which subject codes have valid syllabus PDFs
+  useEffect(() => {
+    fetch(`${API_BASE}/api/examglow/syllabus/available/`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => {
+        if (data?.available) setAvailableCodes(new Set<string>(data.available));
+      })
+      .catch(() => { /* graceful degradation — show all */ });
+  }, []);
+
+  const parsedSubjects = useMemo(() => {
+    return SUBJECT_LIST
+      .map((name, index) => ({
+        name,
+        subjectId: getSubjectId(name),
+        firstLetter: name.charAt(0).toUpperCase(),
+        Icon: getSubjectIcon(name),
+        accent: ACCENT_COLORS[index % ACCENT_COLORS.length],
+      }))
+      .filter(subject => {
+        // While still loading, show all subjects (graceful degradation)
+        if (availableCodes === null) return true;
+        const m = subject.name.match(/\s*-\s*(\d{4})(?:\s|$)/);
+        const code = m ? m[1] : null;
+        return code ? availableCodes.has(code) : false;
+      });
+  }, [availableCodes]);
 
   const filteredGroups = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
@@ -764,11 +785,24 @@ function Subjects() {
                             <GraduationCap className="w-3.5 h-3.5 shrink-0" />
                             View Syllabus
                           </button>
-                          <Link to="/subject-notes/$subject" params={{ subject: getNotesSubjectName(subject.name) }}
-                            className="flex-1 py-2 rounded-xl border border-slate-200/80 text-[10px] font-bold inline-flex items-center justify-center gap-1.5 hover:bg-amber-600 hover:text-white hover:border-amber-600 transition-all text-slate-600 bg-white cursor-pointer">
-                            <BookOpen className="w-3.5 h-3.5 shrink-0" />
-                            View Notes
-                          </Link>
+                          {(() => {
+                            const m = subject.name.match(/\s*-\s*(\d{4})(?:\s|$)/);
+                            const extractedCode = m ? m[1] : subject.subjectId;
+                            const cleanSubjectName = subject.name
+                              .replace(/\s*-\s*\d{4}/g, "")
+                              .replace(/\s*\(9-1\)\s*/g, "")
+                              .trim();
+                            return (
+                              <Link
+                                to="/syllabus-notes/$code/$name"
+                                params={{ code: extractedCode, name: cleanSubjectName }}
+                                className="flex-1 py-2 rounded-xl border border-slate-200/80 text-[10px] font-bold inline-flex items-center justify-center gap-1.5 hover:bg-amber-600 hover:text-white hover:border-amber-600 transition-all text-slate-600 bg-white cursor-pointer"
+                              >
+                                <BookOpen className="w-3.5 h-3.5 shrink-0" />
+                                View Notes
+                              </Link>
+                            );
+                          })()}
                         </div>
                       </div>
                     </div>
