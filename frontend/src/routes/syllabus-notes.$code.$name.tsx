@@ -6,9 +6,9 @@ import { apiFetch } from "@/lib/api-client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   ArrowLeft, BookOpen, ChevronRight, ChevronDown, ChevronUp,
-  Loader2, FileText, GraduationCap, Lightbulb, AlertCircle,
-  CheckCircle2, List, Youtube, Image as ImageIcon, Menu, X,
-  ExternalLink, Play,
+  Loader2, GraduationCap, Lightbulb, AlertCircle,
+  CheckCircle2, List, Image as ImageIcon, Menu, X,
+  ExternalLink, Play, RefreshCw,
 } from "lucide-react";
 
 export const Route = createFileRoute("/syllabus-notes/$code/$name")({
@@ -74,32 +74,58 @@ function Bold({ text }: { text: string }) {
 
 function NoteImage({ src, caption }: { src: string; caption?: string }) {
   const [loaded, setLoaded] = useState(false);
-  const [err, setErr] = useState(false);
+  const [retries, setRetries] = useState(0);
+  const [imgSrc, setImgSrc] = useState(src);
+
+  // On error: retry up to 2 times with a fresh seed, then show fallback
+  const handleError = () => {
+    if (retries < 2) {
+      // Append a new random seed to bust cache and retry
+      const base = src.replace(/&seed=\d+/, "");
+      setImgSrc(`${base}&seed=${Math.floor(Math.random() * 99999)}&retry=${retries + 1}`);
+      setRetries(r => r + 1);
+      setLoaded(false);
+    }
+    // After 2 retries just leave imgSrc pointing to the last failed URL — broken-image shown
+  };
+
+  const failed = retries >= 2 && !loaded;
+
   return (
     <figure className="my-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50">
       <div className="relative min-h-40 flex items-center justify-center bg-slate-100">
-        {!loaded && !err && (
+        {!loaded && !failed && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-slate-400">
             <Loader2 className="w-6 h-6 animate-spin" />
-            <span className="text-[10px] font-semibold uppercase tracking-wider">Generating diagram…</span>
+            <span className="text-[10px] font-semibold uppercase tracking-wider">
+              {retries > 0 ? `Retrying diagram… (${retries}/2)` : "Generating diagram…"}
+            </span>
           </div>
         )}
-        {err && (
-          <div className="absolute inset-0 flex items-center justify-center">
+        {failed && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4">
             <ImageIcon className="w-8 h-8 text-slate-300" />
+            <p className="text-[11px] text-slate-400 text-center">{caption ?? "Diagram unavailable"}</p>
+            <button
+              onClick={() => { setRetries(0); setImgSrc(`${src}&seed=${Math.floor(Math.random() * 99999)}`); setLoaded(false); }}
+              className="flex items-center gap-1 text-[10px] text-primary font-semibold hover:underline"
+            >
+              <RefreshCw className="w-3 h-3" /> Retry
+            </button>
           </div>
         )}
-        {!err && (
+        {!failed && (
           <img
-            src={src}
+            key={imgSrc}
+            src={imgSrc}
             alt={caption ?? "Diagram"}
             className={`w-full object-contain max-h-80 transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
             onLoad={() => setLoaded(true)}
-            onError={() => setErr(true)}
+            onError={handleError}
           />
         )}
       </div>
-      {caption && (
+      {caption && !failed && (
         <figcaption className="text-center text-[11px] text-slate-500 italic py-2.5 px-4 bg-white border-t border-slate-100">
           {caption}
         </figcaption>
@@ -108,39 +134,84 @@ function NoteImage({ src, caption }: { src: string; caption?: string }) {
   );
 }
 
-// ─── YouTube search embed ───────────────────────────────────────────────────────
-// Uses YouTube's search URL as embed src — shows search results for the topic.
+// ─── YouTube revision videos ────────────────────────────────────────────────────
+// The YouTube embed listType=search is blocked. Instead show:
+// 1. A prominent "Search on YouTube" button
+// 2. An embedded playlist from a known IGCSE revision channel (free & reliable)
 
 function YoutubeSearchEmbed({ topic, subject }: { topic: string; subject: string }) {
-  const query = encodeURIComponent(`${topic} ${subject} IGCSE revision`);
-  const searchUrl = `https://www.youtube.com/results?search_query=${query}`;
+  const searchQuery = `${topic} ${subject} IGCSE revision`;
+  const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
+  // Free Maths/Science IGCSE channel playlists — reliable embeds
+  // We pick a search-style embed via a curated channel: freesciencelessons, cognito, save my exams
+  const cognitoSearchUrl = `https://www.youtube.com/@CognitoEd/search?query=${encodeURIComponent(topic)}`;
+
   return (
     <div className="my-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
-      <div className="bg-red-600 px-4 py-3 flex items-center gap-2">
-        <div className="w-6 h-6 rounded bg-white/20 flex items-center justify-center shrink-0">
-          <Play className="w-3.5 h-3.5 fill-white text-white" />
+      <div className="bg-red-600 px-4 py-3.5 flex items-center gap-3">
+        <div className="w-7 h-7 rounded bg-white/20 flex items-center justify-center shrink-0">
+          <Play className="w-4 h-4 fill-white text-white" />
         </div>
-        <div>
-          <p className="text-xs font-bold text-white">Revision Videos</p>
-          <p className="text-[10px] text-red-200">{topic} · {subject}</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-white">Revision Videos</p>
+          <p className="text-[11px] text-red-200 truncate">{topic} · {subject}</p>
         </div>
-        <a
-          href={searchUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml-auto flex items-center gap-1 text-[10px] text-red-200 hover:text-white transition-colors"
-        >
-          <ExternalLink className="w-3 h-3" /> Open on YouTube
-        </a>
       </div>
-      <div className="relative w-full bg-slate-900" style={{ paddingBottom: "56.25%" }}>
-        <iframe
-          className="absolute inset-0 w-full h-full"
-          src={`https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(`${topic} ${subject} IGCSE`)}&rel=0&modestbranding=1`}
-          title={`${topic} revision videos`}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
+
+      <div className="bg-slate-50 p-5 space-y-3">
+        <p className="text-xs text-slate-500 leading-relaxed">
+          Watch free IGCSE revision videos for <strong className="text-slate-700">{topic}</strong>.
+          Click a button below to open videos on YouTube.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <a
+            href={searchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors shadow-sm"
+          >
+            <Play className="w-3.5 h-3.5 fill-white" />
+            Search "{topic}" on YouTube
+          </a>
+          <a
+            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(`${topic} IGCSE Cognito`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            Cognito IGCSE
+          </a>
+          <a
+            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(`${topic} IGCSE freesciencelessons`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            Free Science Lessons
+          </a>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+          {[
+            { label: `${topic} — Full Lesson`, q: `${topic} IGCSE full lesson` },
+            { label: `${topic} — Exam Technique`, q: `${topic} IGCSE exam technique tips` },
+          ].map(({ label, q }) => (
+            <a
+              key={q}
+              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl hover:border-red-300 hover:bg-red-50/30 transition-all group"
+            >
+              <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center shrink-0 group-hover:bg-red-200 transition-colors">
+                <Play className="w-4 h-4 text-red-600 fill-red-600" />
+              </div>
+              <span className="text-xs font-semibold text-slate-700 group-hover:text-red-700 transition-colors">{label}</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-red-400 ml-auto shrink-0" />
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -274,7 +345,7 @@ function NotesPane({
   const state = cache?.status ?? "pending";
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="w-full">
       {/* Breadcrumb */}
       <div className="px-6 pt-6 pb-2 flex items-center gap-1.5 text-xs text-slate-400 flex-wrap">
         <GraduationCap className="w-3.5 h-3.5 text-primary" />
@@ -353,6 +424,86 @@ function NotesPane({
         )}
       </div>
     </div>
+  );
+}
+
+// ─── Sidebar nav — extracted so it can be used in both desktop + mobile drawer ──
+
+interface SyllabusObjectiveItem {
+  id: string;
+  code: string;
+  title: string;
+  subObjectives?: { id: string; title: string }[];
+}
+
+function SidebarNav({
+  objectives, expandedUnits, toggleUnit, activeTopic, selectTopic, cacheRef,
+}: {
+  objectives: SyllabusObjectiveItem[];
+  expandedUnits: Set<string>;
+  toggleUnit: (id: string) => void;
+  activeTopic: { topicTitle: string; unitTitle: string } | null;
+  selectTopic: (t: string, u: string) => void;
+  cacheRef: React.MutableRefObject<CacheMap>;
+}) {
+  return (
+    <>
+      {objectives.map((obj) => {
+        const isExpanded = expandedUnits.has(obj.id);
+        const completedCount = (obj.subObjectives ?? []).filter(
+          s => cacheRef.current.get(s.title)?.status === "done"
+        ).length;
+        const total = obj.subObjectives?.length ?? 0;
+        return (
+          <div key={obj.id} className="mb-1">
+            <button
+              onClick={() => toggleUnit(obj.id)}
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors text-left group"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-slate-700 group-hover:text-primary transition-colors truncate">
+                  Unit {obj.code}: {obj.title}
+                </p>
+                <p className="text-[10px] text-slate-400 mt-0.5">{total} topics · {completedCount} ready</p>
+              </div>
+              {isExpanded
+                ? <ChevronUp className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                : <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              }
+            </button>
+            {isExpanded && (
+              <div className="ml-3 pl-3 border-l-2 border-slate-100 mb-2 space-y-0.5">
+                {(obj.subObjectives ?? []).map((sub) => {
+                  const cached = cacheRef.current.get(sub.title);
+                  const isActive = activeTopic?.topicTitle === sub.title;
+                  return (
+                    <button
+                      key={sub.id}
+                      onClick={() => selectTopic(sub.title, `Unit ${obj.code}: ${obj.title}`)}
+                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-all ${
+                        isActive ? "bg-primary text-white font-bold" : "hover:bg-slate-50 text-slate-600 hover:text-slate-900"
+                      }`}
+                    >
+                      <div className="shrink-0">
+                        {cached?.status === "done"
+                          ? <CheckCircle2 className={`w-3.5 h-3.5 ${isActive ? "text-white/80" : "text-emerald-400"}`} />
+                          : cached?.status === "loading"
+                          ? <Loader2 className={`w-3.5 h-3.5 animate-spin ${isActive ? "text-white/70" : "text-amber-400"}`} />
+                          : cached?.status === "error"
+                          ? <AlertCircle className={`w-3.5 h-3.5 ${isActive ? "text-white/70" : "text-red-400"}`} />
+                          : <div className={`w-3.5 h-3.5 rounded-full border-2 ${isActive ? "border-white/50" : "border-slate-300"}`} />
+                        }
+                      </div>
+                      <span className="text-[12px] leading-snug truncate">{sub.title}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
   );
 }
 
@@ -473,12 +624,13 @@ function SyllabusNotes() {
           <div className="w-px h-4 bg-slate-200 shrink-0" />
           <BookOpen className="w-4 h-4 text-primary shrink-0" />
           <span className="font-bold text-slate-900 text-sm truncate">{decodedName}</span>
-          <span className="text-xs text-slate-400 font-mono shrink-0">{code}</span>
-          <div className="ml-auto">
+          <span className="text-xs text-slate-400 font-mono shrink-0 hidden sm:inline">{code}</span>
+          <div className="ml-auto flex items-center gap-2">
+            {/* Mobile: show sidebar as drawer */}
             <button
               onClick={() => setSidebarOpen(v => !v)}
               className="p-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition-colors text-slate-500"
-              title="Toggle sidebar"
+              title="Toggle topics"
             >
               <Menu className="w-4 h-4" />
             </button>
@@ -486,93 +638,67 @@ function SyllabusNotes() {
         </div>
       </div>
 
-      {/* ── Two-column layout ── */}
-      <div className="flex flex-1 max-w-screen-2xl mx-auto w-full">
-
-        {/* ── Sidebar ── */}
-        {sidebarOpen && (
-          <aside className="w-64 xl:w-72 shrink-0 border-r border-slate-200 bg-white flex flex-col sticky top-[49px] h-[calc(100vh-49px)] overflow-y-auto">
-            <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+      {/* ── Mobile sidebar drawer overlay ── */}
+      {sidebarOpen && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setSidebarOpen(false)}
+          />
+          {/* Drawer */}
+          <aside className="relative w-72 bg-white h-full flex flex-col overflow-hidden shadow-2xl">
+            <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between shrink-0">
               <div className="flex items-center gap-2">
                 <List className="w-3.5 h-3.5 text-slate-400" />
                 <span className="text-xs font-bold text-slate-600 uppercase tracking-wide">Revision Notes</span>
               </div>
-              <Link to="/subjects" className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-0.5">
-                View all topics <ChevronRight className="w-2.5 h-2.5" />
-              </Link>
+              <button onClick={() => setSidebarOpen(false)} className="p-1 rounded-lg hover:bg-slate-100 text-slate-400">
+                <X className="w-4 h-4" />
+              </button>
             </div>
-
-            <nav className="flex-1 px-2 py-2">
-              {objectives.map((obj) => {
-                const isExpanded = expandedUnits.has(obj.id);
-                const completedCount = (obj.subObjectives ?? []).filter(
-                  s => cacheRef.current.get(s.title)?.status === "done"
-                ).length;
-                const total = obj.subObjectives?.length ?? 0;
-                return (
-                  <div key={obj.id} className="mb-1">
-                    {/* Unit row */}
-                    <button
-                      onClick={() => toggleUnit(obj.id)}
-                      className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors text-left group"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-slate-700 group-hover:text-primary transition-colors truncate">
-                          Unit {obj.code}: {obj.title}
-                        </p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">
-                          {total} topics · {completedCount} ready
-                        </p>
-                      </div>
-                      {isExpanded ? (
-                        <ChevronUp className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      ) : (
-                        <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                      )}
-                    </button>
-
-                    {/* Topic rows */}
-                    {isExpanded && (
-                      <div className="ml-3 pl-3 border-l-2 border-slate-100 mb-2 space-y-0.5">
-                        {(obj.subObjectives ?? []).map((sub) => {
-                          const cached = cacheRef.current.get(sub.title);
-                          const isActive = activeTopic?.topicTitle === sub.title;
-                          return (
-                            <button
-                              key={sub.id}
-                              onClick={() => selectTopic(sub.title, `Unit ${obj.code}: ${obj.title}`)}
-                              className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-left transition-all ${
-                                isActive
-                                  ? "bg-primary text-white font-bold"
-                                  : "hover:bg-slate-50 text-slate-600 hover:text-slate-900"
-                              }`}
-                            >
-                              <div className="shrink-0">
-                                {cached?.status === "done" ? (
-                                  <CheckCircle2 className={`w-3.5 h-3.5 ${isActive ? "text-white/80" : "text-emerald-400"}`} />
-                                ) : cached?.status === "loading" ? (
-                                  <Loader2 className={`w-3.5 h-3.5 animate-spin ${isActive ? "text-white/70" : "text-amber-400"}`} />
-                                ) : cached?.status === "error" ? (
-                                  <AlertCircle className={`w-3.5 h-3.5 ${isActive ? "text-white/70" : "text-red-400"}`} />
-                                ) : (
-                                  <div className={`w-3.5 h-3.5 rounded-full border-2 ${isActive ? "border-white/50" : "border-slate-300"}`} />
-                                )}
-                              </div>
-                              <span className="text-[12px] leading-snug truncate">{sub.title}</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+            <nav className="flex-1 overflow-y-auto px-2 py-2">
+              <SidebarNav
+                objectives={objectives}
+                expandedUnits={expandedUnits}
+                toggleUnit={toggleUnit}
+                activeTopic={activeTopic}
+                selectTopic={(t, u) => { selectTopic(t, u); setSidebarOpen(false); }}
+                cacheRef={cacheRef}
+              />
             </nav>
           </aside>
-        )}
+        </div>
+      )}
 
-        {/* ── Main notes area ── */}
-        <main className="flex-1 min-w-0 overflow-y-auto">
+      {/* ── Desktop: two-column layout ── */}
+      <div className="flex flex-1 max-w-screen-2xl mx-auto w-full">
+
+        {/* Desktop sidebar — always visible on lg+ */}
+        <aside className="hidden lg:flex w-64 xl:w-72 shrink-0 border-r border-slate-200 bg-white flex-col self-start sticky top-[49px] max-h-[calc(100vh-49px)] overflow-y-auto">
+          <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-2">
+              <List className="w-3.5 h-3.5 text-slate-400" />
+              <span className="text-xs font-bold text-slate-600 uppercase tracking-wide">Revision Notes</span>
+            </div>
+            <Link to="/subjects" className="text-[10px] text-primary font-semibold hover:underline flex items-center gap-0.5">
+              View all <ChevronRight className="w-2.5 h-2.5" />
+            </Link>
+          </div>
+          <nav className="flex-1 overflow-y-auto px-2 py-2">
+            <SidebarNav
+              objectives={objectives}
+              expandedUnits={expandedUnits}
+              toggleUnit={toggleUnit}
+              activeTopic={activeTopic}
+              selectTopic={selectTopic}
+              cacheRef={cacheRef}
+            />
+          </nav>
+        </aside>
+
+        {/* ── Main notes area — scrolls naturally ── */}
+        <main className="flex-1 min-w-0">
           {activeTopic ? (
             <NotesPane
               topicTitle={activeTopic.topicTitle}
@@ -582,9 +708,9 @@ function SyllabusNotes() {
               cache={cacheRef.current.get(activeTopic.topicTitle)}
             />
           ) : (
-            <div className="flex flex-col items-center justify-center h-full min-h-[60vh] text-slate-400 gap-4">
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-400 gap-4 p-8">
               <BookOpen className="w-12 h-12 opacity-30" />
-              <p className="font-semibold">Select a topic from the sidebar to start revising</p>
+              <p className="font-semibold text-center">Select a topic from the menu to start revising</p>
             </div>
           )}
         </main>

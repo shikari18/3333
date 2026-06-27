@@ -382,14 +382,19 @@ function SyllabusRealPDFViewer({ subjectName, subjectCode, yearRange, pdfUrl, on
         </div>
       )}
 
-      {/* PDF iframe */}
-      <iframe
-        src={resolvedUrl}
-        className="flex-1 w-full border-0 block"
-        title={`${subjectName} ${yearRange} Syllabus PDF`}
+      {/* PDF iframe — wrapped for mobile scroll support */}
+      <div
+        className="flex-1 overflow-auto"
+        style={{ WebkitOverflowScrolling: "touch" } as React.CSSProperties}
         onClick={e => e.stopPropagation()}
-        onLoad={() => setLoading(false)}
-      />
+      >
+        <iframe
+          src={resolvedUrl}
+          className="w-full h-full border-0 block min-h-[100%]"
+          title={`${subjectName} ${yearRange} Syllabus PDF`}
+          onLoad={() => setLoading(false)}
+        />
+      </div>
 
       {/* Tap hint */}
       {!loading && controlsVisible && (
