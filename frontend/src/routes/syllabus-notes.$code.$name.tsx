@@ -134,17 +134,86 @@ function NoteImage({ src, caption }: { src: string; caption?: string }) {
   );
 }
 
-// ─── YouTube revision videos ────────────────────────────────────────────────────
-// The YouTube embed listType=search is blocked. Instead show:
-// 1. A prominent "Search on YouTube" button
-// 2. An embedded playlist from a known IGCSE revision channel (free & reliable)
+// ─── YouTube revision videos — thumbnail preview cards ──────────────────────────
+
+const CURATED: Record<string, { id: string; title: string; channel: string }[]> = {
+  "cell": [{ id: "S9WtBRNydso", title: "Cell Structure & Function", channel: "Cognito" }, { id: "8IlzKri08kU", title: "Cell Biology Revision", channel: "Free Science Lessons" }],
+  "diffusion": [{ id: "7B-1zmImPko", title: "Diffusion & Osmosis IGCSE", channel: "Cognito" }, { id: "m6LNWmRbWMg", title: "Diffusion Explained", channel: "Free Science Lessons" }],
+  "osmosis": [{ id: "7B-1zmImPko", title: "Osmosis & Diffusion", channel: "Cognito" }, { id: "m6LNWmRbWMg", title: "Osmosis Explained", channel: "Free Science Lessons" }],
+  "photosynthesis": [{ id: "uixA8ZuPzXk", title: "Photosynthesis IGCSE", channel: "Cognito" }, { id: "ljGCKPpBfAo", title: "Photosynthesis Revision", channel: "Free Science Lessons" }],
+  "respiration": [{ id: "5_-e-n5FMIY", title: "Respiration IGCSE", channel: "Cognito" }, { id: "kFBCyQ5NjAM", title: "Aerobic Respiration", channel: "Free Science Lessons" }],
+  "enzyme": [{ id: "qgVFkRn8f10", title: "Enzymes IGCSE", channel: "Cognito" }, { id: "YzIBgVQhBRw", title: "Enzyme Action & Factors", channel: "Free Science Lessons" }],
+  "dna": [{ id: "zwibgNGe4aY", title: "DNA & Protein Synthesis", channel: "Cognito" }, { id: "8kK2zwjRV0M", title: "DNA Structure IGCSE", channel: "Free Science Lessons" }],
+  "gene": [{ id: "5i3zB2i9n8o", title: "Genetics & Inheritance", channel: "Cognito" }, { id: "CBezq1fFUEA", title: "Genetic Crosses IGCSE", channel: "Free Science Lessons" }],
+  "heart": [{ id: "OHLxPnJCJGo", title: "The Heart & Circulation", channel: "Cognito" }, { id: "XX68_3p3MGk", title: "Heart Structure IGCSE", channel: "Free Science Lessons" }],
+  "atom": [{ id: "M2uPlWPETt4", title: "Atomic Structure IGCSE", channel: "Cognito" }, { id: "jTMK9PQa-OI", title: "Atoms & Elements IGCSE", channel: "Free Science Lessons" }],
+  "bond": [{ id: "55JkKSJZ9i8", title: "Chemical Bonding IGCSE", channel: "Cognito" }, { id: "TRlS9-kPgcI", title: "Ionic & Covalent Bonds", channel: "Free Science Lessons" }],
+  "force": [{ id: "QUEH5uS_fqI", title: "Forces & Motion IGCSE", channel: "Cognito" }, { id: "HVT3Y3_gHGg", title: "Newton's Laws IGCSE", channel: "Free Science Lessons" }],
+  "wave": [{ id: "Rbuhdo0AZDU", title: "Waves IGCSE", channel: "Cognito" }, { id: "3VDVm_4sMf0", title: "Wave Properties IGCSE", channel: "Free Science Lessons" }],
+  "electricity": [{ id: "AmSaqNOlsRM", title: "Electricity & Circuits", channel: "Cognito" }, { id: "9ckPQBOER9Q", title: "Electric Circuits IGCSE", channel: "Free Science Lessons" }],
+  "algebra": [{ id: "NybHckSEQBI", title: "Algebra IGCSE Revision", channel: "Exam Solutions" }, { id: "kn7KCzQHi-4", title: "Algebra Full Revision", channel: "Math Genie" }],
+  "probability": [{ id: "eCRG7YJpPCE", title: "Probability IGCSE", channel: "Exam Solutions" }, { id: "JiWyHsKFPSc", title: "Probability Trees", channel: "Corbettmaths" }],
+  "accounting": [{ id: "uvTavBFJ59Y", title: "Introduction to Accounting", channel: "Accounting Stuff" }, { id: "7CKXJBTshso", title: "IGCSE Accounting Basics", channel: "Accounting Stuff" }],
+  "purpose": [{ id: "uvTavBFJ59Y", title: "Purpose of Accounting", channel: "Accounting Stuff" }, { id: "yYX4bvQSqbo", title: "Why Accounting Matters", channel: "Accounting Stuff" }],
+  "balance": [{ id: "lVmQm_bSdos", title: "Balance Sheet Explained", channel: "Accounting Stuff" }, { id: "9l-DfZMqjdI", title: "Trial Balance IGCSE", channel: "Tutor2u" }],
+  "supply": [{ id: "ewPNugIqCUM", title: "Supply & Demand Economics", channel: "MRU" }, { id: "LwPSqh0GBwg", title: "Supply & Demand IGCSE", channel: "Tutor2u" }],
+  "demand": [{ id: "ewPNugIqCUM", title: "Supply & Demand", channel: "MRU" }, { id: "LwPSqh0GBwg", title: "Demand IGCSE Economics", channel: "Tutor2u" }],
+};
+
+function getVideosForTopic(topic: string) {
+  const lower = topic.toLowerCase();
+  for (const [kw, vids] of Object.entries(CURATED)) {
+    if (lower.includes(kw)) return vids;
+  }
+  return [];
+}
+
+function VideoCard({ videoId, title, channel }: { videoId: string; title: string; channel: string }) {
+  const [playing, setPlaying] = useState(false);
+  const thumb = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  if (playing) {
+    return (
+      <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-black">
+        <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+          <iframe
+            className="absolute inset-0 w-full h-full"
+            src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+        <div className="bg-slate-900 px-4 py-2 flex items-center gap-2">
+          <p className="text-xs font-semibold text-white truncate flex-1">{title}</p>
+          <button onClick={() => setPlaying(false)} className="text-[10px] text-slate-400 hover:text-white shrink-0">✕</button>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <button
+      onClick={() => setPlaying(true)}
+      className="group w-full text-left rounded-2xl overflow-hidden border border-slate-200 hover:border-red-300 hover:shadow-md transition-all bg-white"
+    >
+      <div className="relative w-full bg-slate-900" style={{ paddingBottom: "56.25%" }}>
+        <img src={thumb} alt={title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
+          <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+            <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+          </div>
+        </div>
+      </div>
+      <div className="px-4 py-3">
+        <p className="text-sm font-semibold text-slate-800 leading-snug line-clamp-2 group-hover:text-red-700 transition-colors">{title}</p>
+        <p className="text-[11px] text-slate-400 mt-1">{channel}</p>
+      </div>
+    </button>
+  );
+}
 
 function YoutubeSearchEmbed({ topic, subject }: { topic: string; subject: string }) {
-  const searchQuery = `${topic} ${subject} IGCSE revision`;
-  const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`;
-  // Free Maths/Science IGCSE channel playlists — reliable embeds
-  // We pick a search-style embed via a curated channel: freesciencelessons, cognito, save my exams
-  const cognitoSearchUrl = `https://www.youtube.com/@CognitoEd/search?query=${encodeURIComponent(topic)}`;
+  const curated = getVideosForTopic(topic);
+  const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${topic} ${subject} IGCSE revision`)}`;
 
   return (
     <div className="my-6 rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
@@ -156,62 +225,42 @@ function YoutubeSearchEmbed({ topic, subject }: { topic: string; subject: string
           <p className="text-sm font-bold text-white">Revision Videos</p>
           <p className="text-[11px] text-red-200 truncate">{topic} · {subject}</p>
         </div>
+        <a href={searchUrl} target="_blank" rel="noopener noreferrer"
+          className="flex items-center gap-1 text-[10px] text-red-200 hover:text-white transition-colors shrink-0">
+          <ExternalLink className="w-3 h-3" /> More on YouTube
+        </a>
       </div>
 
-      <div className="bg-slate-50 p-5 space-y-3">
-        <p className="text-xs text-slate-500 leading-relaxed">
-          Watch free IGCSE revision videos for <strong className="text-slate-700">{topic}</strong>.
-          Click a button below to open videos on YouTube.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <a
-            href={searchUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors shadow-sm"
-          >
-            <Play className="w-3.5 h-3.5 fill-white" />
-            Search "{topic}" on YouTube
-          </a>
-          <a
-            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(`${topic} IGCSE Cognito`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors"
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-            Cognito IGCSE
-          </a>
-          <a
-            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(`${topic} IGCSE freesciencelessons`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors"
-          >
-            <ExternalLink className="w-3.5 h-3.5" />
-            Free Science Lessons
-          </a>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-          {[
-            { label: `${topic} — Full Lesson`, q: `${topic} IGCSE full lesson` },
-            { label: `${topic} — Exam Technique`, q: `${topic} IGCSE exam technique tips` },
-          ].map(({ label, q }) => (
-            <a
-              key={q}
-              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl hover:border-red-300 hover:bg-red-50/30 transition-all group"
-            >
-              <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center shrink-0 group-hover:bg-red-200 transition-colors">
-                <Play className="w-4 h-4 text-red-600 fill-red-600" />
-              </div>
-              <span className="text-xs font-semibold text-slate-700 group-hover:text-red-700 transition-colors">{label}</span>
-              <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-red-400 ml-auto shrink-0" />
-            </a>
-          ))}
-        </div>
+      <div className="p-4 bg-white">
+        {curated.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {curated.map((v) => (
+              <VideoCard key={v.id} videoId={v.id} title={v.title} channel={v.channel} />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[
+              { label: `${topic} — Full Revision`, q: `${topic} ${subject} IGCSE`, ch: "YouTube" },
+              { label: `${topic} — Cognito IGCSE`, q: `${topic} IGCSE Cognito`, ch: "Cognito" },
+              { label: `${topic} — Free Science Lessons`, q: `${topic} IGCSE freesciencelessons`, ch: "Free Science Lessons" },
+              { label: `${topic} — Exam Tips`, q: `${topic} IGCSE exam tips`, ch: "YouTube" },
+            ].map(({ label, q, ch }) => (
+              <a key={q} href={`https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`}
+                target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl hover:border-red-300 hover:bg-red-50/30 transition-all group">
+                <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0 group-hover:bg-red-200 transition-colors">
+                  <Play className="w-4 h-4 text-red-600 fill-red-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-slate-700 group-hover:text-red-700 truncate">{label}</p>
+                  <p className="text-[10px] text-slate-400">{ch}</p>
+                </div>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-300 group-hover:text-red-400 shrink-0" />
+              </a>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
